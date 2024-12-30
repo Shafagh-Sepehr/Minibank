@@ -13,7 +13,20 @@ public class Database : IDataBase
         
         if (_entities.TryGetValue(typeName, out var entityList))
         {
-            entityList.Add(entity);
+            if (entity.Id == 0)
+            {
+                var biggestId = entityList.Select(x => x.Id).Order().Last();
+                entity.Id = biggestId + 1;
+            }
+            
+            if (!entityList.Contains(entity))
+            {
+                entityList.Add(entity);
+            }
+            else
+            {
+                throw new OperationFailedException("Entity already exists");
+            }
         }
         else
         {
