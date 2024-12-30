@@ -7,53 +7,48 @@ public class Database : IDataBase
 {
     private readonly Dictionary<string, List<IDatabaseEntity>> _entities = new();
     
+    
     public void Save<TDatabaseEntity>(TDatabaseEntity entity) where TDatabaseEntity : IDatabaseEntity
     {
         var typeName = typeof(TDatabaseEntity).Name;
+        var entityCopy = DeepCopier.Copier.Copy(entity);
         
         if (_entities.TryGetValue(typeName, out var entityList))
         {
-            if (entity.Id == 0)
-            {
-                var biggestId = entityList.Select(x => x.Id).Order().Last();
-                entity.Id = biggestId + 1;
-            }
+            FixId(entityCopy, entityList);
+            AssertIdIsUnique(entityCopy, entityList);
             
-            if (!entityList.Contains(entity))
+            if (!entityList.Contains(entityCopy))
             {
-                entityList.Add(entity);
+                entityList.Add(entityCopy);
             }
             else
             {
-                throw new OperationFailedException("Entity already exists");
+                throw new OperationFailedException("Entity already exists.");
             }
         }
         else
         {
-            _entities[typeName] = [entity, ];
+            _entities[typeName] = [entityCopy, ];
         }
     }
     
     public void Update<TDatabaseEntity>(TDatabaseEntity entity) where TDatabaseEntity : IDatabaseEntity
     {
         var typeName = typeof(TDatabaseEntity).Name;
+        var entityCopy = DeepCopier.Copier.Copy(entity);
         
         if (_entities.TryGetValue(typeName, out var entityList))
         {
-            var newEntity = entityList.Single(x=> x.Id == entity.Id);
-            var result = entityList.Remove(newEntity);
-            
-            if (result == false)
+            var entityId = entityList.FindIndex(x => x.Id == entityCopy.Id);
+            if (entityId != -1)
             {
-                throw new OperationFailedException($"entity {entity.Id} of type {typeName} could not be removed or does not exist.");
+                entityList[entityId] = entityCopy;
+                return;
             }
-            
-            entityList.Add(entity);
         }
-        else
-        {
-            throw new InvalidOperationException($"entity {entity.Id} of type {typeName} not found.");
-        }
+        
+        throw new InvalidOperationException($"entity {entityCopy.Id} of type {typeName} not found.");
     }
     
     
@@ -88,7 +83,23 @@ public class Database : IDataBase
         }
         else
         {
-            throw new InvalidOperationException($"entity list of type {typeName} not found.");
+            return [];
+        }
+    }
+    
+    private static bool FixId<TDatabaseEntity>(TDatabaseEntity entityCopy, List<TDatabaseEntity> entityList) where TDatabaseEntity : IDatabaseEntity
+    {
+        if (entityCopy.Id != 0) return false;
+        var biggestId = entityList.Select(x => x.Id).Last();
+        entityCopy.Id = biggestId + 1;
+        return true;
+    }
+    
+    private static void AssertIdIsUnique<TDatabaseEntity>(TDatabaseEntity entityCopy, List<TDatabaseEntity> entityList) where TDatabaseEntity : IDatabaseEntity
+    {
+        if (entityList.Any(x => x.Id == entityCopy.Id))
+        {
+            throw new OperationFailedException("an entity with the same id already exists.");
         }
     }
 }
