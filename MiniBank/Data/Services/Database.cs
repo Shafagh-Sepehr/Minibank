@@ -67,6 +67,15 @@ public class Database : IDataBase
     
     public IEnumerable<TDatabaseEntity> FetchAll<TDatabaseEntity>() where TDatabaseEntity : IDatabaseEntity
     {
-        throw new NotImplementedException();
+        var typeName = typeof(TDatabaseEntity).Name;
+        
+        if (_entities.TryGetValue(typeName, out var entityList))
+        {
+            return entityList.Where(x => x is TDatabaseEntity).Cast<TDatabaseEntity>();
+        }
+        else
+        {
+            throw new InvalidOperationException($"entity list of type {typeName} not found.");
+        }
     }
 }
