@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using MiniBank.Data.Abstractions;
 
 namespace MiniBank.Entities;
 
-public class User : IDatabaseEntity
+public class User : ComparableDataBaseEntity
 {
     [StringLength(50, MinimumLength = 5)]
     public required string Username { get; set; }
@@ -21,6 +20,4 @@ public class User : IDatabaseEntity
     
     [StringLength(10, MinimumLength = 10)]
     public required string NationalId { get; init; }
-    
-    public long Id { get; set; }
 }

@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using MiniBank.Data.Abstractions;
 
 namespace MiniBank.Entities;
 
-public abstract class Account : IDatabaseEntity
+public abstract class Account : ComparableDataBaseEntity
 {
     public enum AccountStatus
     {
