@@ -3,9 +3,13 @@ using MiniBank.Exceptions;
 
 namespace MiniBank.Data.Services;
 
-public class Database : IDataBase
+public sealed class Database : IDataBase
 {
     private readonly Dictionary<string, List<IDatabaseEntity>> _entities = new();
+    
+    public event EventHandler<EntityEventArgs> EntitySaved   = delegate { };
+    public event EventHandler<EntityEventArgs> EntityUpdated = delegate { };
+    public event EventHandler<EntityEventArgs> EntityDeleted = delegate { };
     
     
     public void Save<TDatabaseEntity>(TDatabaseEntity entity) where TDatabaseEntity : IDatabaseEntity
@@ -31,6 +35,8 @@ public class Database : IDataBase
         {
             _entities[typeName] = [entityCopy, ];
         }
+        
+        OnEntitySaved(new(){EntityType = typeof(TDatabaseEntity), Entity = DeepCopier.Copier.Copy(entityCopy),});
     }
     
     public void Update<TDatabaseEntity>(TDatabaseEntity entity) where TDatabaseEntity : IDatabaseEntity
@@ -44,6 +50,7 @@ public class Database : IDataBase
             if (entityId != -1)
             {
                 entityList[entityId] = entityCopy;
+                OnEntityUpdated(new(){EntityType = typeof(TDatabaseEntity), Entity = DeepCopier.Copier.Copy(entityCopy),});
                 return;
             }
         }
@@ -65,6 +72,8 @@ public class Database : IDataBase
             {
                 throw new OperationFailedException($"entity {entity.Id} of type {typeName} could not be removed or does not exist.");
             }
+            
+            OnEntityDeleted(new(){EntityType = typeof(TDatabaseEntity), Entity = DeepCopier.Copier.Copy(entity),});
         }
         else
         {
@@ -101,5 +110,20 @@ public class Database : IDataBase
         {
             throw new OperationFailedException("an entity with the same id already exists.");
         }
+    }
+    
+    private void OnEntitySaved(EntityEventArgs e)
+    {
+        EntitySaved(this, e);
+    }
+    
+    private void OnEntityUpdated(EntityEventArgs e)
+    {
+        EntityUpdated(this, e);
+    }
+    
+    private void OnEntityDeleted(EntityEventArgs e)
+    {
+        EntityDeleted(this, e);
     }
 }
