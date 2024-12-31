@@ -4,8 +4,9 @@ public class Transaction : ComparableDataBaseEntity
 {
     private readonly decimal _amount;
     
-    public required string OriginAccountRef      { get; init; }
-    public required string DestinationAccountRef { get; init; }
+    public required TransactionStatus Status                { get; init; }
+    public required string            OriginAccountRef      { get; init; }
+    public required string            DestinationAccountRef { get; init; }
     
     public required decimal Amount
     {

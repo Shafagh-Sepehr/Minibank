@@ -3,7 +3,9 @@
 public class Deposit : ComparableDataBaseEntity
 {
     private readonly decimal _amount;
-    public required  string  AccountRef { get; init; }
+    
+    public required TransactionStatus Status     { get; init; }
+    public required string            AccountRef { get; init; }
     
     public required decimal Amount
     {
