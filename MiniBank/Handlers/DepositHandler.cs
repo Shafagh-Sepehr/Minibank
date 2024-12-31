@@ -10,15 +10,26 @@ public class DepositHandler(IDataBase dataBase)
     {
         var accounts = dataBase.FetchAll<Account>();
         var account = accounts.FirstOrDefault(x => x.AccountNumber == accountNumber);
+        ActionResult actionResult;
         
         if (account == null)
         {
-            return ActionResult.AccountNotFound;
+            actionResult = ActionResult.AccountNotFound;
+        }
+        else
+        {
+            account.Balance += amount;
+            dataBase.Update(account);
+            actionResult = ActionResult.Success;
         }
         
-        account.Balance += amount;
+        dataBase.Save(new Withdrawal
+        {
+            Amount = amount,
+            AccountRef = account?.Id ?? 0,
+            Status = actionResult == ActionResult.Success ? TransactionStatus.Success : TransactionStatus.Failed,
+        });
         
-        dataBase.Update(account);
-        return ActionResult.Success;
+        return actionResult;
     }
 }
