@@ -8,17 +8,16 @@ public class DepositHandler(IDataBase dataBase)
     public ActionResult Deposit(string accountNumber, decimal amount)
     {
         var accounts = dataBase.FetchAll<Account>();
+        var account = accounts.FirstOrDefault(x => x.AccountNumber == accountNumber);
         
-        foreach (var account in accounts)
+        if (account == null)
         {
-            if (account.AccountNumber == accountNumber)
-            {
-                account.Balance += amount;
-                dataBase.Update(account);
-                return ActionResult.Success;
-            }
+            return ActionResult.AccountNotFound;
         }
         
-        return ActionResult.AccountNotFound;
+        account.Balance += amount;
+        
+        dataBase.Update(account);
+        return ActionResult.Success;
     }
 }
