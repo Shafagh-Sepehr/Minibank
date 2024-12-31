@@ -4,12 +4,6 @@ namespace MiniBank.Entities;
 
 public abstract class Account : ComparableDataBaseEntity
 {
-    public enum AccountStatus
-    {
-        Active,
-        Inactive,
-        Blocked,
-    }
     
     private decimal _balance;
     public  long    UserRef { get; set; }
