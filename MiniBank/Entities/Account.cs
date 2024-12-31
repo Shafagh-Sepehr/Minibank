@@ -7,7 +7,7 @@ public abstract class Account : ComparableDataBaseEntity
     public enum AccountStatus
     {
         Active,
-        DeActive,
+        Inactive,
         Blocked,
     }
     
