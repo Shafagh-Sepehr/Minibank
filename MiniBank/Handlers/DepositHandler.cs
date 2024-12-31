@@ -5,7 +5,7 @@ namespace MiniBank.Handlers;
 
 public class DepositHandler(IDataBase dataBase)
 {
-    public bool Deposit(string accountNumber, decimal amount)
+    public ActionResult Deposit(string accountNumber, decimal amount)
     {
         var accounts = dataBase.FetchAll<Account>();
         
@@ -15,10 +15,10 @@ public class DepositHandler(IDataBase dataBase)
             {
                 account.Balance += amount;
                 dataBase.Update(account);
-                return true;
+                return ActionResult.Success;
             }
         }
         
-        return false;
+        return ActionResult.AccountNotFound;
     }
 }
