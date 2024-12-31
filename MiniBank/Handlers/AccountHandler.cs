@@ -9,12 +9,25 @@ public class AccountHandler(IDataBase dataBase)
     {
         var newAccount = new Account
         {
-            AccountNumber = Helper.GenerateRandomNumberAsString(20),
+            AccountNumber = GenerateAccountNumber(),
             UserRef = userRef,
             Balance = 0,
             Status = AccountStatus.Active,
         };
         
         dataBase.Save(newAccount);
+    }
+    
+    private string GenerateAccountNumber()
+    {
+        var accounts = dataBase.FetchAll<Account>().ToList();
+        string accountNumber;
+        do
+        {
+            accountNumber = Helper.GenerateRandomNumberAsString(20);
+            
+        } while (accounts.Any(x => x.AccountNumber == accountNumber));
+        
+        return accountNumber;
     }
 }
