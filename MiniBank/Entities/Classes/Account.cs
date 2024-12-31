@@ -5,9 +5,11 @@ namespace MiniBank.Entities.Classes;
 
 public class Account : DataBaseEntity
 {
-    private decimal _balance;
-    public  long    UserRef { get; set; }
-    public          AccountStatus Status { get; set; } = AccountStatus.Active;
+    private decimal       _balance;
+    public  AccountStatus Status { get; set; } = AccountStatus.Active;
+    
+    [Range(0, long.MaxValue)]
+    public long UserRef { get; set; }
     
     [StringLength(20, MinimumLength = 20)]
     public required string AccountNumber { get; init; }

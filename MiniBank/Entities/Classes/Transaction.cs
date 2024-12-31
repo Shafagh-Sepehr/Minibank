@@ -1,4 +1,5 @@
-﻿using MiniBank.Entities.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+using MiniBank.Entities.Enums;
 
 namespace MiniBank.Entities.Classes;
 
@@ -6,9 +7,13 @@ public class Transaction : DataBaseEntity
 {
     private readonly decimal _amount;
     
-    public required TransactionStatus Status                { get; init; } = TransactionStatus.Success;
-    public required long              OriginAccountRef      { get; init; }
-    public required long              DestinationAccountRef { get; init; }
+    public required TransactionStatus Status { get; init; } = TransactionStatus.Success;
+    
+    [Range(0, long.MaxValue)]
+    public required long OriginAccountRef { get; init; }
+    
+    [Range(0, long.MaxValue)]
+    public required long DestinationAccountRef { get; init; }
     
     public required decimal Amount
     {
