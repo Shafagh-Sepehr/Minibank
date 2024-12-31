@@ -5,7 +5,7 @@ namespace MiniBank.Handlers;
 
 public class AccountHandler(IDataBase dataBase)
 {
-    public void CreateAccount(long userRef, string password, string secondPassword)
+    public string CreateAccount(long userRef, string password, string secondPassword)
     {
         var newAccount = new Account
         {
@@ -16,6 +16,7 @@ public class AccountHandler(IDataBase dataBase)
         };
         
         dataBase.Save(newAccount);
+        return newAccount.AccountNumber;
     }
     
     private string GenerateAccountNumber()
