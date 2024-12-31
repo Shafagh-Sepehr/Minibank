@@ -4,7 +4,7 @@ public class Transaction : ComparableDataBaseEntity
 {
     private readonly decimal _amount;
     
-    public required TransactionStatus Status                { get; init; }
+    public required TransactionStatus Status                { get; init; } = TransactionStatus.Success;
     public required long              OriginAccountRef      { get; init; }
     public required long              DestinationAccountRef { get; init; }
     
@@ -22,5 +22,5 @@ public class Transaction : ComparableDataBaseEntity
         }
     }
     
-    public required DateTime Date { get; init; } = DateTime.Now;
+    public DateTime Date { get; init; } = DateTime.Now;
 }

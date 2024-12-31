@@ -4,8 +4,8 @@ public class Deposit : ComparableDataBaseEntity
 {
     private readonly decimal _amount;
     
-    public required TransactionStatus Status     { get; init; }
-    public required long            AccountRef { get; init; }
+    public required TransactionStatus Status     { get; init; } = TransactionStatus.Success;
+    public required long              AccountRef { get; init; }
     
     public required decimal Amount
     {

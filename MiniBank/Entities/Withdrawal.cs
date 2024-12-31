@@ -4,7 +4,7 @@ public class Withdrawal : ComparableDataBaseEntity
 {
     private readonly decimal _amount;
     
-    public required TransactionStatus Status     { get; init; }
+    public TransactionStatus Status     { get; init; } = TransactionStatus.Success;
     public required long              AccountRef { get; init; }
     
     public required decimal Amount
@@ -21,5 +21,5 @@ public class Withdrawal : ComparableDataBaseEntity
         }
     }
     
-    public required DateTime Date { get; init; } = DateTime.Now;
+    public DateTime Date { get; init; } = DateTime.Now;
 }
