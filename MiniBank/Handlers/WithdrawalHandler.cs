@@ -9,19 +9,33 @@ public class WithdrawalHandler(IDataBase dataBase)
     {
         var accounts = dataBase.FetchAll<Account>();
         var account = accounts.FirstOrDefault(x => x.AccountNumber == accountNumber);
+        ActionResult actionResult;
         
         if (account == null)
         {
-            return ActionResult.AccountNotFound;
+            actionResult = ActionResult.AccountNotFound;
         }
-        
-        account.Balance -= amount;
-        if (account.Balance < 0)
+        else
         {
-            return ActionResult.InsufficientBalance;
+            account.Balance -= amount;
+            if (account.Balance < 0)
+            {
+                actionResult = ActionResult.InsufficientBalance;
+            }
+            else
+            {
+                dataBase.Update(account);
+                actionResult = ActionResult.Success;
+            }
         }
         
-        dataBase.Update(account);
-        return ActionResult.Success;
+        dataBase.Save(new Withdrawal
+        {
+            Amount = amount,
+            AccountRef = account?.Id ?? 0,
+            Status = actionResult == ActionResult.Success ? TransactionStatus.Success : TransactionStatus.Failed,
+        });
+        
+        return actionResult;
     }
 }
