@@ -2,7 +2,7 @@
 
 namespace MiniBank.Entities;
 
-public class AccountCard
+public class AccountCard : ComparableDataBaseEntity
 {
     public required long AccountRef { get; init; }
     
