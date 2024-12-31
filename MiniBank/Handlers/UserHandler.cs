@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-using MiniBank.Data.Abstractions;
+﻿using MiniBank.Data.Abstractions;
 using MiniBank.Entities;
 
 namespace MiniBank.Handlers;
@@ -21,6 +19,4 @@ public class UserHandler(IDataBase dataBase)
         
         dataBase.Save(newUser);
     }
-    
-   
 }
