@@ -2,7 +2,7 @@
 
 namespace MiniBank.Entities;
 
-public abstract class Account : ComparableDataBaseEntity
+public class Account : ComparableDataBaseEntity
 {
     
     private decimal _balance;
