@@ -8,6 +8,7 @@ public class Withdrawal : DataBaseEntity
     private readonly decimal _amount;
     
     public TransactionStatus Status { get; init; } = TransactionStatus.Success;
+    public DateTime          Date   { get; init; } = DateTime.Now;
     
     [Range(0, long.MaxValue)]
     public required long AccountRef { get; init; }
@@ -25,6 +26,4 @@ public class Withdrawal : DataBaseEntity
             _amount = value;
         }
     }
-    
-    public DateTime Date { get; init; } = DateTime.Now;
 }

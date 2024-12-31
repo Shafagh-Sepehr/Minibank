@@ -23,7 +23,7 @@ public class DepositHandler(IDataBase dataBase)
             actionResult = ActionResult.Success;
         }
         
-        dataBase.Save(new Withdrawal
+        dataBase.Save(new Deposit
         {
             Amount = amount,
             AccountRef = account?.Id ?? 0,

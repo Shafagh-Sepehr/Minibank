@@ -7,7 +7,8 @@ public class Deposit : DataBaseEntity
 {
     private readonly decimal _amount;
     
-    public required TransactionStatus Status { get; init; } = TransactionStatus.Success;
+    public TransactionStatus Status { get; init; } = TransactionStatus.Success;
+    public DateTime          Date   { get; init; } = DateTime.Now;
     
     [Range(0, long.MaxValue)]
     public required long AccountRef { get; init; }
@@ -25,6 +26,4 @@ public class Deposit : DataBaseEntity
             _amount = value;
         }
     }
-    
-    public required DateTime Date { get; init; } = DateTime.Now;
 }
