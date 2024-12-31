@@ -4,6 +4,8 @@ namespace MiniBank.Entities;
 
 public class AccountCard
 {
+    public required long AccountRef { get; init; }
+    
     [StringLength(21, MinimumLength = 16)]
     public required string CardNumber { get; set; }
     
