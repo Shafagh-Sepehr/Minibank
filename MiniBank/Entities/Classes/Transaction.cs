@@ -1,11 +1,14 @@
-﻿namespace MiniBank.Entities;
+﻿using MiniBank.Entities.Enums;
 
-public class Withdrawal : ComparableDataBaseEntity
+namespace MiniBank.Entities.Classes;
+
+public class Transaction : DataBaseEntity
 {
     private readonly decimal _amount;
     
-    public TransactionStatus Status     { get; init; } = TransactionStatus.Success;
-    public required long              AccountRef { get; init; }
+    public required TransactionStatus Status                { get; init; } = TransactionStatus.Success;
+    public required long              OriginAccountRef      { get; init; }
+    public required long              DestinationAccountRef { get; init; }
     
     public required decimal Amount
     {

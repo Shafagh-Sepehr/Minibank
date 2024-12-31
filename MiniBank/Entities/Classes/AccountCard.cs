@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MiniBank.Entities;
+namespace MiniBank.Entities.Classes;
 
-public class AccountCard : ComparableDataBaseEntity
+public class AccountCard : DataBaseEntity
 {
     public required long AccountRef { get; init; }
     

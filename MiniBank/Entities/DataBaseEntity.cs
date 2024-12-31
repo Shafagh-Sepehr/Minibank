@@ -2,7 +2,7 @@
 
 namespace MiniBank.Entities;
 
-public abstract class ComparableDataBaseEntity : IDatabaseEntity
+public abstract class DataBaseEntity : IDatabaseEntity
 {
     public long Id { get; set; }
 }

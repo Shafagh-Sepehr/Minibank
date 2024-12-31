@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MiniBank.Entities;
+namespace MiniBank.Entities.Classes;
 
-public class User : ComparableDataBaseEntity
+public class User : DataBaseEntity
 {
     [StringLength(50, MinimumLength = 5)]
     public required string Username { get; set; }

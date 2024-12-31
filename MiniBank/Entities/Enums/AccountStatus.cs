@@ -1,4 +1,4 @@
-﻿namespace MiniBank.Entities;
+﻿namespace MiniBank.Entities.Enums;
 
 public enum AccountStatus
 {

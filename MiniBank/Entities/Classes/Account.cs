@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using MiniBank.Entities.Enums;
 
-namespace MiniBank.Entities;
+namespace MiniBank.Entities.Classes;
 
-public class Account : ComparableDataBaseEntity
+public class Account : DataBaseEntity
 {
     private decimal _balance;
     public  long    UserRef { get; set; }

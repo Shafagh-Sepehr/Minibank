@@ -1,5 +1,6 @@
 ﻿using MiniBank.Data.Abstractions;
-using MiniBank.Entities;
+using MiniBank.Entities.Classes;
+using MiniBank.Entities.Enums;
 
 namespace MiniBank.Handlers;
 
