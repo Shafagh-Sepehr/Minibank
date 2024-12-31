@@ -1,6 +1,6 @@
 ﻿namespace MiniBank.Data.Abstractions;
 
-public interface IDatabaseEntity : IComparable<IDatabaseEntity>
+public interface IDatabaseEntity
 {
     long Id { get; set; }
 }

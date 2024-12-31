@@ -5,7 +5,7 @@ namespace MiniBank.Data.Services;
 
 public sealed class Database : IDataBase
 {
-    private readonly Dictionary<string, SortedSet<IDatabaseEntity>> _entities = new();
+    private readonly Dictionary<string, List<IDatabaseEntity>> _entities = new();
     
     public event EventHandler<EntityEventArgs> EntitySaved   = delegate { };
     public event EventHandler<EntityEventArgs> EntityUpdated = delegate { };
@@ -22,7 +22,11 @@ public sealed class Database : IDataBase
             FixId(entityCopy, entityList);
             AssertIdIsUnique(entityCopy, entityList);
             
-            if (!entityList.Add(entityCopy))
+            if (!entityList.Contains(entityCopy))
+            {
+                entityList.Add(entityCopy);
+            }
+            else
             {
                 throw new OperationFailedException("Entity already exists.");
             }
@@ -42,11 +46,10 @@ public sealed class Database : IDataBase
         
         if (_entities.TryGetValue(typeName, out var entityList))
         {
-            var entityId = entityList.Contains(entityCopy);
-            if (entityId == true)
+            var entityId = entityList.FindIndex(x => x.Id == entityCopy.Id);
+            if (entityId != -1)
             {
-                entityList.Remove(entityCopy); // remove old entity 
-                entityList.Add(entityCopy); // add new entity
+                entityList[entityId] = entityCopy;
                 OnEntityUpdated(new(){EntityType = typeof(TDatabaseEntity), Entity = DeepCopier.Copier.Copy(entityCopy),});
                 return;
             }
@@ -62,7 +65,8 @@ public sealed class Database : IDataBase
         
         if (_entities.TryGetValue(typeName, out var entityList))
         {
-            var result = entityList.Remove(entity);
+            var newEntity = entityList.Single(x=> x.Id == entity.Id);
+            var result = entityList.Remove(newEntity);
             
             if (result == false)
             {
@@ -92,23 +96,17 @@ public sealed class Database : IDataBase
         }
     }
     
-    private static bool FixId<TDatabaseEntity>(TDatabaseEntity entityCopy, SortedSet<TDatabaseEntity> entityList) where TDatabaseEntity : IDatabaseEntity
+    private static bool FixId<TDatabaseEntity>(TDatabaseEntity entityCopy, List<TDatabaseEntity> entityList) where TDatabaseEntity : IDatabaseEntity
     {
-        if (entityCopy.Id != 0)
-        {
-            return false;
-        }
-        else
-        {
-            var biggestId = entityList.Last().Id;
-            entityCopy.Id = biggestId + 1;
-            return true;
-        }
+        if (entityCopy.Id != 0) return false;
+        var biggestId = entityList.Select(x => x.Id).Last();
+        entityCopy.Id = biggestId + 1;
+        return true;
     }
     
-    private static void AssertIdIsUnique<TDatabaseEntity>(TDatabaseEntity entityCopy, SortedSet<TDatabaseEntity> entityList) where TDatabaseEntity : IDatabaseEntity
+    private static void AssertIdIsUnique<TDatabaseEntity>(TDatabaseEntity entityCopy, List<TDatabaseEntity> entityList) where TDatabaseEntity : IDatabaseEntity
     {
-        if (entityList.Contains(entityCopy))
+        if (entityList.Any(x => x.Id == entityCopy.Id))
         {
             throw new OperationFailedException("an entity with the same id already exists.");
         }
