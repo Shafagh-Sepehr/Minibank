@@ -34,6 +34,4 @@ public abstract class Account : ComparableDataBaseEntity
             _balance = value;
         }
     }
-    
-    public long Id { get; set; }
 }
