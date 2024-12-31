@@ -7,7 +7,9 @@ public class Transaction : DataBaseEntity
 {
     private readonly decimal _amount;
     
-    public required TransactionStatus Status { get; init; } = TransactionStatus.Success;
+    public required TransactionStatus Status      { get; init; } = TransactionStatus.Success;
+    public          DateTime          Date        { get; init; } = DateTime.Now;
+    public          string?           Description { get; init; }
     
     [Range(0, long.MaxValue)]
     public required long OriginAccountRef { get; init; }
@@ -28,6 +30,4 @@ public class Transaction : DataBaseEntity
             _amount = value;
         }
     }
-    
-    public DateTime Date { get; init; } = DateTime.Now;
 }
