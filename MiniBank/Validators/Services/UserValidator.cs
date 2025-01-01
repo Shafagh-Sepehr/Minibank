@@ -8,22 +8,31 @@ public class UserValidator(IDataBase dataBase) : BaseValidator<User>
 {
     protected override void ValidateGeneralState(User entity, List<string> errors)
     {
-        throw new NotImplementedException();
+        
     }
     protected override void ValidateSaveState(User entity, List<string> errors)
     {
         var users = dataBase.FetchAll<User>();
         if (users.Any(x => x.Username == entity.Username || x.NationalId == entity.NationalId))
         {
-            throw new ValidationException("Username is already taken");
+            errors.Add("Username is already taken");
         }
     }
     protected override void ValidateUpdateState(User entity, List<string> errors)
     {
-        throw new NotImplementedException();
+        var user = dataBase.FetchAll<User>().FirstOrDefault(x => x.Id == entity.Id);
+        if (user == null)
+        {
+            errors.Add("cannot update non-existing user");
+            return;
+        }
+        if (entity.FirstName != user.FirstName || entity.LastName != user.LastName || entity.NationalId != user.NationalId)
+        {
+            errors.Add("First name, last name and national id cannot be change");
+        }
     }
     protected override void ValidateDeleteState(User entity)
     {
-        throw new NotImplementedException();
+        
     }
 }
