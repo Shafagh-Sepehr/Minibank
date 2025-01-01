@@ -1,5 +1,7 @@
-﻿using DB.Data.Abstractions;
+﻿using System.Data;
+using DB.Data.Abstractions;
 using DB.Exceptions;
+using DB.Validators.Abstractions;
 
 namespace DB.Data.Services;
 
@@ -107,6 +109,25 @@ public sealed class DataBase : IDataBase
         {
             entityCopy.Id = 1;
             _entityIds[typeName] = 2;
+        }
+    }
+    
+    private static void Validate<TDataBaseEntity>(TDataBaseEntity entity) where TDataBaseEntity : IDatabaseEntity
+    {
+        if (Attribute.GetCustomAttribute(typeof(TDataBaseEntity), typeof(ValidatorAttributeBase)) is ValidatorAttributeBase validatorBase)
+        {
+            if (validatorBase.Validator is IValidator<TDataBaseEntity> validator)
+            {
+                validator.Validate(entity);
+            }
+            else
+            {
+                throw new DataBaseException($"validator type and entity type don't match. {validatorBase.Validator.GetType().Name} was used on {entity.GetType().Name} entity.");
+            }
+        }
+        else
+        {
+            throw new DataException($"wrong attribute was used on {entity.GetType().Name} entity.");
         }
     }
     
