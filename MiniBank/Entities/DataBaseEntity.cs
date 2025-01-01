@@ -5,6 +5,6 @@ namespace MiniBank.Entities;
 
 public abstract class DataBaseEntity : IDatabaseEntity
 {
-    [Range(0, long.MaxValue)]
+    [AllowedValues(0L, ErrorMessage = "Id must not be set")]
     public long Id { get; set; }
 }
