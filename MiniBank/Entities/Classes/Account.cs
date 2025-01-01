@@ -8,8 +8,8 @@ public class Account : DataBaseEntity
     private decimal       _balance;
     public  AccountStatus Status { get; set; } = AccountStatus.Active;
     
-    [Range(0, long.MaxValue)]
-    public long UserRef { get; set; }
+    [Range(1, long.MaxValue)]
+    public long UserRef { get; init; }
     
     [StringLength(20, MinimumLength = 20)]
     public required string AccountNumber { get; init; }

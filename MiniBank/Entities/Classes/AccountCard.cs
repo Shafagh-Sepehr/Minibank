@@ -4,16 +4,20 @@ namespace MiniBank.Entities.Classes;
 
 public class AccountCard : DataBaseEntity
 {
-    [Range(0, long.MaxValue)]
+    [Range(1, long.MaxValue)]
     public required long AccountRef { get; init; }
     
-    [StringLength(21, MinimumLength = 16)]
-    public required string CardNumber { get; set; }
+    [StringLength(16, MinimumLength = 16)]
+    public required string CardNumber { get; init; }
     
     [StringLength(4, MinimumLength = 3)]
-    public required string Cvv2 { get; set; }
+    public required string Cvv2 { get; init; }
     
-    public required string   PasswordHash       { get; set; }
-    public required string   SecondPasswordHash { get; set; }
-    public required DateTime ExpiryDate         { get; set; }
+    [StringLength(64, MinimumLength = 64, ErrorMessage = "sha256 hash must be 64 characters.")]
+    public required string PasswordHash { get; set; }
+    
+    [StringLength(64, MinimumLength = 64, ErrorMessage = "sha256 hash must be 64 characters.")]
+    public required string SecondPasswordHash { get; set; }
+    
+    public required DateTime ExpiryDate { get; init; }
 }
