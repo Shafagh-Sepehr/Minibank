@@ -1,8 +1,9 @@
 ﻿using DB.Data.Abstractions;
+using DB.Entities.Enums;
 
 namespace DB.Validators.Abstractions;
 
-public interface IValidator<TEntity> where TEntity : IDatabaseEntity
+public interface IValidator<in TEntity> where TEntity : IDatabaseEntity
 {
-    public void Validate(TEntity entity);
+    public void Validate(TEntity entity, DataBaseAction dataBaseAction);
 }

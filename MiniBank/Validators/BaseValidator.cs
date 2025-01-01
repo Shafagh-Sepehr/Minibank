@@ -1,12 +1,19 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using DB.Data.Abstractions;
+using DB.Entities.Enums;
 using DB.Validators.Abstractions;
 
 namespace MiniBank.Validators;
 
 public abstract class BaseValidator<TEntity> : IValidator<TEntity>  where TEntity : IDatabaseEntity{
-    public void Validate(TEntity entity)
+    public void Validate(TEntity entity, DataBaseAction dataBaseAction)
     {
+        if (dataBaseAction == DataBaseAction.Delete)
+        {
+            ValidateDeleteState(entity);
+            return;
+        }
+        
         var validationResults = new List<ValidationResult>();
         var validationContext = new ValidationContext(entity, null, null);
         
@@ -31,8 +38,20 @@ public abstract class BaseValidator<TEntity> : IValidator<TEntity>  where TEntit
             }
         }
         
-        ValidateData(entity);
+        ValidateGeneralState(entity);
+        
+        if (dataBaseAction == DataBaseAction.Save)
+        {
+            ValidateSaveState(entity);
+        }
+        else
+        {
+            ValidateUpdateState(entity);
+        }
     }
     
-    protected abstract void ValidateData(TEntity entity);
+    protected abstract void ValidateGeneralState(TEntity entity);
+    protected abstract void ValidateSaveState(TEntity entity);
+    protected abstract void ValidateUpdateState(TEntity entity);
+    protected abstract void ValidateDeleteState(TEntity entity);
 }

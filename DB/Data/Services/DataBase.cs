@@ -1,14 +1,16 @@
 ﻿using System.Data;
 using DB.Data.Abstractions;
+using DB.Entities.Enums;
 using DB.Exceptions;
 using DB.Validators.Abstractions;
+using DeepCopier;
 
 namespace DB.Data.Services;
 
 public sealed class DataBase : IDataBase
 {
-    private readonly Dictionary<string, List<IDatabaseEntity>> _entities = new();
-    private readonly Dictionary<string, long> _entityIds = new();
+    private readonly Dictionary<string, List<IDatabaseEntity>> _entities  = new();
+    private readonly Dictionary<string, long>                  _entityIds = new();
     
     public event EventHandler<EntityEventArgs> EntitySaved   = delegate { };
     public event EventHandler<EntityEventArgs> EntityUpdated = delegate { };
@@ -17,10 +19,10 @@ public sealed class DataBase : IDataBase
     
     public void Save<TDatabaseEntity>(TDatabaseEntity entity) where TDatabaseEntity : IDatabaseEntity
     {
-        Validate(entity);
+        Validate(entity, DataBaseAction.Save);
         
         var typeName = typeof(TDatabaseEntity).Name;
-        var entityCopy = DeepCopier.Copier.Copy(entity);
+        var entityCopy = Copier.Copy(entity);
         
         if (_entities.TryGetValue(typeName, out var entityList))
         {
@@ -37,18 +39,18 @@ public sealed class DataBase : IDataBase
         }
         else
         {
-            _entities[typeName] = [entityCopy, ];
+            _entities[typeName] = [entityCopy,];
         }
         
-        OnEntitySaved(new(){EntityType = typeof(TDatabaseEntity), Entity = DeepCopier.Copier.Copy(entityCopy),});
+        OnEntitySaved(new() { EntityType = typeof(TDatabaseEntity), Entity = Copier.Copy(entityCopy), });
     }
     
     public void Update<TDatabaseEntity>(TDatabaseEntity entity) where TDatabaseEntity : IDatabaseEntity
     {
-        Validate(entity);
+        Validate(entity, DataBaseAction.Update);
         
         var typeName = typeof(TDatabaseEntity).Name;
-        var entityCopy = DeepCopier.Copier.Copy(entity);
+        var entityCopy = Copier.Copy(entity);
         
         if (_entities.TryGetValue(typeName, out var entityList))
         {
@@ -56,7 +58,7 @@ public sealed class DataBase : IDataBase
             if (entityId != -1)
             {
                 entityList[entityId] = entityCopy;
-                OnEntityUpdated(new(){EntityType = typeof(TDatabaseEntity), Entity = DeepCopier.Copier.Copy(entityCopy),});
+                OnEntityUpdated(new() { EntityType = typeof(TDatabaseEntity), Entity = Copier.Copy(entityCopy), });
                 return;
             }
         }
@@ -67,11 +69,13 @@ public sealed class DataBase : IDataBase
     
     public void Delete<TDatabaseEntity>(TDatabaseEntity entity) where TDatabaseEntity : IDatabaseEntity
     {
+        Validate(entity, DataBaseAction.Delete);
+        
         var typeName = typeof(TDatabaseEntity).Name;
         
         if (_entities.TryGetValue(typeName, out var entityList))
         {
-            var newEntity = entityList.Single(x=> x.Id == entity.Id);
+            var newEntity = entityList.Single(x => x.Id == entity.Id);
             var result = entityList.Remove(newEntity);
             
             if (result == false)
@@ -79,7 +83,7 @@ public sealed class DataBase : IDataBase
                 throw new DataBaseException($"entity {entity.Id} of type {typeName} could not be removed or does not exist.");
             }
             
-            OnEntityDeleted(new(){EntityType = typeof(TDatabaseEntity), Entity = DeepCopier.Copier.Copy(entity),});
+            OnEntityDeleted(new() { EntityType = typeof(TDatabaseEntity), Entity = Copier.Copy(entity), });
         }
         else
         {
@@ -96,10 +100,8 @@ public sealed class DataBase : IDataBase
         {
             return entityList.Where(x => x is TDatabaseEntity).Cast<TDatabaseEntity>();
         }
-        else
-        {
-            return [];
-        }
+        
+        return [];
     }
     
     private void SetId<TDatabaseEntity>(TDatabaseEntity entityCopy, string typeName) where TDatabaseEntity : IDatabaseEntity
@@ -116,17 +118,19 @@ public sealed class DataBase : IDataBase
         }
     }
     
-    private static void Validate<TDataBaseEntity>(TDataBaseEntity entity) where TDataBaseEntity : IDatabaseEntity
+    private static void Validate<TDataBaseEntity>(TDataBaseEntity entity, DataBaseAction dataBaseAction) where TDataBaseEntity : IDatabaseEntity
     {
         if (Attribute.GetCustomAttribute(typeof(TDataBaseEntity), typeof(ValidatorAttributeBase)) is ValidatorAttributeBase validatorBase)
         {
             if (validatorBase.Validator is IValidator<TDataBaseEntity> validator)
             {
-                validator.Validate(entity);
+                validator.Validate(entity, dataBaseAction);
             }
             else
             {
-                throw new DataBaseException($"validator type and entity type don't match. {validatorBase.Validator.GetType().Name} was used on {entity.GetType().Name} entity.");
+                throw new DataBaseException(
+                    $"validator type and entity type don't match. " +
+                    $"{validatorBase.Validator.GetType().Name} was used on {entity.GetType().Name} entity.");
             }
         }
         else
