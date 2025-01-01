@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using MiniBank.Attributes;
+using MiniBank.Validators.Abstractions;
 
 namespace MiniBank.Entities.Classes;
 
-[Validator(typeof(Card))]
+[Validator(typeof(ICardValidator))]
 public class Card : DataBaseEntity
 {
     [Range(1, long.MaxValue)]

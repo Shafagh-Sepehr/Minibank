@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using MiniBank.Attributes;
 using MiniBank.Entities.Enums;
+using MiniBank.Validators.Abstractions;
 
 namespace MiniBank.Entities.Classes;
 
-[Validator(typeof(Account))]
+[Validator(typeof(IAccountValidator))]
 public class Account : DataBaseEntity
 {
     public required decimal       Balance { get; set; }
