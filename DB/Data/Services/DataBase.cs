@@ -6,6 +6,7 @@ namespace DB.Data.Services;
 public sealed class DataBase : IDataBase
 {
     private readonly Dictionary<string, List<IDatabaseEntity>> _entities = new();
+    private readonly Dictionary<string, long> _entityIds = new();
     
     public event EventHandler<EntityEventArgs> EntitySaved   = delegate { };
     public event EventHandler<EntityEventArgs> EntityUpdated = delegate { };
@@ -19,8 +20,7 @@ public sealed class DataBase : IDataBase
         
         if (_entities.TryGetValue(typeName, out var entityList))
         {
-            FixId(entityCopy, entityList);
-            AssertIdIsUnique(entityCopy, entityList);
+            SetId(entityCopy, typeName);
             
             if (!entityList.Contains(entityCopy))
             {
@@ -96,19 +96,17 @@ public sealed class DataBase : IDataBase
         }
     }
     
-    private static bool FixId<TDatabaseEntity>(TDatabaseEntity entityCopy, List<TDatabaseEntity> entityList) where TDatabaseEntity : IDatabaseEntity
+    private void SetId<TDatabaseEntity>(TDatabaseEntity entityCopy, string typeName) where TDatabaseEntity : IDatabaseEntity
     {
-        if (entityCopy.Id != 0) return false;
-        var biggestId = entityList.Select(x => x.Id).Last();
-        entityCopy.Id = biggestId + 1;
-        return true;
-    }
-    
-    private static void AssertIdIsUnique<TDatabaseEntity>(TDatabaseEntity entityCopy, List<TDatabaseEntity> entityList) where TDatabaseEntity : IDatabaseEntity
-    {
-        if (entityList.Any(x => x.Id == entityCopy.Id))
+        if (_entityIds.TryGetValue(typeName, out var lastId))
         {
-            throw new DataBaseException("an entity with the same id already exists.");
+            entityCopy.Id = lastId;
+            _entityIds[typeName]++;
+        }
+        else
+        {
+            entityCopy.Id = 1;
+            _entityIds[typeName] = 2;
         }
     }
     
