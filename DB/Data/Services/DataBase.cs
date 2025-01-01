@@ -17,6 +17,8 @@ public sealed class DataBase : IDataBase
     
     public void Save<TDatabaseEntity>(TDatabaseEntity entity) where TDatabaseEntity : IDatabaseEntity
     {
+        Validate(entity);
+        
         var typeName = typeof(TDatabaseEntity).Name;
         var entityCopy = DeepCopier.Copier.Copy(entity);
         
@@ -43,6 +45,8 @@ public sealed class DataBase : IDataBase
     
     public void Update<TDatabaseEntity>(TDatabaseEntity entity) where TDatabaseEntity : IDatabaseEntity
     {
+        Validate(entity);
+        
         var typeName = typeof(TDatabaseEntity).Name;
         var entityCopy = DeepCopier.Copier.Copy(entity);
         
