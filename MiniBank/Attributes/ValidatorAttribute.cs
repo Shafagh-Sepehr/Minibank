@@ -16,7 +16,7 @@ public class ValidatorAttribute : Attribute
         }
         else
         {
-            throw new ArgumentException("The validator class must implement IValidator<IDatabaseEntity>");
+            throw new ArgumentException($"validator type and provided entity type to attribute don't match. {validatorObj.GetType().Name} was used on {modelType.Name} entity.");
         }
     }
     
