@@ -1,29 +1,36 @@
-﻿using MiniBank.Entities.Classes;
+﻿using DB.Data.Abstractions;
+using MiniBank.Entities.Classes;
 
 namespace MiniBank.Validators.Services;
 
-public class CardValidator : BaseValidator<Card>
+public class CardValidator(IDataBase dataBase) : BaseValidator<Card>
 {
     protected override void ValidateGeneralState(Card entity, List<string> errors)
     {
         if (entity.ExpiryDate < DateTime.Now)
         {
-            throw new InvalidDataException("Card expiry date cannot be in the past.");
+            errors.Add("Card expiry date cannot be in the past.");
+        }
+        
+        var accounts = dataBase.FetchAll<Account>();
+        if (accounts.All(x => x.Id != entity.AccountRef))
+        {
+            errors.Add("this account's UserRef doesn't exist");
         }
     }
     
     protected override void ValidateSaveState(Card entity, List<string> errors)
     {
-        throw new NotImplementedException();
+        
     }
     
     protected override void ValidateUpdateState(Card entity, List<string> errors)
     {
-        throw new NotImplementedException();
+        
     }
     
     protected override void ValidateDeleteState(Card entity)
     {
-        throw new NotImplementedException();
+        
     }
 }
