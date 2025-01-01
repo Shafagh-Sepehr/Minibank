@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using MiniBank.Data.Abstractions;
+using DataBase.Data.Abstractions;
 
 namespace MiniBank.Entities;
 

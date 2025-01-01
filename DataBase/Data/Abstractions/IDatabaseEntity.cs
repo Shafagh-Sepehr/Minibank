@@ -1,4 +1,4 @@
-﻿namespace MiniBank.Data.Abstractions;
+﻿namespace DataBase.Data.Abstractions;
 
 public interface IDatabaseEntity
 {

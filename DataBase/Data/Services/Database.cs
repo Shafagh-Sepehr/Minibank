@@ -1,7 +1,7 @@
-﻿using MiniBank.Data.Abstractions;
-using MiniBank.Exceptions;
+﻿using DataBase.Data.Abstractions;
+using DataBase.Exceptions;
 
-namespace MiniBank.Data.Services;
+namespace DataBase.Data.Services;
 
 public sealed class Database : IDataBase
 {
@@ -28,7 +28,7 @@ public sealed class Database : IDataBase
             }
             else
             {
-                throw new OperationFailedException("Entity already exists.");
+                throw new DataBaseException("Entity already exists.");
             }
         }
         else
@@ -70,7 +70,7 @@ public sealed class Database : IDataBase
             
             if (result == false)
             {
-                throw new OperationFailedException($"entity {entity.Id} of type {typeName} could not be removed or does not exist.");
+                throw new DataBaseException($"entity {entity.Id} of type {typeName} could not be removed or does not exist.");
             }
             
             OnEntityDeleted(new(){EntityType = typeof(TDatabaseEntity), Entity = DeepCopier.Copier.Copy(entity),});
@@ -108,7 +108,7 @@ public sealed class Database : IDataBase
     {
         if (entityList.Any(x => x.Id == entityCopy.Id))
         {
-            throw new OperationFailedException("an entity with the same id already exists.");
+            throw new DataBaseException("an entity with the same id already exists.");
         }
     }
     

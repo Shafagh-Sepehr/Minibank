@@ -1,6 +1,6 @@
-﻿using MiniBank.Data.Abstractions;
+﻿using DataBase.Data.Abstractions;
 
-namespace MiniBank.Data.Services;
+namespace DataBase.Data.Services;
 
 public class EntityEventArgs : EventArgs
 {

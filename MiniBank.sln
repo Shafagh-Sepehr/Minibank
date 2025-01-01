@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniBank", "MiniBank\MiniBank.csproj", "{EC370AF4-F890-4C4F-97D8-AAC51E24FC04}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataBase", "DataBase\DataBase.csproj", "{F53C684D-336B-40AD-842B-A1B22377C5BA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{EC370AF4-F890-4C4F-97D8-AAC51E24FC04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC370AF4-F890-4C4F-97D8-AAC51E24FC04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC370AF4-F890-4C4F-97D8-AAC51E24FC04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F53C684D-336B-40AD-842B-A1B22377C5BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F53C684D-336B-40AD-842B-A1B22377C5BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F53C684D-336B-40AD-842B-A1B22377C5BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F53C684D-336B-40AD-842B-A1B22377C5BA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

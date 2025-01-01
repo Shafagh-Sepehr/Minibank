@@ -1,4 +1,4 @@
-﻿using MiniBank.Data.Abstractions;
+﻿using DataBase.Data.Abstractions;
 using MiniBank.Entities.Classes;
 
 namespace MiniBank.Handlers;

@@ -1,6 +1,6 @@
-﻿using MiniBank.Data.Services;
+﻿using DataBase.Data.Services;
 
-namespace MiniBank.Data.Abstractions;
+namespace DataBase.Data.Abstractions;
 
 public interface IDataBase
 {
