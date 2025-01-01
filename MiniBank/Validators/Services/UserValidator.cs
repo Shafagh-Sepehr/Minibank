@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using DB.Data.Abstractions;
 using MiniBank.Entities.Classes;
+using MiniBank.Validators.Abstractions;
 
 namespace MiniBank.Validators.Services;
 
-public class UserValidator(IDataBase dataBase) : BaseValidator<User> {
+public class UserValidator(IDataBase dataBase) : BaseValidator<User>, IUserValidator
+{
     
     protected override void ValidateData(User entity)
     {
