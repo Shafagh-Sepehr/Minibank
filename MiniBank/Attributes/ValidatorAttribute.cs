@@ -1,10 +1,11 @@
-﻿using DB.Validators.Abstractions;
+﻿using DB.Data.Abstractions;
+using DB.Validators.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MiniBank.Attributes;
 
 [AttributeUsage(AttributeTargets.Class)]
-public class ValidatorAttribute : Attribute
+public class ValidatorAttribute : ValidatorAttributeBase
 {
     public ValidatorAttribute(Type validatorType, Type modelType)
     {
@@ -20,5 +21,5 @@ public class ValidatorAttribute : Attribute
         }
     }
     
-    public object Validator { get; set; }
+    public override object Validator { get; set; }
 }
