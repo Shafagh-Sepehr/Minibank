@@ -2,6 +2,7 @@
 using DB.Data.Abstractions;
 using DB.Entities.Enums;
 using DB.Validators.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MiniBank.Validators;
 
@@ -33,20 +34,32 @@ public abstract class BaseValidator<TEntity> : IValidator<TEntity>  where TEntit
             }
         }
         
-        ValidateGeneralState(entity, errors);
         
         if (dataBaseAction == DataBaseAction.Save)
         {
+            ValidateGeneralState(entity, errors);
             ValidateSaveState(entity, errors);
         }
         else
         {
+            ValidateThatEntityExistsBeforeUpdate(entity);
+            ValidateGeneralState(entity, errors);
             ValidateUpdateState(entity, errors);
         }
         
         if (errors.Count > 0)
         {
             throw new ValidationException(string.Join("|", errors));
+        }
+    }
+    
+    private static void ValidateThatEntityExistsBeforeUpdate(TEntity entity)
+    {
+        var dataBase = ServiceCollection.ServiceProvider.GetRequiredService<IDataBase>();
+        var user = dataBase.FetchAll<TEntity>().FirstOrDefault(x => x.Id == entity.Id);
+        if (user == null)
+        {
+            throw new ValidationException($"cannot update non-existing {entity.GetType().Name}");
         }
     }
     

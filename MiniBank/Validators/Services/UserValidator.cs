@@ -21,12 +21,7 @@ public class UserValidator(IDataBase dataBase) : BaseValidator<User>
     protected override void ValidateUpdateState(User entity, List<string> errors)
     {
         var user = dataBase.FetchAll<User>().FirstOrDefault(x => x.Id == entity.Id);
-        if (user == null)
-        {
-            errors.Add("cannot update non-existing user");
-            return;
-        }
-        if (entity.FirstName != user.FirstName || entity.LastName != user.LastName || entity.NationalId != user.NationalId)
+        if (entity.FirstName != user!.FirstName || entity.LastName != user.LastName || entity.NationalId != user.NationalId)
         {
             errors.Add("First name, last name and national id cannot be change");
         }
