@@ -2,7 +2,7 @@
 
 namespace MiniBank.Entities.Classes;
 
-public class AccountCard : DataBaseEntity
+public class Card : DataBaseEntity
 {
     [Range(1, long.MaxValue)]
     public required long AccountRef { get; init; }

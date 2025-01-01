@@ -12,7 +12,7 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings) : 
                                                      string? description)
     {
         var accounts = dataBase.FetchAll<Account>().ToList();
-        var cards = dataBase.FetchAll<AccountCard>().ToList();
+        var cards = dataBase.FetchAll<Card>().ToList();
         
         var originCard = cards.FirstOrDefault(c => c.CardNumber == originCardNumber);
         var destinationCard = cards.FirstOrDefault(c => c.CardNumber == destinationCardNumber);

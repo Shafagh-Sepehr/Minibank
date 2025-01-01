@@ -8,9 +8,9 @@ namespace MiniBank.Handlers.Services;
 
 public class CardHandler(IDataBase dataBase, ISmsService smsService) : ICardHandler
 {
-    public AccountCard CreateCard(long accountRef, string password, string secondPassword)
+    public Card CreateCard(long accountRef, string password, string secondPassword)
     {
-        var card = new AccountCard
+        var card = new Card
         {
             AccountRef = accountRef,
             CardNumber = GenerateCardNumber(),
@@ -25,7 +25,7 @@ public class CardHandler(IDataBase dataBase, ISmsService smsService) : ICardHand
     
     public void RequestDynamicPassword(decimal amount, string originCardNumber, string destinationCardNumber, string cvv2, DateTime expiryDate)
     {
-        var cards = dataBase.FetchAll<AccountCard>().ToList();
+        var cards = dataBase.FetchAll<Card>().ToList();
         var accounts = dataBase.FetchAll<Account>().ToList();
         var users = dataBase.FetchAll<User>().ToList();
         var originCard = cards.FirstOrDefault(c => c.CardNumber == originCardNumber);
@@ -66,7 +66,7 @@ public class CardHandler(IDataBase dataBase, ISmsService smsService) : ICardHand
     
     private string GenerateCardNumber()
     {
-        var cards = dataBase.FetchAll<AccountCard>().ToList();
+        var cards = dataBase.FetchAll<Card>().ToList();
         string cardNumber;
         do
         {
