@@ -1,9 +1,8 @@
 ﻿using MiniBank.Entities.Classes;
-using MiniBank.Validators.Abstractions;
 
 namespace MiniBank.Validators.Services;
 
-public class CardValidator : BaseValidator<Card>, ICardValidator
+public class CardValidator : BaseValidator<Card>
 {
     protected override void ValidateData(Card entity)
     {
