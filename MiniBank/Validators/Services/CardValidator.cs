@@ -4,7 +4,7 @@ namespace MiniBank.Validators.Services;
 
 public class CardValidator : BaseValidator<Card>
 {
-    protected override void ValidateGeneralState(Card entity)
+    protected override void ValidateGeneralState(Card entity, List<string> errors)
     {
         if (entity.ExpiryDate < DateTime.Now)
         {
@@ -12,12 +12,12 @@ public class CardValidator : BaseValidator<Card>
         }
     }
     
-    protected override void ValidateSaveState(Card entity)
+    protected override void ValidateSaveState(Card entity, List<string> errors)
     {
         throw new NotImplementedException();
     }
     
-    protected override void ValidateUpdateState(Card entity)
+    protected override void ValidateUpdateState(Card entity, List<string> errors)
     {
         throw new NotImplementedException();
     }

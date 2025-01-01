@@ -31,27 +31,27 @@ public abstract class BaseValidator<TEntity> : IValidator<TEntity>  where TEntit
                     errors.Add(validationResult.ErrorMessage);
                 }
             }
-            
-            if (errors.Count > 0)
-            {
-                throw new ValidationException(string.Join(", ", errors));
-            }
         }
         
-        ValidateGeneralState(entity);
+        ValidateGeneralState(entity, errors);
         
         if (dataBaseAction == DataBaseAction.Save)
         {
-            ValidateSaveState(entity);
+            ValidateSaveState(entity, errors);
         }
         else
         {
-            ValidateUpdateState(entity);
+            ValidateUpdateState(entity, errors);
+        }
+        
+        if (errors.Count > 0)
+        {
+            throw new ValidationException(string.Join("|", errors));
         }
     }
     
-    protected abstract void ValidateGeneralState(TEntity entity);
-    protected abstract void ValidateSaveState(TEntity entity);
-    protected abstract void ValidateUpdateState(TEntity entity);
+    protected abstract void ValidateGeneralState(TEntity entity, List<string> errors);
+    protected abstract void ValidateSaveState(TEntity entity, List<string> errors);
+    protected abstract void ValidateUpdateState(TEntity entity, List<string> errors);
     protected abstract void ValidateDeleteState(TEntity entity);
 }

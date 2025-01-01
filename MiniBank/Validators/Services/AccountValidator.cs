@@ -5,7 +5,7 @@ namespace MiniBank.Validators.Services;
 
 public class AccountValidator : BaseValidator<Account>
 {
-    protected override void ValidateGeneralState(Account entity)
+    protected override void ValidateGeneralState(Account entity, List<string> errors)
     {
         if (entity.Balance < 0)
         {
@@ -13,12 +13,12 @@ public class AccountValidator : BaseValidator<Account>
         }
     }
     
-    protected override void ValidateSaveState(Account entity)
+    protected override void ValidateSaveState(Account entity, List<string> errors)
     {
         throw new NotImplementedException();
     }
     
-    protected override void ValidateUpdateState(Account entity)
+    protected override void ValidateUpdateState(Account entity, List<string> errors)
     {
         throw new NotImplementedException();
     }

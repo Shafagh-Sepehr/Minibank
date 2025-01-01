@@ -6,11 +6,11 @@ namespace MiniBank.Validators.Services;
 
 public class UserValidator(IDataBase dataBase) : BaseValidator<User>
 {
-    protected override void ValidateGeneralState(User entity)
+    protected override void ValidateGeneralState(User entity, List<string> errors)
     {
         throw new NotImplementedException();
     }
-    protected override void ValidateSaveState(User entity)
+    protected override void ValidateSaveState(User entity, List<string> errors)
     {
         var users = dataBase.FetchAll<User>();
         if (users.Any(x => x.Username == entity.Username || x.NationalId == entity.NationalId))
@@ -18,7 +18,7 @@ public class UserValidator(IDataBase dataBase) : BaseValidator<User>
             throw new ValidationException("Username is already taken");
         }
     }
-    protected override void ValidateUpdateState(User entity)
+    protected override void ValidateUpdateState(User entity, List<string> errors)
     {
         throw new NotImplementedException();
     }
