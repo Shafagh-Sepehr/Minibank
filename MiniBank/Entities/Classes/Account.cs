@@ -12,7 +12,7 @@ public class Account : DataBaseEntity
     public          AccountStatus Status  { get; set; } = AccountStatus.Active;
     
     [Range(1, long.MaxValue)]
-    public long UserRef { get; init; }
+    public required long UserRef { get; init; }
     
     [StringLength(20, MinimumLength = 20)]
     public required string AccountNumber { get; init; }
