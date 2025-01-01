@@ -2,10 +2,11 @@
 using MiniBank.Communication.Abstractions;
 using MiniBank.Entities.Classes;
 using MiniBank.Exceptions;
+using MiniBank.Handlers.Abstractions;
 
-namespace MiniBank.Handlers;
+namespace MiniBank.Handlers.Services;
 
-public class CardHandler(IDataBase dataBase, ISmsService smsService)
+public class CardHandler(IDataBase dataBase, ISmsService smsService) : ICardHandler
 {
     public AccountCard CreateCard(long accountRef, string password, string secondPassword)
     {

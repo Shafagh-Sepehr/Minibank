@@ -1,10 +1,11 @@
 ﻿using DB.Data.Abstractions;
 using MiniBank.Entities.Classes;
 using MiniBank.Entities.Enums;
+using MiniBank.Handlers.Abstractions;
 
-namespace MiniBank.Handlers;
+namespace MiniBank.Handlers.Services;
 
-public class AccountHandler(IDataBase dataBase)
+public class AccountHandler(IDataBase dataBase) : IAccountHandler
 {
     public string CreateAccount(long userRef, string password, string secondPassword)
     {

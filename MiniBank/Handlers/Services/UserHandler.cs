@@ -1,9 +1,10 @@
 ﻿using DB.Data.Abstractions;
 using MiniBank.Entities.Classes;
+using MiniBank.Handlers.Abstractions;
 
-namespace MiniBank.Handlers;
+namespace MiniBank.Handlers.Services;
 
-public class UserHandler(IDataBase dataBase)
+public class UserHandler(IDataBase dataBase) : IUserHandler
 {
     public void CreateUser(string username, string password, string firstName, string lastName, string phoneNumber, string nationalId)
     {

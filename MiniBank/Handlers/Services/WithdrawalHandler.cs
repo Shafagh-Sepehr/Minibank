@@ -1,12 +1,13 @@
 ﻿using DB.Data.Abstractions;
 using MiniBank.Entities.Classes;
 using MiniBank.Entities.Enums;
+using MiniBank.Handlers.Abstractions;
 
-namespace MiniBank.Handlers;
+namespace MiniBank.Handlers.Services;
 
-public class DepositHandler(IDataBase dataBase)
+public class WithdrawalHandler(IDataBase dataBase) : IWithdrawalHandler
 {
-    public ActionResult Deposit(string accountNumber, decimal amount)
+    public ActionResult Withdraw(string accountNumber, decimal amount)
     {
         var accounts = dataBase.FetchAll<Account>();
         var account = accounts.FirstOrDefault(x => x.AccountNumber == accountNumber);
@@ -18,12 +19,19 @@ public class DepositHandler(IDataBase dataBase)
         }
         else
         {
-            account.Balance += amount;
-            dataBase.Update(account);
-            actionResult = ActionResult.Success;
+            account.Balance -= amount;
+            if (account.Balance < 0)
+            {
+                actionResult = ActionResult.InsufficientBalance;
+            }
+            else
+            {
+                dataBase.Update(account);
+                actionResult = ActionResult.Success;
+            }
         }
         
-        dataBase.Save(new Deposit
+        dataBase.Save(new Withdrawal
         {
             Amount = amount,
             AccountRef = account?.Id ?? 0,

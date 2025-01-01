@@ -2,10 +2,11 @@
 using MiniBank.AppSettings.Abstractions;
 using MiniBank.Entities.Classes;
 using MiniBank.Entities.Enums;
+using MiniBank.Handlers.Abstractions;
 
-namespace MiniBank.Handlers;
+namespace MiniBank.Handlers.Services;
 
-public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings)
+public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings) : ITransactionHandler
 {
     public ActionResult CreateTransaction_CardToCard(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword,
                                                      string? description)
