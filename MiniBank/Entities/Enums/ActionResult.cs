@@ -5,4 +5,6 @@ public enum ActionResult
     Success,
     AccountNotFound,
     InsufficientBalance,
+    IncorrectPassword,
+    MaximumStaticPasswordPurchaseLimitExceeded,
 }
