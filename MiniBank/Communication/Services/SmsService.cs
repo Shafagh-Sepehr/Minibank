@@ -1,6 +1,6 @@
-﻿using MiniBank.SmsService.Abstractions;
+﻿using MiniBank.Communication.Abstractions;
 
-namespace MiniBank.SmsService.Services;
+namespace MiniBank.Communication.Services;
 
 public class SmsService: IDisposable, ISmsService
 {

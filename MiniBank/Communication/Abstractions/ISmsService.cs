@@ -1,4 +1,4 @@
-﻿namespace MiniBank.SmsService.Abstractions;
+﻿namespace MiniBank.Communication.Abstractions;
 
 public interface ISmsService
 {

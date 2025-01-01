@@ -1,7 +1,7 @@
 ﻿using DB.Data.Abstractions;
+using MiniBank.Communication.Abstractions;
 using MiniBank.Entities.Classes;
 using MiniBank.Exceptions;
-using MiniBank.SmsService.Abstractions;
 
 namespace MiniBank.Handlers;
 

@@ -3,7 +3,8 @@ using DB.Data.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MiniBank.AppSettings.Abstractions;
-using MiniBank.SmsService.Abstractions;
+using MiniBank.Communication.Abstractions;
+using MiniBank.Communication.Services;
 using MiniBank.Validators.Abstractions;
 using MiniBank.Validators.Services;
 
@@ -24,7 +25,7 @@ internal static class ServiceCollection
         
         serviceCollector.AddTransient<IUserValidator, UserValidator>();
         
-        serviceCollector.AddSingleton<ISmsService, SmsService.Services.SmsService>();
+        serviceCollector.AddSingleton<ISmsService, SmsService>();
         
         
         serviceCollector.AddSingleton<IConfiguration>(new ConfigurationBuilder()
