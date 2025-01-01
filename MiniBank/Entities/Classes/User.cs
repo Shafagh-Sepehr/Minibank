@@ -1,7 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using MiniBank.Attributes;
+using MiniBank.Validators.Services;
 
 namespace MiniBank.Entities.Classes;
 
+[Validator(typeof(UserValidator))]
 public class User : DataBaseEntity
 {
     [StringLength(50, MinimumLength = 5)]
