@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using DB.Data.Abstractions;
-using MiniBank.Validators.Abstractions;
+using DB.Validators.Abstractions;
 
 namespace MiniBank.Validators;
 
