@@ -1,4 +1,4 @@
-﻿namespace DataBase.Data.Abstractions;
+﻿namespace DB.Data.Abstractions;
 
 public interface IDatabaseEntity
 {

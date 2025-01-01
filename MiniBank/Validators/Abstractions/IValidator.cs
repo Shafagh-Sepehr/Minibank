@@ -1,4 +1,4 @@
-﻿using DataBase.Data.Abstractions;
+﻿using DB.Data.Abstractions;
 
 namespace MiniBank.Validators.Abstractions;
 

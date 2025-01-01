@@ -1,10 +1,11 @@
-﻿using DataBase.Data.Abstractions;
+﻿using DB.Data.Abstractions;
+using MiniBank.AppSettings.Abstractions;
 using MiniBank.Entities.Classes;
 using MiniBank.Entities.Enums;
 
 namespace MiniBank.Handlers;
 
-public class TransactionHandler(IDataBase dataBase)
+public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings)
 {
     public ActionResult CreateTransaction_CardToCard(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword,
                                                      string? description)
@@ -50,7 +51,7 @@ public class TransactionHandler(IDataBase dataBase)
             {
                 transactionType = TransactionType.StaticCardToCard;
                 var staticPasswordPurchaseAmount = dataBase.FetchAll<Transaction>().Where(x=>x.Date == DateTime.Today && x.Type == TransactionType.StaticCardToCard).Sum(x=>x.Amount);
-                if (staticPasswordPurchaseAmount > 100_000) // fix hardcoded value
+                if (staticPasswordPurchaseAmount > appSettings.MaximumStaticPasswordPurchaseLimit)
                 {
                     actionResult = ActionResult.MaximumStaticPasswordPurchaseLimitExceeded;
                 }

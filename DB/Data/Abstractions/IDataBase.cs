@@ -1,6 +1,6 @@
-﻿using DataBase.Data.Services;
+﻿using DB.Data.Services;
 
-namespace DataBase.Data.Abstractions;
+namespace DB.Data.Abstractions;
 
 public interface IDataBase
 {

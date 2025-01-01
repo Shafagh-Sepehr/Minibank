@@ -1,4 +1,4 @@
-﻿using DataBase.Data.Abstractions;
+﻿using DB.Data.Abstractions;
 using MiniBank.Entities.Classes;
 using MiniBank.Exceptions;
 using MiniBank.SmsService.Abstractions;

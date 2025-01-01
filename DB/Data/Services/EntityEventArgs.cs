@@ -1,6 +1,6 @@
-﻿using DataBase.Data.Abstractions;
+﻿using DB.Data.Abstractions;
 
-namespace DataBase.Data.Services;
+namespace DB.Data.Services;
 
 public class EntityEventArgs : EventArgs
 {

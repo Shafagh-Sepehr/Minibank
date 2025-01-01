@@ -1,9 +1,9 @@
-﻿using DataBase.Data.Abstractions;
-using DataBase.Exceptions;
+﻿using DB.Data.Abstractions;
+using DB.Exceptions;
 
-namespace DataBase.Data.Services;
+namespace DB.Data.Services;
 
-public sealed class Database : IDataBase
+public sealed class DataBase : IDataBase
 {
     private readonly Dictionary<string, List<IDatabaseEntity>> _entities = new();
     

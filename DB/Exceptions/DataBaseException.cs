@@ -1,4 +1,4 @@
-﻿namespace DataBase.Exceptions;
+﻿namespace DB.Exceptions;
 
 public class DataBaseException : Exception
 {
