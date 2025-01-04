@@ -6,8 +6,6 @@ namespace MiniBank.Validators.Services;
 
 public class DynamicPasswordValidator(IDataBase dataBase) : BaseValidator<DynamicPassword>
 {
-    protected override void ValidateGeneralState(DynamicPassword entity, List<string> errors) { }
-    
     protected override void ValidateSaveState(DynamicPassword entity, List<string> errors)
     {
         if (entity.Amount <= 0)
@@ -16,11 +14,12 @@ public class DynamicPasswordValidator(IDataBase dataBase) : BaseValidator<Dynami
         }
         
         var cards = dataBase.FetchAll<Card>().ToArray();
-        if (OriginCardNotFound(cards,entity.OriginCardNumber))
+        if (OriginCardNotFound(cards, entity.OriginCardNumber))
         {
             errors.Add("no card found for this request's OriginCardNumber");
         }
-        if (OriginCardNotFound(cards,entity.DestinationCardNumber))
+        
+        if (OriginCardNotFound(cards, entity.DestinationCardNumber))
         {
             errors.Add("no card found for this request's DestinationCardNumber");
         }

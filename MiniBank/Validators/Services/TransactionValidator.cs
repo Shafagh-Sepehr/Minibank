@@ -6,8 +6,6 @@ namespace MiniBank.Validators.Services;
 
 public class TransactionValidator(IDataBase dataBase) : BaseValidator<Transaction> // not complete
 {
-    protected override void ValidateGeneralState(Transaction entity, List<string> errors) { }
-    
     protected override void ValidateSaveState(Transaction entity, List<string> errors)
     {
         if (entity.Amount <= 0)

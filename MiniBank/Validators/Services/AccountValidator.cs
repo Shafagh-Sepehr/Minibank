@@ -44,5 +44,11 @@ public class AccountValidator(IDataBase dataBase) : BaseValidator<Account>
         {
             throw new ValidationException("Account balance cannot be more than 1 when deleting, withdraw money");
         }
+        
+        var cards = dataBase.FetchAll<Card>();
+        if (cards.Any(x => x.AccountRef == entity.Id))
+        {
+            throw new ValidationException("Account can't have cards when deleting, first delete its cards");
+        }
     }
 }

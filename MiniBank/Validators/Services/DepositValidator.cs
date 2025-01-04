@@ -6,10 +6,6 @@ namespace MiniBank.Validators.Services;
 
 public class DepositValidator(IDataBase dataBase) : BaseValidator<Deposit>
 {
-    protected override void ValidateGeneralState(Deposit entity, List<string> errors)
-    {
-        
-    }
     protected override void ValidateSaveState(Deposit entity, List<string> errors)
     {
         if (entity.Amount <= 0)
@@ -23,10 +19,12 @@ public class DepositValidator(IDataBase dataBase) : BaseValidator<Deposit>
             errors.Add("no account found for this deposit's AccountRef");
         }
     }
+    
     protected override void ValidateUpdateState(Deposit entity, List<string> errors)
     {
         throw new ValidationException("Deposit entities can't get updated");
     }
+    
     protected override void ValidateDeleteState(Deposit entity)
     {
         throw new ValidationException("Deposit entities can't be deleted");

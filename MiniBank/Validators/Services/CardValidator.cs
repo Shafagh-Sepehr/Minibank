@@ -18,19 +18,4 @@ public class CardValidator(IDataBase dataBase) : BaseValidator<Card>
             errors.Add("this account's UserRef doesn't exist");
         }
     }
-    
-    protected override void ValidateSaveState(Card entity, List<string> errors)
-    {
-        
-    }
-    
-    protected override void ValidateUpdateState(Card entity, List<string> errors)
-    {
-        
-    }
-    
-    protected override void ValidateDeleteState(Card entity)
-    {
-        
-    }
 }
