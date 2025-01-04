@@ -8,7 +8,13 @@ namespace MiniBank.Entities.Classes;
 [Validator(typeof(IValidator<Account>), typeof(Account))]
 public class Account : DataBaseEntity
 {
-    public required decimal       Balance { get; set; }
+    private decimal _balance = 0;
+    
+    public void IncreaseBalance(decimal amount) => _balance += amount;
+    public void DecreaseBalance(decimal amount) => _balance -= amount;
+    public decimal Balance => _balance;
+    
+    
     public          AccountStatus Status  { get; set; } = AccountStatus.Active;
     
     [Range(1, long.MaxValue)]

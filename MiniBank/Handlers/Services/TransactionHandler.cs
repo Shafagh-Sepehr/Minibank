@@ -17,8 +17,8 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings) : 
         var originCard = cards.FirstOrDefault(c => c.CardNumber == originCardNumber);
         var destinationCard = cards.FirstOrDefault(c => c.CardNumber == destinationCardNumber);
         
-        var originAccount = accounts.FirstOrDefault(a => a.Id == originCard?.AccountRef);
-        var destinationAccount = accounts.FirstOrDefault(a => a.Id == destinationCard?.AccountRef);
+        var originAccount = accounts.FirstOrDefault(a => a.Id == originCard?.AccountRef)!;
+        var destinationAccount = accounts.FirstOrDefault(a => a.Id == destinationCard?.AccountRef)!;
         
         ActionResult actionResult;
         var transactionType = TransactionType.FailedCardToCard;
@@ -32,8 +32,8 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings) : 
             if (IsDynamicPassword(originCardNumber,destinationCardNumber,amount,secondPassword))
             {
                 transactionType = TransactionType.DynamicCardToCard;
-                originAccount!.Balance -= amount;
-                destinationAccount!.Balance += amount;
+                originAccount.DecreaseBalance(amount);
+                destinationAccount.IncreaseBalance(amount);
                 
                 if (originAccount.Balance < 0)
                 {
@@ -56,8 +56,8 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings) : 
                 }
                 else
                 {
-                    originAccount!.Balance -= amount;
-                    destinationAccount!.Balance += amount;
+                    originAccount.DecreaseBalance(amount);
+                    destinationAccount.IncreaseBalance(amount);
                     
                     if (originAccount.Balance < 0)
                     {
@@ -112,8 +112,8 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings) : 
         }
         else
         {
-            originAccount.Balance -= amount;
-            destinationAccount.Balance += amount;
+            originAccount.DecreaseBalance(amount);
+            destinationAccount.IncreaseBalance(amount);
             
             if (originAccount.Balance < 0)
             {

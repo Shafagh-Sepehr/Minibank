@@ -19,7 +19,7 @@ public class DepositHandler(IDataBase dataBase) : IDepositHandler
         }
         else
         {
-            account.Balance += amount;
+            account.IncreaseBalance(amount);
             dataBase.Update(account);
             actionResult = ActionResult.Success;
         }

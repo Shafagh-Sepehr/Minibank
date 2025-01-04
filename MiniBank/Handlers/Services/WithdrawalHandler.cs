@@ -19,7 +19,7 @@ public class WithdrawalHandler(IDataBase dataBase) : IWithdrawalHandler
         }
         else
         {
-            account.Balance -= amount;
+            account.DecreaseBalance(amount);
             if (account.Balance < 0)
             {
                 actionResult = ActionResult.InsufficientBalance;

@@ -13,7 +13,6 @@ public class AccountHandler(IDataBase dataBase) : IAccountHandler
         {
             AccountNumber = GenerateAccountNumber(),
             UserRef = userRef,
-            Balance = 0,
             Status = AccountStatus.Active,
         };
         
