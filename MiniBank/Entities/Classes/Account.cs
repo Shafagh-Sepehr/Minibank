@@ -8,7 +8,7 @@ namespace MiniBank.Entities.Classes;
 [Validator(typeof(IValidator<Account>), typeof(Account))]
 public class Account : DataBaseEntity
 {
-    private decimal _balance = 0;
+    private decimal _balance;
     
     public void IncreaseBalance(decimal amount) => _balance += amount;
     public void DecreaseBalance(decimal amount) => _balance -= amount;
