@@ -6,7 +6,7 @@ namespace MiniBank.Entities.Classes;
 public class Deposit : DataBaseEntity
 {
     public required decimal           Amount { get; init; }
-    public          TransactionStatus Status { get; init; }
+    public required TransactionStatus Status { get; init; }
     public          DateTime          Date   { get; } = DateTime.Now;
     
     [Range(1, long.MaxValue)]
