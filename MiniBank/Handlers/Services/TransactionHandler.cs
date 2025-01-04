@@ -29,9 +29,7 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings) : 
         }
         else
         {
-            if (dataBase.FetchAll<DynamicPassword>().Any(d =>
-                    d.OriginCardNumber == originCardNumber && d.DestinationCardNumber == destinationCardNumber && d.Amount == amount &&
-                    d.DynamicPasswordHash == Helper.ComputeSha256Hash(secondPassword) && d.ExpiryDate <= DateTime.Now))
+            if (IsDynamicPassword(originCardNumber,destinationCardNumber,amount,secondPassword))
             {
                 transactionType = TransactionType.DynamicCardToCard;
                 originAccount!.Balance -= amount;
@@ -92,6 +90,12 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings) : 
         
         return actionResult;
     }
+    
+    private bool IsDynamicPassword(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword) =>
+        dataBase.FetchAll<DynamicPassword>().Any(d =>
+            d.OriginCardNumber == originCardNumber && d.DestinationCardNumber == destinationCardNumber && d.Amount == amount &&
+            d.DynamicPasswordHash == Helper.ComputeSha256Hash(secondPassword) && d.ExpiryDate <= DateTime.Now);
+    
     
     public ActionResult CreateTransaction_AccountNumberToAccountNumber(string originAccountNumber, string destinationAccountNumber, decimal amount,
                                                                        string? description = null)
