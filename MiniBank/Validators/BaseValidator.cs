@@ -65,10 +65,6 @@ public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity
         }
     }
     
-    protected abstract void ValidateGeneralState(TEntity entity, List<string> errors);
-    protected abstract void ValidateSaveState(TEntity entity, List<string> errors);
-    protected abstract void ValidateUpdateState(TEntity entity, List<string> errors);
-    protected abstract void ValidateDeleteState(TEntity entity);
     private static void ValidateIdIsNotSet_BeforeSave(TEntity entity, List<string> errors)
     {
         if (entity.Id != 0)
@@ -76,5 +72,10 @@ public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity
             errors.Add("Id must not be set when creating a new entity");
         }
     }
+    
+    protected virtual void ValidateGeneralState(TEntity entity, List<string> errors) { }
+    protected virtual void ValidateSaveState(TEntity entity, List<string> errors) { }
+    protected virtual void ValidateUpdateState(TEntity entity, List<string> errors) { }
+    protected virtual void ValidateDeleteState(TEntity entity) { }
     
 }
