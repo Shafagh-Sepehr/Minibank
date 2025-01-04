@@ -66,13 +66,8 @@ public sealed class DataBase : IDataBase
         
         if (_entities.TryGetValue(typeName, out var entityList))
         {
-            var newEntity = entityList.Single(x => x.Id == entity.Id);
-            var result = entityList.Remove(newEntity);
-            
-            if (result == false)
-            {
-                throw new DataBaseException($"entity {entity.Id} of type {typeName} could not be removed or does not exist.");
-            }
+            var newEntity = entityList.Single(x => x.Id == entity.Id); // entityId will always have a valid value
+            entityList.Remove(newEntity);
             
             OnEntityDeleted(new() { EntityType = typeof(TDatabaseEntity), Entity = entity, });
         }

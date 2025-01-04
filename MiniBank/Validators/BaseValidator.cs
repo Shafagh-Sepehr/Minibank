@@ -12,6 +12,7 @@ public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity
     {
         if (dataBaseAction == DataBaseAction.Delete)
         {
+            ValidateThatEntityExists_BeforeUpdateOrDelete(entity);
             ValidateDeleteState(entity);
             return;
         }
@@ -44,7 +45,7 @@ public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity
         }
         else
         {
-            ValidateThatEntityExists_BeforeUpdate(entity);
+            ValidateThatEntityExists_BeforeUpdateOrDelete(entity);
             ValidateGeneralState(entity, errors);
             ValidateUpdateState(entity, errors);
         }
@@ -55,16 +56,6 @@ public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity
         }
     }
     
-    private static void ValidateThatEntityExists_BeforeUpdate(TEntity entity)
-    {
-        var dataBase = ServiceCollection.ServiceProvider.GetRequiredService<IDataBase>();
-        var ent = dataBase.FetchAll<TEntity>().FirstOrDefault(x => x.Id == entity.Id);
-        if (ent == null)
-        {
-            throw new ValidationException($"cannot update non-existing {entity.GetType().Name}");
-        }
-    }
-    
     private static void ValidateIdIsNotSet_BeforeSave(TEntity entity, List<string> errors)
     {
         if (entity.Id != 0)
@@ -72,6 +63,17 @@ public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity
             errors.Add("Id must not be set when creating a new entity");
         }
     }
+    
+    private static void ValidateThatEntityExists_BeforeUpdateOrDelete(TEntity entity)
+    {
+        var dataBase = ServiceCollection.ServiceProvider.GetRequiredService<IDataBase>();
+        var ent = dataBase.FetchAll<TEntity>().FirstOrDefault(x => x.Id == entity.Id);
+        if (ent == null)
+        {
+            throw new ValidationException($"cannot update/delete non-existing {entity.GetType().Name}");
+        }
+    }
+    
     
     protected virtual void ValidateGeneralState(TEntity entity, List<string> errors) { }
     protected virtual void ValidateSaveState(TEntity entity, List<string> errors) { }
