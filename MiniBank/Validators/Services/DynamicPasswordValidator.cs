@@ -4,7 +4,7 @@ using MiniBank.Entities.Classes;
 
 namespace MiniBank.Validators.Services;
 
-public class DynamicPasswordValidation(IDataBase dataBase) : BaseValidator<DynamicPassword>
+public class DynamicPasswordValidator(IDataBase dataBase) : BaseValidator<DynamicPassword>
 {
     protected override void ValidateGeneralState(DynamicPassword entity, List<string> errors) { }
     

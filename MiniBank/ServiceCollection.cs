@@ -29,6 +29,10 @@ internal static class ServiceCollection
         serviceCollector.AddTransient<IValidator<User>, UserValidator>();
         serviceCollector.AddTransient<IValidator<Account>, AccountValidator>();
         serviceCollector.AddTransient<IValidator<Card>, CardValidator>();
+        serviceCollector.AddTransient<IValidator<Deposit>, DepositValidator>();
+        serviceCollector.AddTransient<IValidator<Withdrawal>, WithdrawalValidator>();
+        serviceCollector.AddTransient<IValidator<DynamicPassword>, DynamicPasswordValidator>();
+        serviceCollector.AddTransient<IValidator<Transaction>, TransactionValidator>();
         
         serviceCollector.AddTransient<IAccountHandler, AccountHandler>();
         serviceCollector.AddTransient<ICardHandler, CardHandler>();

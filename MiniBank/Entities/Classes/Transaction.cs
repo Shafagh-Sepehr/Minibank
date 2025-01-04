@@ -1,8 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using DB.Validators.Abstractions;
+using MiniBank.Attributes;
 using MiniBank.Entities.Enums;
 
 namespace MiniBank.Entities.Classes;
 
+[Validator(typeof(IValidator<Account>), typeof(Account))]
 public class Transaction : DataBaseEntity
 {
     public required decimal           Amount      { get; init; }
