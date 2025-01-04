@@ -6,7 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace MiniBank.Validators;
 
-public abstract class BaseValidator<TEntity> : IValidator<TEntity>  where TEntity : IDatabaseEntity{
+public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity : IDatabaseEntity
+{
     public void Validate(TEntity entity, DataBaseAction dataBaseAction)
     {
         if (dataBaseAction == DataBaseAction.Delete)
@@ -37,12 +38,13 @@ public abstract class BaseValidator<TEntity> : IValidator<TEntity>  where TEntit
         
         if (dataBaseAction == DataBaseAction.Save)
         {
+            ValidateIdIsNotSet_BeforeSave(entity, errors);
             ValidateGeneralState(entity, errors);
             ValidateSaveState(entity, errors);
         }
         else
         {
-            ValidateThatEntityExistsBeforeUpdate(entity);
+            ValidateThatEntityExists_BeforeUpdate(entity);
             ValidateGeneralState(entity, errors);
             ValidateUpdateState(entity, errors);
         }
@@ -53,11 +55,11 @@ public abstract class BaseValidator<TEntity> : IValidator<TEntity>  where TEntit
         }
     }
     
-    private static void ValidateThatEntityExistsBeforeUpdate(TEntity entity)
+    private static void ValidateThatEntityExists_BeforeUpdate(TEntity entity)
     {
         var dataBase = ServiceCollection.ServiceProvider.GetRequiredService<IDataBase>();
-        var user = dataBase.FetchAll<TEntity>().FirstOrDefault(x => x.Id == entity.Id);
-        if (user == null)
+        var ent = dataBase.FetchAll<TEntity>().FirstOrDefault(x => x.Id == entity.Id);
+        if (ent == null)
         {
             throw new ValidationException($"cannot update non-existing {entity.GetType().Name}");
         }
@@ -67,4 +69,12 @@ public abstract class BaseValidator<TEntity> : IValidator<TEntity>  where TEntit
     protected abstract void ValidateSaveState(TEntity entity, List<string> errors);
     protected abstract void ValidateUpdateState(TEntity entity, List<string> errors);
     protected abstract void ValidateDeleteState(TEntity entity);
+    private static void ValidateIdIsNotSet_BeforeSave(TEntity entity, List<string> errors)
+    {
+        if (entity.Id != 0)
+        {
+            errors.Add("Id must not be set when creating a new entity");
+        }
+    }
+    
 }
