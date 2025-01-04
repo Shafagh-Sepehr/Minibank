@@ -30,7 +30,12 @@ public class AccountValidator(IDataBase dataBase) : BaseValidator<Account>
     
     protected override void ValidateUpdateState(Account entity, List<string> errors)
     {
-        
+        var accounts = dataBase.FetchAll<Account>();
+        var oldAccount = accounts.First(x => x.Id == entity.Id);
+        if (oldAccount.UserRef != entity.UserRef || oldAccount.AccountNumber != entity.AccountNumber)
+        {
+            errors.Add("Can't change account's owner or AccountNumber");
+        }
     }
     
     protected override void ValidateDeleteState(Account entity)
