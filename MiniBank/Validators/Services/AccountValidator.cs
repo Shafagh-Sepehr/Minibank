@@ -16,7 +16,7 @@ public class AccountValidator(IDataBase dataBase) : BaseValidator<Account>
         var users = dataBase.FetchAll<User>();
         if (users.All(x => x.Id != entity.UserRef))
         {
-            errors.Add("this account's UserRef doesn't exist");
+            errors.Add("no user found for this account's UserRef");
         }
     }
     
