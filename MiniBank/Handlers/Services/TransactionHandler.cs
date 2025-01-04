@@ -29,53 +29,8 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings) : 
         }
         else
         {
-            if (IsDynamicPassword(originCardNumber,destinationCardNumber,amount,secondPassword))
-            {
-                transactionType = TransactionType.DynamicCardToCard;
-                originAccount.DecreaseBalance(amount);
-                destinationAccount.IncreaseBalance(amount);
-                
-                if (originAccount.Balance < 0)
-                {
-                    actionResult = ActionResult.InsufficientBalance;
-                }
-                else
-                {
-                    dataBase.Update(originAccount);
-                    dataBase.Update(destinationAccount);
-                    actionResult = ActionResult.Success;
-                }
-            }
-            else if(Helper.ComputeSha256Hash(secondPassword) == originCard.SecondPasswordHash)
-            {
-                transactionType = TransactionType.StaticCardToCard;
-                var staticPasswordPurchaseAmount = dataBase.FetchAll<Transaction>().Where(x=>x.Date == DateTime.Today && x.Type == TransactionType.StaticCardToCard).Sum(x=>x.Amount);
-                if (staticPasswordPurchaseAmount > appSettings.MaximumStaticPasswordPurchaseLimit)
-                {
-                    actionResult = ActionResult.MaximumStaticPasswordPurchaseLimitExceeded;
-                }
-                else
-                {
-                    originAccount.DecreaseBalance(amount);
-                    destinationAccount.IncreaseBalance(amount);
-                    
-                    if (originAccount.Balance < 0)
-                    {
-                        actionResult = ActionResult.InsufficientBalance;
-                    }
-                    else
-                    {
-                        dataBase.Update(originAccount);
-                        dataBase.Update(destinationAccount);
-                        actionResult = ActionResult.Success;
-                    }
-                }
-            }
-            else
-            {
-                actionResult = ActionResult.IncorrectPassword;
-            }
-                
+            actionResult = ExecuteCardToCardTransaction(originCardNumber, destinationCardNumber, amount,
+                secondPassword, originAccount, destinationAccount, originCard, ref transactionType);
         }
         
         dataBase.Save(new Transaction
@@ -90,11 +45,6 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings) : 
         
         return actionResult;
     }
-    
-    private bool IsDynamicPassword(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword) =>
-        dataBase.FetchAll<DynamicPassword>().Any(d =>
-            d.OriginCardNumber == originCardNumber && d.DestinationCardNumber == destinationCardNumber && d.Amount == amount &&
-            d.DynamicPasswordHash == Helper.ComputeSha256Hash(secondPassword) && d.ExpiryDate <= DateTime.Now);
     
     
     public ActionResult CreateTransaction_AccountNumberToAccountNumber(string originAccountNumber, string destinationAccountNumber, decimal amount,
@@ -112,19 +62,7 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings) : 
         }
         else
         {
-            originAccount.DecreaseBalance(amount);
-            destinationAccount.IncreaseBalance(amount);
-            
-            if (originAccount.Balance < 0)
-            {
-                actionResult = ActionResult.InsufficientBalance;
-            }
-            else
-            {
-                dataBase.Update(originAccount);
-                dataBase.Update(destinationAccount);
-                actionResult = ActionResult.Success;
-            }
+            actionResult = TransactAndValidateAndUpdate(amount, originAccount, destinationAccount);
         }
         
         dataBase.Save(new Transaction
@@ -138,5 +76,86 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings) : 
         });
         
         return actionResult;
+    }
+    
+    private ActionResult ExecuteCardToCardTransaction(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword,
+                                                      Account originAccount, Account destinationAccount, Card originCard,
+                                                      ref TransactionType transactionType)
+    {
+        ActionResult actionResult;
+        if (IsDynamicPassword(originCardNumber, destinationCardNumber, amount, secondPassword))
+        {
+            transactionType = TransactionType.DynamicCardToCard;
+            
+            actionResult = TransactAndValidateAndUpdate(amount, originAccount, destinationAccount);
+        }
+        else if (IsStaticPassword(secondPassword, originCard))
+        {
+            transactionType = TransactionType.StaticCardToCard;
+            
+            if (CanUseStaticPassword(originAccount))
+            {
+                actionResult = ActionResult.MaximumStaticPasswordPurchaseLimitExceeded;
+            }
+            else
+            {
+                actionResult = TransactAndValidateAndUpdate(amount, originAccount, destinationAccount);
+            }
+        }
+        else
+        {
+            actionResult = ActionResult.IncorrectPassword;
+        }
+        
+        return actionResult;
+    }
+    
+    private static bool IsStaticPassword(string secondPassword, Card originCard) =>
+        Helper.ComputeSha256Hash(secondPassword) == originCard.SecondPasswordHash;
+    
+    private ActionResult TransactAndValidateAndUpdate(decimal amount, Account originAccount, Account destinationAccount)
+    {
+        Transact(originAccount, destinationAccount, amount);
+        var actionResult = ValidateBalanceAndUpdateDataBase(originAccount, destinationAccount);
+        return actionResult;
+    }
+    
+    private bool CanUseStaticPassword(Account account)
+    {
+        var transactions = dataBase.FetchAll<Transaction>();
+        var staticPasswordPurchaseAmount = transactions.Where(x => account.Id == x.OriginAccountRef && x.Date == DateTime.Today &&
+                                                                   x.Type == TransactionType.StaticCardToCard)
+            .Sum(x => x.Amount);
+        
+        return staticPasswordPurchaseAmount > appSettings.MaximumStaticPasswordPurchaseLimit;
+    }
+    
+    private bool IsDynamicPassword(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword) =>
+        dataBase.FetchAll<DynamicPassword>().Any(d =>
+            d.OriginCardNumber == originCardNumber && d.DestinationCardNumber == destinationCardNumber && d.Amount == amount &&
+            d.DynamicPasswordHash == Helper.ComputeSha256Hash(secondPassword) && d.ExpiryDate <= DateTime.Now);
+    
+    
+    private ActionResult ValidateBalanceAndUpdateDataBase(Account originAccount, Account destinationAccount)
+    {
+        ActionResult actionResult;
+        if (originAccount.Balance < 0)
+        {
+            actionResult = ActionResult.InsufficientBalance;
+        }
+        else
+        {
+            dataBase.Update(originAccount);
+            dataBase.Update(destinationAccount);
+            actionResult = ActionResult.Success;
+        }
+        
+        return actionResult;
+    }
+    
+    private static void Transact(Account originAccount, Account destinationAccount, decimal amount)
+    {
+        originAccount.DecreaseBalance(amount);
+        destinationAccount.IncreaseBalance(amount);
     }
 }
