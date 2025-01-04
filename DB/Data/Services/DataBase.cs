@@ -24,25 +24,18 @@ public sealed class DataBase : IDataBase
         var typeName = typeof(TDatabaseEntity).Name;
         var entityCopy = Copier.Copy(entity);
         
+        SetId(entityCopy, typeName);
+        
         if (_entities.TryGetValue(typeName, out var entityList))
         {
-            SetId(entityCopy, typeName);
-            
-            if (!entityList.Contains(entityCopy))
-            {
-                entityList.Add(entityCopy);
-            }
-            else
-            {
-                throw new DataBaseException("Entity already exists.");
-            }
+            entityList.Add(entityCopy);
         }
         else
         {
             _entities[typeName] = [entityCopy,];
         }
         
-        OnEntitySaved(new() { EntityType = typeof(TDatabaseEntity), Entity = Copier.Copy(entityCopy), });
+        OnEntitySaved(new() { EntityType = typeof(TDatabaseEntity), Entity = entity, });
     }
     
     public void Update<TDatabaseEntity>(TDatabaseEntity entity) where TDatabaseEntity : IDatabaseEntity
@@ -54,16 +47,14 @@ public sealed class DataBase : IDataBase
         
         if (_entities.TryGetValue(typeName, out var entityList))
         {
-            var entityId = entityList.FindIndex(x => x.Id == entityCopy.Id);
-            if (entityId != -1)
-            {
-                entityList[entityId] = entityCopy;
-                OnEntityUpdated(new() { EntityType = typeof(TDatabaseEntity), Entity = Copier.Copy(entityCopy), });
-                return;
-            }
+            var entityId = entityList.FindIndex(x => x.Id == entityCopy.Id); // entityId will always have a valid value
+            entityList[entityId] = entityCopy;
+            OnEntityUpdated(new() { EntityType = typeof(TDatabaseEntity), Entity = entity, });
         }
-        
-        throw new InvalidOperationException($"entity {entityCopy.Id} of type {typeName} not found.");
+        else
+        {
+            throw new InvalidOperationException($"entity {entityCopy.Id} of type {typeName} not found.");
+        }
     }
     
     
@@ -83,7 +74,7 @@ public sealed class DataBase : IDataBase
                 throw new DataBaseException($"entity {entity.Id} of type {typeName} could not be removed or does not exist.");
             }
             
-            OnEntityDeleted(new() { EntityType = typeof(TDatabaseEntity), Entity = Copier.Copy(entity), });
+            OnEntityDeleted(new() { EntityType = typeof(TDatabaseEntity), Entity = entity, });
         }
         else
         {
@@ -100,8 +91,10 @@ public sealed class DataBase : IDataBase
         {
             return entityList.Where(x => x is TDatabaseEntity).Cast<TDatabaseEntity>();
         }
-        
-        return [];
+        else
+        {
+            return [];
+        }
     }
     
     private void SetId<TDatabaseEntity>(TDatabaseEntity entityCopy, string typeName) where TDatabaseEntity : IDatabaseEntity
