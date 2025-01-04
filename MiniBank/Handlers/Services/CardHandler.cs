@@ -53,14 +53,6 @@ public class CardHandler(IDataBase dataBase, ISmsService smsService) : ICardHand
             DynamicPasswordHash = Helper.ComputeSha256Hash(dynamicPasswordString),
         };
         
-        
-        var destinationCard = cards.FirstOrDefault(c => c.CardNumber == destinationCardNumber);
-        if (destinationCard == null)
-        {
-            throw new OperationFailedException("a destination card with this number couldn't be found");
-        }
-        
-        
         dataBase.Save(dynamicPassword);
     }
     
