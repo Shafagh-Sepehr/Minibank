@@ -25,6 +25,7 @@ public class Database : IDatabase
         ValidatePrimaryKeyValue(entity, properties);
         ValidateForeignKeyValue(entity, properties);
         FillNullValuesWithDefault(entity, properties);
+        ValidateNullabilityOfNullProperties(entity, properties);
         
         
         if (_entities.TryGetValue(typeName, out var entityList))
@@ -163,6 +164,18 @@ public class Database : IDatabase
             if (propertyInfo.GetValue(entity) == null)
             {
                 propertyInfo.SetValue(entity,defaultValueAttribute.DefaultValue);
+            }
+        }
+    }
+    
+    private static void ValidateNullabilityOfNullProperties<T>(T entity, PropertyInfo[] properties)
+    {
+        foreach (var propertyInfo in properties)
+        {
+            if (propertyInfo.GetCustomAttribute(typeof(NullableAttribute), true) is NullableAttribute defaultValueAttribute) continue;
+            if (propertyInfo.GetValue(entity) == null)
+            {
+                throw new DatabaseException($"Property `{propertyInfo.Name}` is null while its not nullable");
             }
         }
     }
