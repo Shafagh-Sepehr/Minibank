@@ -103,8 +103,15 @@ public class Database : IDatabase
         
         foreach (var propertyInfo in properties)
         {
-            if (propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is not PrimaryKeyAttribute) continue;
-            if (!_entities.TryGetValue(typeName, out var entityList)) continue;
+            if (propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is not PrimaryKeyAttribute) 
+            {
+                continue;
+            }
+            if (!_entities.TryGetValue(typeName, out var entityList)) 
+            {
+                continue;
+            }
+            
             if (entityList.Any(x => propertyInfo.GetValue(x) == propertyInfo.GetValue(entity)))
             {
                 throw new DatabaseException(
@@ -117,15 +124,21 @@ public class Database : IDatabase
     {
         foreach (var propertyInfo in properties)
         {
-            if (propertyInfo.GetCustomAttribute(typeof(ForeignKeyAttribute), true) is not ForeignKeyAttribute foreignKeyAttribute) continue;
-            
+            if (propertyInfo.GetCustomAttribute(typeof(ForeignKeyAttribute), true) is not ForeignKeyAttribute foreignKeyAttribute) 
+            {
+                continue;
+            }
             
             var referenceType = foreignKeyAttribute.ReferenceType;
             var referenceTypeName = referenceType.Name;
             var propertyName = foreignKeyAttribute.PropertyName;
             var referencePropertyInfo = referenceType.GetProperties().First(x => x.Name == propertyName);
             
-            if (!_entities.TryGetValue(referenceTypeName, out var referenceEntityList)) continue;
+            if (!_entities.TryGetValue(referenceTypeName, out var referenceEntityList)) 
+            {
+                continue;
+            }
+            
             if (referenceEntityList.All(x => referencePropertyInfo.GetValue(x) != propertyInfo.GetValue(entity)))
             {
                 throw new DatabaseException(
@@ -138,7 +151,11 @@ public class Database : IDatabase
     {
         foreach (var propertyInfo in properties)
         {
-            if (propertyInfo.GetCustomAttribute(typeof(DefaultValueAttribute), true) is not DefaultValueAttribute defaultValueAttribute) continue;
+            if (propertyInfo.GetCustomAttribute(typeof(DefaultValueAttribute), true) is not DefaultValueAttribute defaultValueAttribute) 
+            {
+                continue;
+            }
+            
             if(defaultValueAttribute.DefaultValue.GetType() != propertyInfo.PropertyType)
             {
                 throw new DatabaseException($"the default value of property `{propertyInfo.Name}` must be of type `{propertyInfo.PropertyType}`, but was `{defaultValueAttribute.DefaultValue.GetType()}` was given");
