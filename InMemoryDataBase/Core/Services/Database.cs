@@ -3,10 +3,11 @@ using DeepCopier;
 using InMemoryDataBase.Attributes;
 using InMemoryDataBase.Core.Abstractions;
 using InMemoryDataBase.Exceptions;
+using InMemoryDataBase.Validators.Abstractions;
 
 namespace InMemoryDataBase.Core.Services;
 
-public class Database : IDatabase
+public class Database(IPrimaryKeyValidator primaryKeyValidator, IForeignKeyValidator foreignKeyValidator, INullablePropertyValidator nullablePropertyValidator, IDefaultValueValidator defaultValueValidator) : IDatabase
 {
     private readonly Dictionary<string, List<object>> _entities  = new();
     private readonly Dictionary<string, string>       _entityIds = new();
@@ -22,10 +23,10 @@ public class Database : IDatabase
         }
         
         var properties = typeof(T).GetProperties();
-        ValidatePrimaryKeyValue(entity, properties);
-        ValidateForeignKeyValue(entity, properties);
-        FillNullValuesWithDefault(entity, properties);
-        ValidateNullabilityOfNullProperties(entity, properties);
+        primaryKeyValidator.Validate(entity, properties, _entities);
+        foreignKeyValidator.Validate(entity, properties, _entities);
+        defaultValueValidator.Validate(entity, properties);
+        nullablePropertyValidator.Validate(entity, properties);
         
         
         if (_entities.TryGetValue(typeName, out var entityList))
@@ -98,85 +99,4 @@ public class Database : IDatabase
         default;
     
     
-    private void ValidatePrimaryKeyValue<T>(T entity, PropertyInfo[] properties)
-    {
-        var typeName = typeof(T).Name;
-        
-        foreach (var propertyInfo in properties)
-        {
-            if (propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is not PrimaryKeyAttribute) 
-            {
-                continue;
-            }
-            if (!_entities.TryGetValue(typeName, out var entityList)) 
-            {
-                continue;
-            }
-            
-            if (entityList.Any(x => propertyInfo.GetValue(x) == propertyInfo.GetValue(entity)))
-            {
-                throw new DatabaseException(
-                    $"Primary key must be unique, value `{propertyInfo.GetValue(entity)}` of property `{propertyInfo.Name}` of type `{typeName}` is already present in the database");
-            }
-        }
-    }
-    
-    private void ValidateForeignKeyValue<T>(T entity, PropertyInfo[] properties)
-    {
-        foreach (var propertyInfo in properties)
-        {
-            if (propertyInfo.GetCustomAttribute(typeof(ForeignKeyAttribute), true) is not ForeignKeyAttribute foreignKeyAttribute) 
-            {
-                continue;
-            }
-            
-            var referenceType = foreignKeyAttribute.ReferenceType;
-            var referenceTypeName = referenceType.Name;
-            var propertyName = foreignKeyAttribute.PropertyName;
-            var referencePropertyInfo = referenceType.GetProperties().First(x => x.Name == propertyName);
-            
-            if (!_entities.TryGetValue(referenceTypeName, out var referenceEntityList)) 
-            {
-                continue;
-            }
-            
-            if (referenceEntityList.All(x => referencePropertyInfo.GetValue(x) != propertyInfo.GetValue(entity)))
-            {
-                throw new DatabaseException(
-                    $"Invalid foreign key, No `{referenceTypeName}` having value `{propertyInfo.GetValue(entity)}` for its `{propertyInfo.Name}` property found in the database");
-            }
-        }
-    }
-    
-    private static void FillNullValuesWithDefault<T>(T entity, PropertyInfo[] properties)
-    {
-        foreach (var propertyInfo in properties)
-        {
-            if (propertyInfo.GetCustomAttribute(typeof(DefaultValueAttribute), true) is not DefaultValueAttribute defaultValueAttribute) 
-            {
-                continue;
-            }
-            
-            if(defaultValueAttribute.DefaultValue.GetType() != propertyInfo.PropertyType)
-            {
-                throw new DatabaseException($"the default value of property `{propertyInfo.Name}` must be of type `{propertyInfo.PropertyType}`, but was `{defaultValueAttribute.DefaultValue.GetType()}` was given");
-            }
-            if (propertyInfo.GetValue(entity) == null)
-            {
-                propertyInfo.SetValue(entity,defaultValueAttribute.DefaultValue);
-            }
-        }
-    }
-    
-    private static void ValidateNullabilityOfNullProperties<T>(T entity, PropertyInfo[] properties)
-    {
-        foreach (var propertyInfo in properties)
-        {
-            if (propertyInfo.GetCustomAttribute(typeof(NullableAttribute), true) is NullableAttribute defaultValueAttribute) continue;
-            if (propertyInfo.GetValue(entity) == null)
-            {
-                throw new DatabaseException($"Property `{propertyInfo.Name}` is null while its not nullable");
-            }
-        }
-    }
 }
