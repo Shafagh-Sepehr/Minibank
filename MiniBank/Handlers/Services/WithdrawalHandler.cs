@@ -1,11 +1,12 @@
 ﻿using DB.Data.Abstractions;
+using MiniBank.Communication.Abstractions;
 using MiniBank.Entities.Classes;
 using MiniBank.Entities.Enums;
 using MiniBank.Handlers.Abstractions;
 
 namespace MiniBank.Handlers.Services;
 
-public class WithdrawalHandler(IDataBase dataBase) : IWithdrawalHandler
+public class WithdrawalHandler(IDataBase dataBase, ISmsService smsService) : IWithdrawalHandler
 {
     public ActionResult Withdraw(string accountNumber, decimal amount)
     {
@@ -29,6 +30,9 @@ public class WithdrawalHandler(IDataBase dataBase) : IWithdrawalHandler
                 dataBase.Update(account);
                 actionResult = ActionResult.Success;
             }
+            
+            var user = dataBase.FetchAll<User>().First(x => x.Id == account.UserRef);
+            smsService.Send($"{amount} was withdrew from your account", user.PhoneNumber);
         }
         
         dataBase.Save(new Withdrawal
@@ -37,6 +41,8 @@ public class WithdrawalHandler(IDataBase dataBase) : IWithdrawalHandler
             AccountRef = account?.Id ?? 0,
             Status = actionResult == ActionResult.Success ? TransactionStatus.Success : TransactionStatus.Failed,
         });
+        
+        
         
         return actionResult;
     }

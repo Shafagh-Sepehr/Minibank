@@ -1,12 +1,13 @@
 ﻿using DB.Data.Abstractions;
 using MiniBank.AppSettings.Abstractions;
+using MiniBank.Communication.Abstractions;
 using MiniBank.Entities.Classes;
 using MiniBank.Entities.Enums;
 using MiniBank.Handlers.Abstractions;
 
 namespace MiniBank.Handlers.Services;
 
-public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings) : ITransactionHandler
+public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, ISmsService smsService) : ITransactionHandler
 {
     public ActionResult CreateTransaction_CardToCard(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword,
                                                      string? description)
@@ -63,6 +64,10 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings) : 
         else
         {
             actionResult = TransactAndValidateAndUpdate(amount, originAccount, destinationAccount);
+            if(actionResult == ActionResult.Success)
+            {
+                Sms(originAccount, destinationAccount, amount);
+            }
         }
         
         dataBase.Save(new Transaction
@@ -88,6 +93,10 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings) : 
             transactionType = TransactionType.DynamicCardToCard;
             
             actionResult = TransactAndValidateAndUpdate(amount, originAccount, destinationAccount);
+            if(actionResult == ActionResult.Success)
+            {
+                Sms(originAccount, destinationAccount, amount);
+            }
         }
         else if (IsStaticPassword(secondPassword, originCard))
         {
@@ -100,6 +109,10 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings) : 
             else
             {
                 actionResult = TransactAndValidateAndUpdate(amount, originAccount, destinationAccount);
+                if(actionResult == ActionResult.Success)
+                {
+                    Sms(originAccount, destinationAccount, amount);
+                }
             }
         }
         else
@@ -157,5 +170,14 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings) : 
     {
         originAccount.DecreaseBalance(amount);
         destinationAccount.IncreaseBalance(amount);
+    }
+    
+    private void Sms(Account originAccount, Account destinationAccount, decimal amount)
+    {
+        var originUser = dataBase.FetchAll<User>().First(x => x.Id == originAccount.UserRef);
+        smsService.Send($"{amount} was taken from your account", originUser.PhoneNumber);
+        
+        var destinationUser = dataBase.FetchAll<User>().First(x => x.Id == destinationAccount.UserRef);
+        smsService.Send($"{amount} was sent to your account", destinationUser.PhoneNumber);
     }
 }

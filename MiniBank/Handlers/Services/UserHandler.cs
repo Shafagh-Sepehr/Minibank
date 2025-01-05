@@ -20,4 +20,10 @@ public class UserHandler(IDataBase dataBase) : IUserHandler
         
         dataBase.Save(newUser);
     }
+    
+    public User? Login(string username, string password)
+    {
+        var users = dataBase.FetchAll<User>();
+        return users.FirstOrDefault(x=> x.Username == username && x.PasswordHash == Helper.ComputeSha256Hash(password));
+    }
 }

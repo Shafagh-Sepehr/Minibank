@@ -20,6 +20,13 @@ public class AccountHandler(IDataBase dataBase) : IAccountHandler
         return newAccount.AccountNumber;
     }
     
+    public decimal? GetAccountBalance(User user)
+    {
+        var accounts = dataBase.FetchAll<Account>();
+        var account = accounts.FirstOrDefault(x=> x.UserRef == user.Id);
+        return account?.Balance;
+    }
+    
     private string GenerateAccountNumber()
     {
         var accounts = dataBase.FetchAll<Account>().ToList();
