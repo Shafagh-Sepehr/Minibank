@@ -1,4 +1,4 @@
-﻿namespace DB.Entities.Enums;
+﻿namespace InMemoryDataBase.Entities.Enums;
 
 public enum DataBaseAction
 {

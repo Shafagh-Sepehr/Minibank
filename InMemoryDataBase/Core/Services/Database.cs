@@ -1,6 +1,6 @@
-﻿using DB.Entities.Enums;
-using DeepCopier;
+﻿using DeepCopier;
 using InMemoryDataBase.Core.Abstractions;
+using InMemoryDataBase.Entities.Enums;
 
 namespace InMemoryDataBase.Core.Services;
 
@@ -91,6 +91,7 @@ public class Database : IDatabase
     
     private void Validate<T>(T entity, DataBaseAction action) where T : IDatabaseEntity
     {
-        throw new NotImplementedException();
+        var properties = typeof(T).GetProperties();
+        
     }
 }
