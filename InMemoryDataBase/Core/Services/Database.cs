@@ -24,6 +24,7 @@ public class Database : IDatabase
         var properties = typeof(T).GetProperties();
         ValidatePrimaryKeyValue(entity, properties);
         ValidateForeignKeyValue(entity, properties);
+        FillNullValuesWithDefault(entity, properties);
         
         
         if (_entities.TryGetValue(typeName, out var entityList))
@@ -129,6 +130,22 @@ public class Database : IDatabase
             {
                 throw new DatabaseException(
                     $"Invalid foreign key, No `{referenceTypeName}` having value `{propertyInfo.GetValue(entity)}` for its `{propertyInfo.Name}` property found in the database");
+            }
+        }
+    }
+    
+    private static void FillNullValuesWithDefault<T>(T entity, PropertyInfo[] properties)
+    {
+        foreach (var propertyInfo in properties)
+        {
+            if (propertyInfo.GetCustomAttribute(typeof(DefaultValueAttribute), true) is not DefaultValueAttribute defaultValueAttribute) continue;
+            if(defaultValueAttribute.DefaultValue.GetType() != propertyInfo.PropertyType)
+            {
+                throw new DatabaseException($"the default value of property `{propertyInfo.Name}` must be of type `{propertyInfo.PropertyType}`, but was `{defaultValueAttribute.DefaultValue.GetType()}` was given");
+            }
+            if (propertyInfo.GetValue(entity) == null)
+            {
+                propertyInfo.SetValue(entity,defaultValueAttribute.DefaultValue);
             }
         }
     }
