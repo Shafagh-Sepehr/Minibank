@@ -18,7 +18,7 @@ public class DefaultValueValidator : IDefaultValueValidator
             
             if(defaultValueAttribute.DefaultValue.GetType() != propertyInfo.PropertyType)
             {
-                throw new DatabaseException($"the default value of property `{propertyInfo.Name}` must be of type `{propertyInfo.PropertyType}`, but was `{defaultValueAttribute.DefaultValue.GetType()}` was given");
+                throw new DatabaseException($"the default value of property `{propertyInfo.Name}` must be of type `{propertyInfo.PropertyType.Name}`, but was `{defaultValueAttribute.DefaultValue.GetType()}` was given");
             }
             if (propertyInfo.GetValue(entity) == null)
             {

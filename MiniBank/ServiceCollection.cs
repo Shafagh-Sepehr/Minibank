@@ -1,6 +1,11 @@
 using DB.Data.Abstractions;
 using DB.Data.Services;
 using DB.Validators.Abstractions;
+using InMemoryDataBase.Attributes;
+using InMemoryDataBase.Core.Abstractions;
+using InMemoryDataBase.Core.Services;
+using InMemoryDataBase.Validators.Abstractions;
+using InMemoryDataBase.Validators.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MiniBank.AppSettings.Abstractions;
@@ -25,6 +30,12 @@ internal static class ServiceCollection
         
         
         serviceCollector.AddSingleton<IDataBase, DataBase>();
+        serviceCollector.AddSingleton<IDatabase, Database>();
+        
+        serviceCollector.AddSingleton<IPrimaryKeyValidator, PrimaryKeyValidator>();
+        serviceCollector.AddSingleton<IForeignKeyValidator, ForeignKeyValidator>();
+        serviceCollector.AddSingleton<INullablePropertyValidator, NullablePropertyValidator>();
+        serviceCollector.AddSingleton<IDefaultValueValidator, DefaultValueValidator>();
         
         serviceCollector.AddTransient<IValidator<User>, UserValidator>();
         serviceCollector.AddTransient<IValidator<Account>, AccountValidator>();

@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Text;
 using InMemoryDataBase.Attributes;
 using InMemoryDataBase.Exceptions;
 using InMemoryDataBase.Validators.Abstractions;
@@ -10,23 +11,29 @@ public class PrimaryKeyValidator : IPrimaryKeyValidator
     public void Validate<T>(T entity, PropertyInfo[] properties,IReadOnlyDictionary<string, List<object>> entities)
     {
         var typeName = typeof(T).Name;
+        var primaryProperties = properties
+            .Where(propertyInfo => propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is PrimaryKeyAttribute)
+            .ToList();
         
-        foreach (var propertyInfo in properties)
+        if (!entities.TryGetValue(typeName, out var entityList))
         {
-            if (propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is not PrimaryKeyAttribute)
-            {
-                continue;
-            }
-            if (!entities.TryGetValue(typeName, out var entityList))
-            {
-                continue;
-            }
-            
-            if (entityList.Any(x => propertyInfo.GetValue(x) == propertyInfo.GetValue(entity)))
-            {
-                throw new DatabaseException(
-                    $"Primary key must be unique, value `{propertyInfo.GetValue(entity)}` of property `{propertyInfo.Name}` of type `{typeName}` is already present in the database");
-            }
+            return;
         }
+        if (false == entityList.Any(e => primaryProperties.All(p => p.GetValue(e) == p.GetValue(entity))))
+        {
+            return;
+        }
+        
+        var builder = new StringBuilder();
+        builder.Append("Primary key(s) must be unique, an entity with ");
+        
+        foreach (var propertyInfo in primaryProperties)
+        {
+            builder.Append($"[value `{propertyInfo.GetValue(entity)}` of `{propertyInfo.PropertyType.Name}` property `{propertyInfo.Name}` of type `{typeName}`], ");
+        }
+        
+        builder.Append(" is already present in the database");
+        
+        throw new DatabaseException(builder.ToString());
     }
 }
