@@ -1,21 +1,29 @@
-﻿using DeepCopier;
+﻿using System.Reflection;
+using DeepCopier;
+using InMemoryDataBase.Attributes;
 using InMemoryDataBase.Core.Abstractions;
-using InMemoryDataBase.Entities.Enums;
+using InMemoryDataBase.Exceptions;
 
 namespace InMemoryDataBase.Core.Services;
 
 public class Database : IDatabase
 {
-    private readonly Dictionary<string, List<IDatabaseEntity>> _entities  = new();
-    private readonly Dictionary<string, string>                _entityIds = new();
+    private readonly Dictionary<string, List<object>> _entities  = new();
+    private readonly Dictionary<string, string>       _entityIds = new();
     
     
-    public void Insert<T>(T entity) where T : IDatabaseEntity
+    public void Insert<T>(T entity)
     {
-        Validate(entity, DataBaseAction.Save);
-        
         var typeName = typeof(T).Name;
         var entityCopy = Copier.Copy(entity);
+        if (entityCopy == null)
+        {
+            throw new ArgumentException("entity cannot be copied by Copier.");
+        }
+        
+        var properties = typeof(T).GetProperties();
+        ValidatePrimaryKeyValue(entity,properties);
+        
         
         if (_entities.TryGetValue(typeName, out var entityList))
         {
@@ -27,39 +35,37 @@ public class Database : IDatabase
         }
     }
     
-    public void Update<T>(T entity) where T : IDatabaseEntity
+    public void Update<T>(T entity)
     {
-        Validate(entity, DataBaseAction.Update);
-        
-        var typeName = typeof(T).Name;
-        var entityCopy = Copier.Copy(entity);
-        
-        if (_entities.TryGetValue(typeName, out var entityList))
-        {
-            var entityId = entityList.FindIndex(x => x.Id == entityCopy.Id);
-            entityList[entityId] = entityCopy;
-        }
-        else
-        {
-            throw new InvalidOperationException($"entity {entityCopy.Id} of type {typeName} not found.");
-        }
+        // var typeName = typeof(T).Name;
+        // var entityCopy = Copier.Copy(entity);
+        //
+        // if (_entities.TryGetValue(typeName, out var entityList))
+        // {
+        //     var entityId = entityList.FindIndex(x => x.Id == entityCopy.Id);
+        //     entityList[entityId] = entityCopy;
+        // }
+        // else
+        // {
+        //     throw new InvalidOperationException($"entity {entityCopy.Id} of type {typeName} not found.");
+        // }
     }
     
-    public void Delete<T>(string id) where T : IDatabaseEntity
+    public void Delete<T>(string id)
     {
-        var typeName = typeof(T).Name;
-        
-        if (_entities.TryGetValue(typeName, out var entityList))
-        {
-            entityList.RemoveAll(x => x.Id == id);
-        }
-        else
-        {
-            throw new InvalidOperationException($"entity {id} of type {typeName} not found.");
-        }
+        // var typeName = typeof(T).Name;
+        //
+        // if (_entities.TryGetValue(typeName, out var entityList))
+        // {
+        //     entityList.RemoveAll(x => x.Id == id);
+        // }
+        // else
+        // {
+        //     throw new InvalidOperationException($"entity {id} of type {typeName} not found.");
+        // }
     }
     
-    public IEnumerable<T> FetchAll<T>() where T : IDatabaseEntity
+    public IEnumerable<T> FetchAll<T>()
     {
         var typeName = typeof(T).Name;
         
@@ -73,25 +79,36 @@ public class Database : IDatabase
         }
     }
     
-    public T? FetchById<T>(string id) where T : IDatabaseEntity
+    public T? FetchById<T>(string id)
+    {
+        // var typeName = typeof(T).Name;
+        //
+        // if (_entities.TryGetValue(typeName, out var entityList))
+        // {
+        //     var entity = entityList.Find(x => x.Id == id);
+        //     if (entity is T e)
+        //     {
+        //         return e;
+        //     }
+        // } 
+        //
+        // throw new InvalidOperationException($"entity {id} of type {typeName} not found.");
+        return default;
+    }
+    
+    
+    private void ValidatePrimaryKeyValue<T>(T entity, PropertyInfo[] properties)
     {
         var typeName = typeof(T).Name;
         
-        if (_entities.TryGetValue(typeName, out var entityList))
+        foreach (var propertyInfo in properties)
         {
-            var entity = entityList.Find(x => x.Id == id);
-            if (entity is T e)
+            if (propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is not PrimaryKeyAttribute) continue;
+            if (!_entities.TryGetValue(typeName, out var entityList)) continue;
+            if (entityList.Any(x => propertyInfo.GetValue(x) == propertyInfo.GetValue(entity)))
             {
-                return e;
+                throw new DatabaseException($"Primary key must be unique, value `{propertyInfo.GetValue(entity)}` of property `{propertyInfo.Name}` of type `{typeName}` is already present in the database");
             }
-        } 
-        
-        throw new InvalidOperationException($"entity {id} of type {typeName} not found.");
-    }
-    
-    private void Validate<T>(T entity, DataBaseAction action) where T : IDatabaseEntity
-    {
-        var properties = typeof(T).GetProperties();
-        
+        }
     }
 }
