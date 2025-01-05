@@ -22,7 +22,8 @@ public class Database : IDatabase
         }
         
         var properties = typeof(T).GetProperties();
-        ValidatePrimaryKeyValue(entity,properties);
+        ValidatePrimaryKeyValue(entity, properties);
+        ValidateForeignKeyValue(entity, properties);
         
         
         if (_entities.TryGetValue(typeName, out var entityList))
@@ -79,8 +80,7 @@ public class Database : IDatabase
         }
     }
     
-    public T? FetchById<T>(string id)
-    {
+    public T? FetchById<T>(string id) =>
         // var typeName = typeof(T).Name;
         //
         // if (_entities.TryGetValue(typeName, out var entityList))
@@ -93,8 +93,7 @@ public class Database : IDatabase
         // } 
         //
         // throw new InvalidOperationException($"entity {id} of type {typeName} not found.");
-        return default;
-    }
+        default;
     
     
     private void ValidatePrimaryKeyValue<T>(T entity, PropertyInfo[] properties)
@@ -107,7 +106,29 @@ public class Database : IDatabase
             if (!_entities.TryGetValue(typeName, out var entityList)) continue;
             if (entityList.Any(x => propertyInfo.GetValue(x) == propertyInfo.GetValue(entity)))
             {
-                throw new DatabaseException($"Primary key must be unique, value `{propertyInfo.GetValue(entity)}` of property `{propertyInfo.Name}` of type `{typeName}` is already present in the database");
+                throw new DatabaseException(
+                    $"Primary key must be unique, value `{propertyInfo.GetValue(entity)}` of property `{propertyInfo.Name}` of type `{typeName}` is already present in the database");
+            }
+        }
+    }
+    
+    private void ValidateForeignKeyValue<T>(T entity, PropertyInfo[] properties)
+    {
+        foreach (var propertyInfo in properties)
+        {
+            if (propertyInfo.GetCustomAttribute(typeof(ForeignKeyAttribute), true) is not ForeignKeyAttribute foreignKeyAttribute) continue;
+            
+            
+            var referenceType = foreignKeyAttribute.ReferenceType;
+            var referenceTypeName = referenceType.Name;
+            var propertyName = foreignKeyAttribute.PropertyName;
+            var referencePropertyInfo = referenceType.GetProperties().First(x => x.Name == propertyName);
+            
+            if (!_entities.TryGetValue(referenceTypeName, out var referenceEntityList)) continue;
+            if (referenceEntityList.All(x => referencePropertyInfo.GetValue(x) != propertyInfo.GetValue(entity)))
+            {
+                throw new DatabaseException(
+                    $"Invalid foreign key, No `{referenceTypeName}` having value `{propertyInfo.GetValue(entity)}` for its `{propertyInfo.Name}` property found in the database");
             }
         }
     }

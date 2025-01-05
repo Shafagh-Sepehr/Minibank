@@ -1,7 +1,8 @@
 ﻿namespace InMemoryDataBase.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class ForeignKeyAttribute(Type relationKey) : Attribute
+public class ForeignKeyAttribute(Type referenceType, string propertyName) : Attribute
 {
-    public Type RelationKey { get; } = relationKey;
+    public Type   ReferenceType  { get; } = referenceType;
+    public string PropertyName { get; } = propertyName;
 }
