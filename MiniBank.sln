@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniBank", "MiniBank\MiniBa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DB", "DB\DB.csproj", "{F53C684D-336B-40AD-842B-A1B22377C5BA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InMemoryDataBase", "InMemoryDataBase\InMemoryDataBase.csproj", "{F5AABA3B-8DC4-44CF-A249-EFE661D44392}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{F53C684D-336B-40AD-842B-A1B22377C5BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F53C684D-336B-40AD-842B-A1B22377C5BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F53C684D-336B-40AD-842B-A1B22377C5BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5AABA3B-8DC4-44CF-A249-EFE661D44392}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5AABA3B-8DC4-44CF-A249-EFE661D44392}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5AABA3B-8DC4-44CF-A249-EFE661D44392}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5AABA3B-8DC4-44CF-A249-EFE661D44392}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
