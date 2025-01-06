@@ -29,7 +29,7 @@ public class PrimaryKeyValidator : IPrimaryKeyValidator
         
         foreach (var propertyInfo in primaryProperties)
         {
-            builder.Append($"[value `{propertyInfo.GetValue(entity)}` of `{propertyInfo.PropertyType.Name}` property `{propertyInfo.Name}` of type `{typeName}`], ");
+            builder.Append($"[`{propertyInfo.PropertyType.Name}` `{propertyInfo.Name}` = `{propertyInfo.GetValue(entity)}` of type `{typeName}`], ");
         }
         
         builder.Append(" is already present in the database");
