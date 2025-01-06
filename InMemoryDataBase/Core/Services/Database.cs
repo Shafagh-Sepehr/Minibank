@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Text;
 using DeepCopier;
 using InMemoryDataBase.Attributes;
 using InMemoryDataBase.Core.Abstractions;
@@ -39,18 +40,38 @@ public class Database(IPrimaryKeyValidator primaryKeyValidator, IForeignKeyValid
     
     public void Update<T>(T entity)
     {
-        // var typeName = typeof(T).Name;
-        // var entityCopy = Copier.Copy(entity);
-        //
-        // if (_entities.TryGetValue(typeName, out var entityList))
-        // {
-        //     var entityId = entityList.FindIndex(x => x.Id == entityCopy.Id);
-        //     entityList[entityId] = entityCopy;
-        // }
-        // else
-        // {
-        //     throw new InvalidOperationException($"entity {entityCopy.Id} of type {typeName} not found.");
-        // }
+        var typeName = typeof(T).Name;
+        var entityCopy = DeepCopy(entity)!;
+        
+        var properties = typeof(T).GetProperties();
+        foreignKeyValidator.Validate(entity, properties, _entities);
+        defaultValueValidator.Validate(entity, properties);
+        nullablePropertyValidator.Validate(entity, properties);
+        
+        var primaryProperties = properties
+            .Where(propertyInfo => propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is PrimaryKeyAttribute)
+            .ToList();
+        
+        if (_entities.TryGetValue(typeName, out var entityList))
+        {
+            var entityIndex = entityList.FindIndex(e => primaryProperties.All(p => p.GetValue(e) == p.GetValue(entity)));
+            if (entityIndex != -1)
+            {
+                entityList[entityIndex] = entityCopy;
+                return;
+            }
+        }
+        
+        var builder = new StringBuilder();
+        builder.Append("Update failed, no entity found with this primary keys: ");
+        
+        foreach (var propertyInfo in primaryProperties)
+        {
+            builder.Append($"[`{propertyInfo.PropertyType.Name}` `{propertyInfo.Name}` = `{propertyInfo.GetValue(entity)}` of type `{typeName}`], ");
+        }
+        
+        throw new DatabaseException(builder.ToString());
+        
     }
     
     public void Delete<T>(string id)
