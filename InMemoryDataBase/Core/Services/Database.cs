@@ -16,11 +16,7 @@ public class Database(IPrimaryKeyValidator primaryKeyValidator, IForeignKeyValid
     public void Insert<T>(T entity)
     {
         var typeName = typeof(T).Name;
-        var entityCopy = Copier.Copy(entity);
-        if (entityCopy == null)
-        {
-            throw new ArgumentException("entity cannot be copied by Copier.");
-        }
+        var entityCopy = DeepCopy(entity)!;
         
         var properties = typeof(T).GetProperties();
         primaryKeyValidator.Validate(entity, properties, _entities);
@@ -38,6 +34,8 @@ public class Database(IPrimaryKeyValidator primaryKeyValidator, IForeignKeyValid
             _entities[typeName] = [entityCopy,];
         }
     }
+    
+    private static T DeepCopy<T>(T entity) => Copier.Copy(entity) ?? throw new ArgumentException("entity cannot be copied by Copier.");
     
     public void Update<T>(T entity)
     {
