@@ -1,9 +1,10 @@
 using DB.Data.Abstractions;
 using DB.Data.Services;
 using DB.Validators.Abstractions;
-using InMemoryDataBase.Attributes;
 using InMemoryDataBase.Core.Abstractions;
 using InMemoryDataBase.Core.Services;
+using InMemoryDataBase.DataSanitizers.Abstractions;
+using InMemoryDataBase.DataSanitizers.Services;
 using InMemoryDataBase.Validators.Abstractions;
 using InMemoryDataBase.Validators.Services;
 using Microsoft.Extensions.Configuration;
@@ -35,7 +36,7 @@ internal static class ServiceCollection
         serviceCollector.AddSingleton<IPrimaryKeyValidator, PrimaryKeyValidator>();
         serviceCollector.AddSingleton<IForeignKeyValidator, ForeignKeyValidator>();
         serviceCollector.AddSingleton<INullablePropertyValidator, NullablePropertyValidator>();
-        serviceCollector.AddSingleton<IDefaultValueValidator, DefaultValueValidator>();
+        serviceCollector.AddSingleton<IDefaultValueSetter, DefaultValueSetter>();
         
         serviceCollector.AddTransient<IValidator<User>, UserValidator>();
         serviceCollector.AddTransient<IValidator<Account>, AccountValidator>();

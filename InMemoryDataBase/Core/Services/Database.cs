@@ -3,12 +3,13 @@ using System.Text;
 using DeepCopier;
 using InMemoryDataBase.Attributes;
 using InMemoryDataBase.Core.Abstractions;
+using InMemoryDataBase.DataSanitizers.Abstractions;
 using InMemoryDataBase.Exceptions;
 using InMemoryDataBase.Validators.Abstractions;
 
 namespace InMemoryDataBase.Core.Services;
 
-public class Database(IPrimaryKeyValidator primaryKeyValidator, IForeignKeyValidator foreignKeyValidator, INullablePropertyValidator nullablePropertyValidator, IDefaultValueValidator defaultValueValidator) : IDatabase
+public class Database(IPrimaryKeyValidator primaryKeyValidator, IForeignKeyValidator foreignKeyValidator, INullablePropertyValidator nullablePropertyValidator, IDefaultValueSetter defaultValueSetter) : IDatabase
 {
     private readonly Dictionary<string, List<object>> _entities  = new();
     private readonly Dictionary<string, string>       _entityIds = new();
@@ -22,7 +23,7 @@ public class Database(IPrimaryKeyValidator primaryKeyValidator, IForeignKeyValid
         var properties = typeof(T).GetProperties();
         primaryKeyValidator.Validate(entity, properties, _entities);
         foreignKeyValidator.Validate(entity, properties, _entities);
-        defaultValueValidator.Validate(entity, properties);
+        defaultValueSetter.Apply(entity, properties);
         nullablePropertyValidator.Validate(entity, properties);
         
         
@@ -45,7 +46,7 @@ public class Database(IPrimaryKeyValidator primaryKeyValidator, IForeignKeyValid
         
         var properties = typeof(T).GetProperties();
         foreignKeyValidator.Validate(entity, properties, _entities);
-        defaultValueValidator.Validate(entity, properties);
+        defaultValueSetter.Apply(entity, properties);
         nullablePropertyValidator.Validate(entity, properties);
         
         var primaryProperties = properties

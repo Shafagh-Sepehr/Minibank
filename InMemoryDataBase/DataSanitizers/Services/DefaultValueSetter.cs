@@ -1,13 +1,13 @@
 ﻿using System.Reflection;
 using InMemoryDataBase.Attributes;
+using InMemoryDataBase.DataSanitizers.Abstractions;
 using InMemoryDataBase.Exceptions;
-using InMemoryDataBase.Validators.Abstractions;
 
-namespace InMemoryDataBase.Validators.Services;
+namespace InMemoryDataBase.DataSanitizers.Services;
 
-public class DefaultValueValidator : IDefaultValueValidator
+public class DefaultValueSetter : IDefaultValueSetter
 {
-    public void Validate<T>(T entity, PropertyInfo[] properties)
+    public void Apply<T>(T entity, PropertyInfo[] properties)
     {
         foreach (var propertyInfo in properties)
         {
