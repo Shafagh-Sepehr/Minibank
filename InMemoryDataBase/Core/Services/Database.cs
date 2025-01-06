@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Text;
 using DeepCopier;
 using InMemoryDataBase.Attributes;
 using InMemoryDataBase.Core.Abstractions;
@@ -71,16 +70,21 @@ public class Database(
     
     public void Delete<T>(string id)
     {
-        // var typeName = typeof(T).Name;
-        //
-        // if (_entities.TryGetValue(typeName, out var entityList))
-        // {
-        //     entityList.RemoveAll(x => x.Id == id);
-        // }
-        // else
-        // {
-        //     throw new InvalidOperationException($"entity {id} of type {typeName} not found.");
-        // }
+        var typeName = typeof(T).Name;
+        
+        var properties = typeof(T).GetProperties();
+        var primaryProperty = properties
+            .First(propertyInfo => propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is PrimaryKeyAttribute);
+        
+        if (_entities.TryGetValue(typeName, out var entityList))
+        {
+            var entityIndex = entityList.FindIndex(e => (string)primaryProperty.GetValue(e)! == id);
+            entityList.RemoveAt(entityIndex);
+        }
+        else
+        {
+            throw new InvalidOperationException($"{typeName} having {primaryProperty.Name} with value {id} not found");
+        }
     }
     
     public IEnumerable<T> FetchAll<T>()
