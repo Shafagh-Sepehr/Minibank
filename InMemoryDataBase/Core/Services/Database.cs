@@ -80,7 +80,7 @@ public class Database(
         }
         else
         {
-            throw new InvalidOperationException($"{typeName} having {primaryProperty.Name} with value {id} not found");
+            throw new InvalidOperationException($"{typeName} having {primaryProperty.Name} with value {id} was not found");
         }
     }
     
