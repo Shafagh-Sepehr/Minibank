@@ -46,18 +46,18 @@ public class Database(
         var typeName = typeof(T).Name;
         var entityCopy = DeepCopy(entity)!;
         
-        var properties = typeof(T).GetProperties();
-        foreignKeyValidator.Validate(entity, _entities);
         defaultValueSetter.Apply(entity);
+        
+        foreignKeyValidator.Validate(entity, _entities);
         nullablePropertyValidator.Validate(entity);
         
-        var primaryProperties = properties
-            .Where(propertyInfo => propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is PrimaryKeyAttribute)
-            .ToList();
+        var properties = typeof(T).GetProperties();
+        var primaryProperty = properties
+            .First(propertyInfo => propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is PrimaryKeyAttribute);
         
         if (_entities.TryGetValue(typeName, out var entityList))
         {
-            var entityIndex = entityList.FindIndex(e => primaryProperties.All(p => p.GetValue(e) == p.GetValue(entity)));
+            var entityIndex = entityList.FindIndex(e => primaryProperty.GetValue(e) == primaryProperty.GetValue(entity));
             if (entityIndex != -1)
             {
                 entityList[entityIndex] = entityCopy;
@@ -65,15 +65,8 @@ public class Database(
             }
         }
         
-        var builder = new StringBuilder();
-        builder.Append("Update failed, no entity found with this primary keys: ");
-        
-        foreach (var propertyInfo in primaryProperties)
-        {
-            builder.Append($"[`{propertyInfo.PropertyType.Name}` `{propertyInfo.Name}` = `{propertyInfo.GetValue(entity)}` of type `{typeName}`], ");
-        }
-        
-        throw new DatabaseException(builder.ToString());
+        throw new DatabaseException(
+            $"Update failed, no entity found with this primary key: `{primaryProperty.PropertyType.Name}` `{primaryProperty.Name}` = `{primaryProperty.GetValue(entity)}` of type `{typeName}`");
     }
     
     public void Delete<T>(string id)
