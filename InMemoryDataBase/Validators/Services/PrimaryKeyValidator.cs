@@ -20,7 +20,7 @@ public class PrimaryKeyValidator : IPrimaryKeyValidator
             case 0:
                 throw new DatabaseException($"you must have one string type marked with primary key attribute in {typeName}");
             case > 1:
-                throw new DatabaseException($"you cannot have more than one string type marked with primary key attribute in {typeName}");
+                throw new DatabaseException($"you cannot have more than one string type marked with primaryKeyAttribute in {typeName}");
         }
         
         var primaryProperty = primaryProperties.First();
