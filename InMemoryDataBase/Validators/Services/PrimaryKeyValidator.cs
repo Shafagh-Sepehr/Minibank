@@ -7,9 +7,9 @@ namespace InMemoryDataBase.Validators.Services;
 
 public class PrimaryKeyValidator : IPrimaryKeyValidator
 {
-    public void Validate<T>(T entity, IReadOnlyDictionary<string, List<object>> entities)
+    public void Validate<T>(T entity, IReadOnlyDictionary<Type, List<object>> entities)
     {
-        var typeName = typeof(T).Name;
+        var type = typeof(T);
         var properties = typeof(T).GetProperties();
         var primaryProperties = properties
             .Where(propertyInfo => propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is PrimaryKeyAttribute)
@@ -18,18 +18,18 @@ public class PrimaryKeyValidator : IPrimaryKeyValidator
         switch (primaryProperties.Count)
         {
             case 0:
-                throw new DatabaseException($"you must have one string type marked with primary key attribute in {typeName}");
+                throw new DatabaseException($"you must have one string type marked with primary key attribute in {type.Name}");
             case > 1:
-                throw new DatabaseException($"you cannot have more than one string type marked with primaryKeyAttribute in {typeName}");
+                throw new DatabaseException($"you cannot have more than one string type marked with primaryKeyAttribute in {type.Name}");
         }
         
         var primaryProperty = primaryProperties.First();
         if (primaryProperty.PropertyType != typeof(string))
         {
-            throw new DatabaseException($"the primary key property must be of type string in {typeName}");
+            throw new DatabaseException($"the primary key property must be of type string in {type.Name}");
         }
         
-        if (!entities.TryGetValue(typeName, out var entityList))
+        if (!entities.TryGetValue(type, out var entityList))
         {
             return;
         }
@@ -40,6 +40,6 @@ public class PrimaryKeyValidator : IPrimaryKeyValidator
         }
         
         throw new DatabaseException(
-            $"Primary key must be unique, an entity with `{primaryProperty.PropertyType.Name}` `{primaryProperty.Name}` = `{primaryProperty.GetValue(entity)}` of type `{typeName}` is already present in the database");
+            $"Primary key must be unique, an entity with `{primaryProperty.PropertyType.Name}` `{primaryProperty.Name}` = `{primaryProperty.GetValue(entity)}` of type `{type.Name}` is already present in the database");
     }
 }

@@ -9,7 +9,7 @@ public class Validator(
     IForeignKeyValidator foreignKeyValidator,
     INullablePropertyValidator nullablePropertyValidator) : IValidator
 {
-    public void Validate<T>(T entity, IReadOnlyDictionary<string, List<object>> entities, DataBaseAction dataBaseAction)
+    public void Validate<T>(T entity, IReadOnlyDictionary<Type, List<object>> entities, DataBaseAction dataBaseAction)
     {
         switch (dataBaseAction)
         {
@@ -19,7 +19,7 @@ public class Validator(
             case DataBaseAction.Update:
                 break;
             default:
-                throw new DatabaseException("wrong invocation of Validator in DataBase");
+                throw new DatabaseException("Wrong invocation of Validator in Database");
         }
         
         foreignKeyValidator.Validate(entity, entities);

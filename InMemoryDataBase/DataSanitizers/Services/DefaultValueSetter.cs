@@ -10,6 +10,7 @@ public class DefaultValueSetter : IDefaultValueSetter
     public void Apply<T>(T entity)
     {
         var properties = typeof(T).GetProperties();
+        
         foreach (var propertyInfo in properties)
         {
             if (propertyInfo.GetCustomAttribute(typeof(DefaultValueAttribute), true) is not DefaultValueAttribute defaultValueAttribute)

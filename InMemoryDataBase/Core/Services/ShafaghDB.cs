@@ -5,47 +5,45 @@ using InMemoryDataBase.Core.Abstractions;
 using InMemoryDataBase.DataSanitizers.Abstractions;
 using InMemoryDataBase.Entities.Enums;
 using InMemoryDataBase.Exceptions;
-using InMemoryDataBase.Validators.Services;
+using InMemoryDataBase.Validators.Abstractions;
 
 namespace InMemoryDataBase.Core.Services;
 
 public class Database(IDefaultValueSetter defaultValueSetter, IValidator validator) : IDatabase
 {
-    private readonly Dictionary<string, List<object>> _entities  = new();
-    private readonly Dictionary<string, string>       _entityIds = new();
+    private readonly Dictionary<Type, List<object>> _entities  = new();
+    private readonly Dictionary<string, string>     _entityIds = new();
     
     
     public void Insert<T>(T entity)
     {
-        var typeName = typeof(T).Name;
+        var type = typeof(T);
         var entityCopy = DeepCopy(entity)!;
-        
         
         defaultValueSetter.Apply(entity);
         validator.Validate(entity,_entities,DataBaseAction.Save);
         
-        if (_entities.TryGetValue(typeName, out var entityList))
+        if (_entities.TryGetValue(type, out var entityList))
         {
             entityList.Add(entityCopy);
         }
         else
         {
-            _entities[typeName] = [entityCopy,];
+            _entities[type] = [entityCopy,];
         }
     }
     
     public void Update<T>(T entity)
     {
-        var typeName = typeof(T).Name;
+        var type = typeof(T);
         var entityCopy = DeepCopy(entity)!;
         
         defaultValueSetter.Apply(entity);
         validator.Validate(entity,_entities,DataBaseAction.Update);
         
-        
         var primaryProperty = GetPrimaryPropertyInfo<T>();
         
-        if (_entities.TryGetValue(typeName, out var entityList))
+        if (_entities.TryGetValue(type, out var entityList))
         {
             var entityIndex = entityList.FindIndex(e => primaryProperty.GetValue(e) == primaryProperty.GetValue(entity));
             if (entityIndex != -1)
@@ -56,31 +54,34 @@ public class Database(IDefaultValueSetter defaultValueSetter, IValidator validat
         }
         
         throw new DatabaseException(
-            $"Update failed, no entity found with this primary key: `{primaryProperty.PropertyType.Name}` `{primaryProperty.Name}` = `{primaryProperty.GetValue(entity)}` of type `{typeName}`");
+            $"Update failed, no entity found with this primary key: `{primaryProperty.PropertyType.Name}` `{primaryProperty.Name}` = `{primaryProperty.GetValue(entity)}` of type `{type.Name}`");
     }
     
     public void Delete<T>(string id)
     {
-        var typeName = typeof(T).Name;
+        var type = typeof(T);
         
         var primaryProperty = GetPrimaryPropertyInfo<T>();
         
-        if (_entities.TryGetValue(typeName, out var entityList))
+        if (_entities.TryGetValue(type, out var entityList))
         {
             var entityIndex = GetEntityIndex(entityList, primaryProperty, id);
-            entityList.RemoveAt(entityIndex);
+            
+            if (entityIndex != -1)
+            {
+                entityList.RemoveAt(entityIndex);
+                return;
+            }
         }
-        else
-        {
-            throw new InvalidOperationException($"{typeName} having {primaryProperty.Name} with value {id} was not found");
-        }
+        
+        throw new InvalidOperationException($"{type.Name} having {primaryProperty.Name} with value {id} was not found");
     }
     
     public IEnumerable<T> FetchAll<T>()
     {
-        var typeName = typeof(T).Name;
+        var type = typeof(T);
         
-        if (_entities.TryGetValue(typeName, out var entityList))
+        if (_entities.TryGetValue(type, out var entityList))
         {
             return entityList.Where(x => x is T).Cast<T>();
         }
@@ -92,14 +93,18 @@ public class Database(IDefaultValueSetter defaultValueSetter, IValidator validat
     
     public T? FetchById<T>(string id)
     {
-        var typeName = typeof(T).Name;
+        var type = typeof(T);
         
         var primaryProperty = GetPrimaryPropertyInfo<T>();
         
-        if (_entities.TryGetValue(typeName, out var entityList))
+        if (_entities.TryGetValue(type, out var entityList))
         {
             var entityIndex = GetEntityIndex(entityList, primaryProperty, id);
-            return (T)entityList[entityIndex];
+            
+            if(entityIndex != -1)
+            {
+                return DeepCopy((T)entityList[entityIndex]);
+            }
         }
         else
         {
@@ -110,7 +115,7 @@ public class Database(IDefaultValueSetter defaultValueSetter, IValidator validat
     private static int GetEntityIndex(List<object> entityList, PropertyInfo primaryProperty, string id) 
         => entityList.FindIndex(e => (string)primaryProperty.GetValue(e)! == id);
     
-    private static T DeepCopy<T>(T entity) => Copier.Copy(entity) ?? throw new ArgumentException("entity cannot be copied by Copier.");
+    private static T DeepCopy<T>(T entity) => Copier.Copy(entity) ?? throw new ArgumentException("entity cannot be copied by Copier");
     
     private static PropertyInfo GetPrimaryPropertyInfo<T>()
     {
