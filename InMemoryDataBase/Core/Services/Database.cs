@@ -3,16 +3,13 @@ using DeepCopier;
 using InMemoryDataBase.Attributes;
 using InMemoryDataBase.Core.Abstractions;
 using InMemoryDataBase.DataSanitizers.Abstractions;
+using InMemoryDataBase.Entities.Enums;
 using InMemoryDataBase.Exceptions;
-using InMemoryDataBase.Validators.Abstractions;
+using InMemoryDataBase.Validators.Services;
 
 namespace InMemoryDataBase.Core.Services;
 
-public class Database(
-    IPrimaryKeyValidator primaryKeyValidator,
-    IForeignKeyValidator foreignKeyValidator,
-    INullablePropertyValidator nullablePropertyValidator,
-    IDefaultValueSetter defaultValueSetter) : IDatabase
+public class Database(IDefaultValueSetter defaultValueSetter, IValidator validator) : IDatabase
 {
     private readonly Dictionary<string, List<object>> _entities  = new();
     private readonly Dictionary<string, string>       _entityIds = new();
@@ -25,11 +22,7 @@ public class Database(
         
         
         defaultValueSetter.Apply(entity);
-        
-        primaryKeyValidator.Validate(entity, _entities);
-        foreignKeyValidator.Validate(entity, _entities);
-        nullablePropertyValidator.Validate(entity);
-        
+        validator.Validate(entity,_entities,DataBaseAction.Save);
         
         if (_entities.TryGetValue(typeName, out var entityList))
         {
@@ -47,9 +40,8 @@ public class Database(
         var entityCopy = DeepCopy(entity)!;
         
         defaultValueSetter.Apply(entity);
+        validator.Validate(entity,_entities,DataBaseAction.Update);
         
-        foreignKeyValidator.Validate(entity, _entities);
-        nullablePropertyValidator.Validate(entity);
         
         var primaryProperty = GetPrimaryPropertyInfo<T>();
         
