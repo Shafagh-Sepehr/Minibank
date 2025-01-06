@@ -9,7 +9,7 @@ using InMemoryDataBase.Validators.Abstractions;
 
 namespace InMemoryDataBase.Core.Services;
 
-public class Database(IDefaultValueSetter defaultValueSetter, IValidator validator) : IDatabase
+public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator validator) : IShafaghDB
 {
     private readonly Dictionary<Type, List<object>> _entities  = new();
     private readonly Dictionary<string, string>     _entityIds = new();
@@ -83,7 +83,7 @@ public class Database(IDefaultValueSetter defaultValueSetter, IValidator validat
         
         if (_entities.TryGetValue(type, out var entityList))
         {
-            return entityList.Where(x => x is T).Cast<T>();
+            return entityList.Cast<T>();
         }
         else
         {
@@ -91,7 +91,7 @@ public class Database(IDefaultValueSetter defaultValueSetter, IValidator validat
         }
     }
     
-    public T? FetchById<T>(string id)
+    public T? FetchById<T>(string id) where T: class
     {
         var type = typeof(T);
         
@@ -106,10 +106,8 @@ public class Database(IDefaultValueSetter defaultValueSetter, IValidator validat
                 return DeepCopy((T)entityList[entityIndex]);
             }
         }
-        else
-        {
-            return default;
-        }
+        
+        return null;
     }
     
     private static int GetEntityIndex(List<object> entityList, PropertyInfo primaryProperty, string id) 
