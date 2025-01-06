@@ -10,6 +10,7 @@ public class ForeignKeyValidator : IForeignKeyValidator
     public void Validate<T>(T entity, IReadOnlyDictionary<string, List<object>> entities)
     {
         var properties = typeof(T).GetProperties();
+        
         foreach (var propertyInfo in properties)
         {
             if (propertyInfo.GetCustomAttribute(typeof(ForeignKeyAttribute), true) is not ForeignKeyAttribute foreignKeyAttribute)
@@ -18,19 +19,17 @@ public class ForeignKeyValidator : IForeignKeyValidator
             }
             
             var referenceType = foreignKeyAttribute.ReferenceType;
-            var referenceTypeName = referenceType.Name;
-            var propertyName = foreignKeyAttribute.PropertyName;
-            var referencePropertyInfo = referenceType.GetProperties().First(x => x.Name == propertyName);
+            var referencePropertyInfo = referenceType
+                .GetProperties()
+                .First(rp=>rp.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is  PrimaryKeyAttribute);
             
-            if (!entities.TryGetValue(referenceTypeName, out var referenceEntityList))
-            {
-                continue;
-            }
+            var referenceListExists = entities.TryGetValue(referenceType, out var referenceEntityList);
+            var referenceIdNotExists = referenceEntityList?.All(e => referencePropertyInfo.GetValue(e) != propertyInfo.GetValue(entity));
             
-            if (referenceEntityList.All(x => referencePropertyInfo.GetValue(x) != propertyInfo.GetValue(entity)))
+            if (!referenceListExists || referenceIdNotExists.GetValueOrDefault())
             {
                 throw new DatabaseException(
-                    $"Invalid foreign key, No `{referenceTypeName}` having value `{propertyInfo.GetValue(entity)}` for its `{propertyInfo.Name}` property found in the database");
+                    $"Invalid foreign key, No `{referenceType.Name}` having value `{propertyInfo.GetValue(entity)}` for its `{propertyInfo.Name}` property found in the database");
             }
         }
     }
