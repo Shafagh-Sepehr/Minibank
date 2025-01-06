@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Text;
 using InMemoryDataBase.Attributes;
 using InMemoryDataBase.Exceptions;
 using InMemoryDataBase.Validators.Abstractions;
@@ -8,9 +7,10 @@ namespace InMemoryDataBase.Validators.Services;
 
 public class PrimaryKeyValidator : IPrimaryKeyValidator
 {
-    public void Validate<T>(T entity, PropertyInfo[] properties,IReadOnlyDictionary<string, List<object>> entities)
+    public void Validate<T>(T entity, IReadOnlyDictionary<string, List<object>> entities)
     {
         var typeName = typeof(T).Name;
+        var properties = typeof(T).GetProperties();
         var primaryProperties = properties
             .Where(propertyInfo => propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is PrimaryKeyAttribute)
             .ToList();
@@ -33,11 +33,13 @@ public class PrimaryKeyValidator : IPrimaryKeyValidator
         {
             return;
         }
+        
         if (entityList.All(e => primaryProperty.GetValue(e) != primaryProperty.GetValue(entity)))
         {
             return;
         }
         
-        throw new DatabaseException($"Primary key must be unique, an entity with `{primaryProperty.PropertyType.Name}` `{primaryProperty.Name}` = `{primaryProperty.GetValue(entity)}` of type `{typeName}` is already present in the database");
+        throw new DatabaseException(
+            $"Primary key must be unique, an entity with `{primaryProperty.PropertyType.Name}` `{primaryProperty.Name}` = `{primaryProperty.GetValue(entity)}` of type `{typeName}` is already present in the database");
     }
 }

@@ -7,8 +7,9 @@ namespace InMemoryDataBase.Validators.Services;
 
 public class ForeignKeyValidator : IForeignKeyValidator
 {
-    public void Validate<T>(T entity, PropertyInfo[] properties,IReadOnlyDictionary<string, List<object>> entities)
+    public void Validate<T>(T entity, IReadOnlyDictionary<string, List<object>> entities)
     {
+        var properties = typeof(T).GetProperties();
         foreach (var propertyInfo in properties)
         {
             if (propertyInfo.GetCustomAttribute(typeof(ForeignKeyAttribute), true) is not ForeignKeyAttribute foreignKeyAttribute)

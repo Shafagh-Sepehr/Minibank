@@ -4,5 +4,5 @@ namespace InMemoryDataBase.Validators.Abstractions;
 
 public interface INullablePropertyValidator
 {
-    void Validate<T>(T entity, PropertyInfo[] properties);
+    void Validate<T>(T entity);
 }

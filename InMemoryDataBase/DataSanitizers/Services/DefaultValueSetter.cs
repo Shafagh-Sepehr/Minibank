@@ -7,8 +7,9 @@ namespace InMemoryDataBase.DataSanitizers.Services;
 
 public class DefaultValueSetter : IDefaultValueSetter
 {
-    public void Apply<T>(T entity, PropertyInfo[] properties)
+    public void Apply<T>(T entity)
     {
+        var properties = typeof(T).GetProperties();
         foreach (var propertyInfo in properties)
         {
             if (propertyInfo.GetCustomAttribute(typeof(DefaultValueAttribute), true) is not DefaultValueAttribute defaultValueAttribute)
@@ -16,13 +17,15 @@ public class DefaultValueSetter : IDefaultValueSetter
                 continue;
             }
             
-            if(defaultValueAttribute.DefaultValue.GetType() != propertyInfo.PropertyType)
+            if (defaultValueAttribute.DefaultValue.GetType() != propertyInfo.PropertyType)
             {
-                throw new DatabaseException($"the default value of property `{propertyInfo.Name}` must be of type `{propertyInfo.PropertyType.Name}`, but was `{defaultValueAttribute.DefaultValue.GetType()}` was given");
+                throw new DatabaseException(
+                    $"the default value of property `{propertyInfo.Name}` must be of type `{propertyInfo.PropertyType.Name}`, but was `{defaultValueAttribute.DefaultValue.GetType()}` was given");
             }
+            
             if (propertyInfo.GetValue(entity) == null)
             {
-                propertyInfo.SetValue(entity,defaultValueAttribute.DefaultValue);
+                propertyInfo.SetValue(entity, defaultValueAttribute.DefaultValue);
             }
         }
     }

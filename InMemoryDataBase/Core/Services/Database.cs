@@ -9,7 +9,11 @@ using InMemoryDataBase.Validators.Abstractions;
 
 namespace InMemoryDataBase.Core.Services;
 
-public class Database(IPrimaryKeyValidator primaryKeyValidator, IForeignKeyValidator foreignKeyValidator, INullablePropertyValidator nullablePropertyValidator, IDefaultValueSetter defaultValueSetter) : IDatabase
+public class Database(
+    IPrimaryKeyValidator primaryKeyValidator,
+    IForeignKeyValidator foreignKeyValidator,
+    INullablePropertyValidator nullablePropertyValidator,
+    IDefaultValueSetter defaultValueSetter) : IDatabase
 {
     private readonly Dictionary<string, List<object>> _entities  = new();
     private readonly Dictionary<string, string>       _entityIds = new();
@@ -20,11 +24,11 @@ public class Database(IPrimaryKeyValidator primaryKeyValidator, IForeignKeyValid
         var typeName = typeof(T).Name;
         var entityCopy = DeepCopy(entity)!;
         
-        var properties = typeof(T).GetProperties();
-        primaryKeyValidator.Validate(entity, properties, _entities);
-        foreignKeyValidator.Validate(entity, properties, _entities);
-        defaultValueSetter.Apply(entity, properties);
-        nullablePropertyValidator.Validate(entity, properties);
+        
+        defaultValueSetter.Apply(entity);
+        primaryKeyValidator.Validate(entity, _entities);
+        foreignKeyValidator.Validate(entity, _entities);
+        nullablePropertyValidator.Validate(entity);
         
         
         if (_entities.TryGetValue(typeName, out var entityList))
@@ -37,17 +41,15 @@ public class Database(IPrimaryKeyValidator primaryKeyValidator, IForeignKeyValid
         }
     }
     
-    private static T DeepCopy<T>(T entity) => Copier.Copy(entity) ?? throw new ArgumentException("entity cannot be copied by Copier.");
-    
     public void Update<T>(T entity)
     {
         var typeName = typeof(T).Name;
         var entityCopy = DeepCopy(entity)!;
         
         var properties = typeof(T).GetProperties();
-        foreignKeyValidator.Validate(entity, properties, _entities);
-        defaultValueSetter.Apply(entity, properties);
-        nullablePropertyValidator.Validate(entity, properties);
+        foreignKeyValidator.Validate(entity, _entities);
+        defaultValueSetter.Apply(entity);
+        nullablePropertyValidator.Validate(entity);
         
         var primaryProperties = properties
             .Where(propertyInfo => propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is PrimaryKeyAttribute)
@@ -72,7 +74,6 @@ public class Database(IPrimaryKeyValidator primaryKeyValidator, IForeignKeyValid
         }
         
         throw new DatabaseException(builder.ToString());
-        
     }
     
     public void Delete<T>(string id)
@@ -118,5 +119,5 @@ public class Database(IPrimaryKeyValidator primaryKeyValidator, IForeignKeyValid
         // throw new InvalidOperationException($"entity {id} of type {typeName} not found.");
         default;
     
-    
+    private static T DeepCopy<T>(T entity) => Copier.Copy(entity) ?? throw new ArgumentException("entity cannot be copied by Copier.");
 }
