@@ -15,6 +15,10 @@ public class PrimaryKeyValidator : IPrimaryKeyValidator
             .Where(propertyInfo => propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is PrimaryKeyAttribute)
             .ToList();
         
+        if (primaryProperties.Count == 0)
+        {
+            throw new DatabaseException($"At least one property must be primary key in {typeName}");
+        }
         if (!entities.TryGetValue(typeName, out var entityList))
         {
             return;
