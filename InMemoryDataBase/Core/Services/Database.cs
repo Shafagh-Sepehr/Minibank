@@ -25,6 +25,7 @@ public class Database(
         
         
         defaultValueSetter.Apply(entity);
+        
         primaryKeyValidator.Validate(entity, _entities);
         foreignKeyValidator.Validate(entity, _entities);
         nullablePropertyValidator.Validate(entity);
@@ -50,9 +51,7 @@ public class Database(
         foreignKeyValidator.Validate(entity, _entities);
         nullablePropertyValidator.Validate(entity);
         
-        var properties = typeof(T).GetProperties();
-        var primaryProperty = properties
-            .First(propertyInfo => propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is PrimaryKeyAttribute);
+        var primaryProperty = GetPrimaryPropertyInfo<T>();
         
         if (_entities.TryGetValue(typeName, out var entityList))
         {
@@ -72,9 +71,7 @@ public class Database(
     {
         var typeName = typeof(T).Name;
         
-        var properties = typeof(T).GetProperties();
-        var primaryProperty = properties
-            .First(propertyInfo => propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is PrimaryKeyAttribute);
+        var primaryProperty = GetPrimaryPropertyInfo<T>();
         
         if (_entities.TryGetValue(typeName, out var entityList))
         {
@@ -101,20 +98,28 @@ public class Database(
         }
     }
     
-    public T? FetchById<T>(string id) =>
-        // var typeName = typeof(T).Name;
-        //
-        // if (_entities.TryGetValue(typeName, out var entityList))
-        // {
-        //     var entity = entityList.Find(x => x.Id == id);
-        //     if (entity is T e)
-        //     {
-        //         return e;
-        //     }
-        // } 
-        //
-        // throw new InvalidOperationException($"entity {id} of type {typeName} not found.");
-        default;
+    public T? FetchById<T>(string id)
+    {
+        var typeName = typeof(T).Name;
+        
+        var primaryProperty = GetPrimaryPropertyInfo<T>();
+        
+        if (_entities.TryGetValue(typeName, out var entityList))
+        {
+            var entityIndex = entityList.FindIndex(e => (string)primaryProperty.GetValue(e)! == id);
+            return (T)entityList[entityIndex];
+        }
+        else
+        {
+            return default;
+        }
+    }
     
     private static T DeepCopy<T>(T entity) => Copier.Copy(entity) ?? throw new ArgumentException("entity cannot be copied by Copier.");
+    
+    private static PropertyInfo GetPrimaryPropertyInfo<T>()
+    {
+        var properties = typeof(T).GetProperties();
+        return properties.First(propertyInfo => propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is PrimaryKeyAttribute);
+    }
 }
