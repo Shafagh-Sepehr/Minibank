@@ -67,7 +67,7 @@ public class Database(IDefaultValueSetter defaultValueSetter, IValidator validat
         
         if (_entities.TryGetValue(typeName, out var entityList))
         {
-            var entityIndex = entityList.FindIndex(e => (string)primaryProperty.GetValue(e)! == id);
+            var entityIndex = GetEntityIndex(entityList, primaryProperty, id);
             entityList.RemoveAt(entityIndex);
         }
         else
@@ -98,7 +98,7 @@ public class Database(IDefaultValueSetter defaultValueSetter, IValidator validat
         
         if (_entities.TryGetValue(typeName, out var entityList))
         {
-            var entityIndex = entityList.FindIndex(e => (string)primaryProperty.GetValue(e)! == id);
+            var entityIndex = GetEntityIndex(entityList, primaryProperty, id);
             return (T)entityList[entityIndex];
         }
         else
@@ -106,6 +106,9 @@ public class Database(IDefaultValueSetter defaultValueSetter, IValidator validat
             return default;
         }
     }
+    
+    private static int GetEntityIndex(List<object> entityList, PropertyInfo primaryProperty, string id) 
+        => entityList.FindIndex(e => (string)primaryProperty.GetValue(e)! == id);
     
     private static T DeepCopy<T>(T entity) => Copier.Copy(entity) ?? throw new ArgumentException("entity cannot be copied by Copier.");
     
