@@ -15,29 +15,29 @@ public class PrimaryKeyValidator : IPrimaryKeyValidator
             .Where(propertyInfo => propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is PrimaryKeyAttribute)
             .ToList();
         
-        if (primaryProperties.Count == 0)
+        switch (primaryProperties.Count)
         {
-            throw new DatabaseException($"At least one property must be primary key in {typeName}");
+            case 0:
+                throw new DatabaseException($"you must have one string type marked with primary key attribute in {typeName}");
+            case > 1:
+                throw new DatabaseException($"you cannot have more than one string type marked with primary key attribute in {typeName}");
         }
+        
+        var primaryProperty = primaryProperties.First();
+        if (primaryProperty.PropertyType != typeof(string))
+        {
+            throw new DatabaseException($"the primary key property must be of type string in {typeName}");
+        }
+        
         if (!entities.TryGetValue(typeName, out var entityList))
         {
             return;
         }
-        if (false == entityList.Any(e => primaryProperties.All(p => p.GetValue(e) == p.GetValue(entity))))
+        if (entityList.All(e => primaryProperty.GetValue(e) != primaryProperty.GetValue(entity)))
         {
             return;
         }
         
-        var builder = new StringBuilder();
-        builder.Append("Primary key(s) must be unique, an entity with ");
-        
-        foreach (var propertyInfo in primaryProperties)
-        {
-            builder.Append($"[`{propertyInfo.PropertyType.Name}` `{propertyInfo.Name}` = `{propertyInfo.GetValue(entity)}` of type `{typeName}`], ");
-        }
-        
-        builder.Append(" is already present in the database");
-        
-        throw new DatabaseException(builder.ToString());
+        throw new DatabaseException($"Primary key must be unique, an entity with `{primaryProperty.PropertyType.Name}` `{primaryProperty.Name}` = `{primaryProperty.GetValue(entity)}` of type `{typeName}` is already present in the database");
     }
 }
