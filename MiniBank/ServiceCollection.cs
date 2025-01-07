@@ -40,6 +40,7 @@ internal static class ServiceCollection
         serviceCollector.AddSingleton<IValidator, Validator>();
         
         serviceCollector.AddSingleton<IDefaultValueSetter, DefaultValueSetter>();
+        serviceCollector.AddSingleton<IReferenceHandler, ReferenceHandler>();
         
         serviceCollector.AddTransient<IValidator<User>, UserValidator>();
         serviceCollector.AddTransient<IValidator<Account>, AccountValidator>();

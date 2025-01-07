@@ -15,7 +15,6 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
 {
     private readonly Dictionary<Type, List<IVersionable>> _entities        = new();
     private readonly Dictionary<string, string>           _entityIds       = new();
-    private readonly Dictionary<Type, HashSet<Type>>      _entityRelatives = new();
     private readonly List<Reference>                      _references      = new();
     
     public void Insert<T>(T entity) where T : IVersionable
@@ -24,7 +23,7 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
         var entityCopy = DeepCopy(entity);
         
         defaultValueSetter.Apply(entity);
-        validator.Validate(entity, _entities, _entityRelatives, DataBaseAction.Save);
+        validator.Validate(entity, _entities, _references, DataBaseAction.Save);
         referenceHandler.HandleInsert(entityCopy, _references);
         
         if (_entities.TryGetValue(type, out var entityList))
@@ -43,7 +42,7 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
         var entityCopy = DeepCopy(entity);
         
         defaultValueSetter.Apply(entity);
-        validator.Validate(entity, _entities, _entityRelatives, DataBaseAction.Update);
+        validator.Validate(entity, _entities, _references, DataBaseAction.Update);
         
         
         var primaryProperty = GetPrimaryPropertyInfo<T>();
@@ -60,7 +59,7 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
                         $"entity with type `{type.Name}` with primary key `{primaryProperty.GetValue(entity)}` was modified by another user, fetch the new entity and redo the process");
                 }
                 
-                referenceHandler.HandleUpdate(entityCopy, entityList[entityIndex], _references);
+                referenceHandler.HandleUpdate(entityCopy, (T)entityList[entityIndex], _references);
                 entityCopy.IncrementVersion();
                 entityList[entityIndex] = entityCopy;
                 return;
@@ -83,7 +82,7 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
             
             if (entityIndex != -1)
             {
-                validator.Validate((T)entityList[entityIndex], _entities, _entityRelatives, DataBaseAction.Delete);
+                validator.Validate((T)entityList[entityIndex], _entities, _references, DataBaseAction.Delete);
                 entityList.RemoveAt(entityIndex);
                 return;
             }

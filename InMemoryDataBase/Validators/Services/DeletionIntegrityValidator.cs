@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using InMemoryDataBase.Attributes;
+using InMemoryDataBase.Entities.Classes;
 using InMemoryDataBase.Exceptions;
 using InMemoryDataBase.Interfaces;
 using InMemoryDataBase.Validators.Abstractions;
@@ -9,52 +10,27 @@ namespace InMemoryDataBase.Validators.Services;
 
 public class DeletionIntegrityValidator : IDeletionIntegrityValidator
 {
-    public void Validate<T>(T entity, IReadOnlyDictionary<Type, List<IVersionable>> entities, IReadOnlyDictionary<Type, HashSet<Type>> entityRelatives)
+    public void Validate<T>(T entity, IReadOnlyDictionary<Type, List<IVersionable>> entities, List<Reference> references)
     {
+        
         var type = typeof(T);
-        if (!entityRelatives.TryGetValue(type, out var referenceTypes))
-        {
-            return;
-        }
         var properties = type.GetProperties();
         var primaryProperty = properties
             .First(propertyInfo => propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is PrimaryKeyAttribute);
+        var reference = references.FirstOrDefault(r => r.MasterType == type && r.MasterId == (string)primaryProperty.GetValue(entity)!);
         
-        foreach (var referenceType in referenceTypes)
+        if (reference == null)
         {
-            var referenceProperties = referenceType.GetProperties()
-                .Where(p =>
-                p.GetCustomAttribute(typeof(ForeignKeyAttribute), true) is ForeignKeyAttribute f && 
-                ForeignKeyDoesNotReferenceThisType(f, type)
-                );
-            
-            foreach (var propertyInfo in referenceProperties)
-            {
-                if (!entities.TryGetValue(referenceType, out var referenceEntityList))
-                {
-                    continue;
-                }
-                if (referenceEntityList.Any(x => propertyInfo.GetValue(x) == primaryProperty.GetValue(entity)))
-                {
-                    throw new DatabaseException($"Cannot delete an entity which is referenced by other entities, `{type.Name}` with primary key `{primaryProperty.Name}` with value `{primaryProperty.GetValue(entity)}` is referenced by a `{referenceType.Name}`'s `{propertyInfo.Name}` property");
-                }
-            }
+            return;
         }
+        
+        var slaveProperty = reference.SlaveType.GetProperties()
+            .First(p =>
+                p.GetCustomAttribute(typeof(ForeignKeyAttribute), true) is ForeignKeyAttribute fkAttribute &&
+                fkAttribute.ReferenceType == type
+            );
+        
+        throw new DatabaseException(
+            $"Cannot delete an entity which is referenced by other entities, `{type.Name}` with primary key `{primaryProperty.Name}` with value `{primaryProperty.GetValue(entity)}` is referenced by a `{reference.SlaveType.Name}`'s `{slaveProperty.Name}` property");
     }
-    
-    private bool PropertyIsAForeignKey(PropertyInfo propertyInfo,[MaybeNullWhen(false)] out ForeignKeyAttribute foreignKeyAttribute)
-    {
-        if (propertyInfo.GetCustomAttribute(typeof(ForeignKeyAttribute), true) is ForeignKeyAttribute foreignKeyAttr)
-        {
-            foreignKeyAttribute = foreignKeyAttr;
-            return true;
-        }
-        else
-        {
-            foreignKeyAttribute = null;
-            return false;
-        }
-    }
-    
-    private bool ForeignKeyDoesNotReferenceThisType(ForeignKeyAttribute foreignKeyAttribute, Type type) => foreignKeyAttribute.ReferenceType != type;
 }

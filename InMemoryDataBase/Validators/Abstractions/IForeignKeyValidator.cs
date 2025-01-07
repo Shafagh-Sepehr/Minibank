@@ -4,5 +4,5 @@ namespace InMemoryDataBase.Validators.Abstractions;
 
 public interface IForeignKeyValidator
 {
-    void Validate<T>(T entity, IReadOnlyDictionary<Type, List<IVersionable>> entities, Dictionary<Type, HashSet<Type>> entityRelatives);
+    void Validate<T>(T entity, IReadOnlyDictionary<Type, List<IVersionable>> entities);
 }

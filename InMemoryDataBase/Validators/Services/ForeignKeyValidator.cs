@@ -8,8 +8,7 @@ namespace InMemoryDataBase.Validators.Services;
 
 public class ForeignKeyValidator : IForeignKeyValidator
 {
-    public void Validate<T>(T entity, IReadOnlyDictionary<Type, List<IVersionable>> entities,
-                            Dictionary<Type, HashSet<Type>> entityRelatives)
+    public void Validate<T>(T entity, IReadOnlyDictionary<Type, List<IVersionable>> entities)
     {
         var type = typeof(T);
         var properties = type.GetProperties();
@@ -33,15 +32,6 @@ public class ForeignKeyValidator : IForeignKeyValidator
             {
                 throw new DatabaseException(
                     $"Invalid foreign key, No `{referenceType.Name}` having value `{propertyInfo.GetValue(entity)}` for its `{propertyInfo.Name}` property found in the database");
-            }
-            
-            if (entityRelatives.TryGetValue(referenceType, out var relativesSet))
-            {
-                relativesSet.Add(type);
-            }
-            else
-            {
-                entityRelatives[referenceType] = [type,];
             }
         }
     }
