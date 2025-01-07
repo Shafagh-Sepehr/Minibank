@@ -12,8 +12,9 @@ namespace InMemoryDataBase.Core.Services;
 
 public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator validator) : IShafaghDB
 {
-    private readonly Dictionary<Type, List<IVersionable>> _entities  = new();
-    private readonly Dictionary<string, string>           _entityIds = new();
+    private readonly Dictionary<Type, List<IVersionable>> _entities        = new();
+    private readonly Dictionary<string, string>           _entityIds       = new();
+    private readonly Dictionary<Type, HashSet<Type>>      _entityRelatives = new();
     
     public void Insert<T>(T entity) where T : IVersionable
     {
@@ -21,7 +22,7 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
         var entityCopy = DeepCopy(entity);
         
         defaultValueSetter.Apply(entity);
-        validator.Validate(entity, _entities, DataBaseAction.Save);
+        validator.Validate(entity, _entities, _entityRelatives, DataBaseAction.Save);
         
         if (_entities.TryGetValue(type, out var entityList))
         {
@@ -39,7 +40,7 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
         var entityCopy = DeepCopy(entity);
         
         defaultValueSetter.Apply(entity);
-        validator.Validate(entity, _entities, DataBaseAction.Update);
+        validator.Validate(entity, _entities, _entityRelatives, DataBaseAction.Update);
         
         var primaryProperty = GetPrimaryPropertyInfo<T>();
         
@@ -51,7 +52,8 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
             {
                 if (entityList[entityIndex].Version != entity.Version)
                 {
-                    throw new DatabaseException($"entity with type {type.Name} with primary key {primaryProperty.GetValue(entity)} was modified by another user, fetch the new entity and redo the process");
+                    throw new DatabaseException(
+                        $"entity with type `{type.Name}` with primary key `{primaryProperty.GetValue(entity)}` was modified by another user, fetch the new entity and redo the process");
                 }
                 
                 entityCopy.IncrementVersion();
@@ -76,6 +78,7 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
             
             if (entityIndex != -1)
             {
+                validator.Validate((T)entityList[entityIndex], _entities, _entityRelatives, DataBaseAction.Delete);
                 entityList.RemoveAt(entityIndex);
                 return;
             }
