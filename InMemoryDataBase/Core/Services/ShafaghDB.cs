@@ -3,6 +3,7 @@ using DeepCopier;
 using InMemoryDataBase.Attributes;
 using InMemoryDataBase.Core.Abstractions;
 using InMemoryDataBase.DataSanitizers.Abstractions;
+using InMemoryDataBase.Entities.Classes;
 using InMemoryDataBase.Entities.Enums;
 using InMemoryDataBase.Exceptions;
 using InMemoryDataBase.Interfaces;
@@ -10,11 +11,12 @@ using InMemoryDataBase.Validators.Abstractions;
 
 namespace InMemoryDataBase.Core.Services;
 
-public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator validator) : IShafaghDB
+public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator validator, IReferenceInsertHandler referenceInsertHandler) : IShafaghDB
 {
     private readonly Dictionary<Type, List<IVersionable>> _entities        = new();
     private readonly Dictionary<string, string>           _entityIds       = new();
     private readonly Dictionary<Type, HashSet<Type>>      _entityRelatives = new();
+    private readonly List<Reference>                      _references      = new();
     
     public void Insert<T>(T entity) where T : IVersionable
     {
@@ -23,6 +25,7 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
         
         defaultValueSetter.Apply(entity);
         validator.Validate(entity, _entities, _entityRelatives, DataBaseAction.Save);
+        referenceInsertHandler.Handle(entityCopy, _references);
         
         if (_entities.TryGetValue(type, out var entityList))
         {
