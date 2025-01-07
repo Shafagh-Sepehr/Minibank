@@ -46,8 +46,15 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
         if (_entities.TryGetValue(type, out var entityList))
         {
             var entityIndex = entityList.FindIndex(e => primaryProperty.GetValue(e) == primaryProperty.GetValue(entity));
+            
             if (entityIndex != -1)
             {
+                if (entityList[entityIndex].Version != entity.Version)
+                {
+                    throw new DatabaseException($"entity with type {type.Name} with primary key {primaryProperty.GetValue(entity)} was modified by another user, fetch the new entity and redo the process");
+                }
+                
+                entityCopy.IncrementVersion();
                 entityList[entityIndex] = entityCopy;
                 return;
             }

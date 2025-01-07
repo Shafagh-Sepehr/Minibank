@@ -2,5 +2,6 @@
 
 public interface IVersionable
 {
-    public int Version { get; init; }
+    int Version { get; set; }
+    void IncrementVersion() => Version++;
 }
