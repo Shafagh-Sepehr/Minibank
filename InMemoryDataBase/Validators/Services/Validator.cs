@@ -22,8 +22,8 @@ public class Validator(
                 foreignKeyValidator.Validate(entity, entities);
                 break;
             case DataBaseAction.Update:
-                foreignKeyValidator.Validate(entity, entities);
                 nullablePropertyValidator.Validate(entity);
+                foreignKeyValidator.Validate(entity, entities);
                 break;
             case DataBaseAction.Delete:
                 deletionIntegrityValidator.Validate(entity, entities, references);
