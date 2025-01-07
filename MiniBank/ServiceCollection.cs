@@ -37,6 +37,7 @@ internal static class ServiceCollection
         serviceCollector.AddSingleton<IForeignKeyValidator, ForeignKeyValidator>();
         serviceCollector.AddSingleton<IDeletionIntegrityValidator, DeletionIntegrityValidator>();
         serviceCollector.AddSingleton<INullablePropertyValidator, NullablePropertyValidator>();
+        serviceCollector.AddSingleton<IAttributeValidator, AttributeValidator>();
         serviceCollector.AddSingleton<IValidator, Validator>();
         
         serviceCollector.AddSingleton<IDefaultValueSetter, DefaultValueSetter>();

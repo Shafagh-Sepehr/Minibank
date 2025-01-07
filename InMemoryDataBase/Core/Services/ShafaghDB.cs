@@ -8,10 +8,11 @@ using InMemoryDataBase.Entities.Enums;
 using InMemoryDataBase.Exceptions;
 using InMemoryDataBase.Interfaces;
 using InMemoryDataBase.Validators.Abstractions;
+using InMemoryDataBase.Validators.Services;
 
 namespace InMemoryDataBase.Core.Services;
 
-public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator validator, IReferenceHandler referenceHandler) : IShafaghDB
+public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator validator, IReferenceHandler referenceHandler, IAttributeValidator attributeValidator) : IShafaghDB
 {
     private readonly Dictionary<Type, List<IVersionable>> _entities        = new();
     private readonly Dictionary<string, string>           _entityIds       = new();
@@ -32,6 +33,7 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
         }
         else
         {
+            attributeValidator.Validate<T>();
             _entities[type] = [entityCopy,];
         }
     }
