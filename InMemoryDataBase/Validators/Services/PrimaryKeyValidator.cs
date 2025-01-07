@@ -1,13 +1,14 @@
 ﻿using System.Reflection;
 using InMemoryDataBase.Attributes;
 using InMemoryDataBase.Exceptions;
+using InMemoryDataBase.Interfaces;
 using InMemoryDataBase.Validators.Abstractions;
 
 namespace InMemoryDataBase.Validators.Services;
 
 public class PrimaryKeyValidator : IPrimaryKeyValidator
 {
-    public void Validate<T>(T entity, IReadOnlyDictionary<Type, List<object>> entities)
+    public void Validate<T>(T entity, IReadOnlyDictionary<Type, List<IVersionable>> entities)
     {
         var type = typeof(T);
         var properties = typeof(T).GetProperties();

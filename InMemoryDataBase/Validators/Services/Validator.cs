@@ -1,5 +1,6 @@
 ﻿using InMemoryDataBase.Entities.Enums;
 using InMemoryDataBase.Exceptions;
+using InMemoryDataBase.Interfaces;
 using InMemoryDataBase.Validators.Abstractions;
 
 namespace InMemoryDataBase.Validators.Services;
@@ -9,7 +10,7 @@ public class Validator(
     IForeignKeyValidator foreignKeyValidator,
     INullablePropertyValidator nullablePropertyValidator) : IValidator
 {
-    public void Validate<T>(T entity, IReadOnlyDictionary<Type, List<object>> entities, DataBaseAction dataBaseAction)
+    public void Validate<T>(T entity, IReadOnlyDictionary<Type, List<IVersionable>> entities, DataBaseAction dataBaseAction)
     {
         switch (dataBaseAction)
         {

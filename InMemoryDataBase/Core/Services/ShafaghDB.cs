@@ -5,23 +5,23 @@ using InMemoryDataBase.Core.Abstractions;
 using InMemoryDataBase.DataSanitizers.Abstractions;
 using InMemoryDataBase.Entities.Enums;
 using InMemoryDataBase.Exceptions;
+using InMemoryDataBase.Interfaces;
 using InMemoryDataBase.Validators.Abstractions;
 
 namespace InMemoryDataBase.Core.Services;
 
 public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator validator) : IShafaghDB
 {
-    private readonly Dictionary<Type, List<object>> _entities  = new();
-    private readonly Dictionary<string, string>     _entityIds = new();
+    private readonly Dictionary<Type, List<IVersionable>> _entities  = new();
+    private readonly Dictionary<string, string>           _entityIds = new();
     
-    
-    public void Insert<T>(T entity)
+    public void Insert<T>(T entity) where T : IVersionable
     {
         var type = typeof(T);
-        var entityCopy = DeepCopy(entity)!;
+        var entityCopy = DeepCopy(entity);
         
         defaultValueSetter.Apply(entity);
-        validator.Validate(entity,_entities,DataBaseAction.Save);
+        validator.Validate(entity, _entities, DataBaseAction.Save);
         
         if (_entities.TryGetValue(type, out var entityList))
         {
@@ -33,13 +33,13 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
         }
     }
     
-    public void Update<T>(T entity)
+    public void Update<T>(T entity) where T : IVersionable
     {
         var type = typeof(T);
-        var entityCopy = DeepCopy(entity)!;
+        var entityCopy = DeepCopy(entity);
         
         defaultValueSetter.Apply(entity);
-        validator.Validate(entity,_entities,DataBaseAction.Update);
+        validator.Validate(entity, _entities, DataBaseAction.Update);
         
         var primaryProperty = GetPrimaryPropertyInfo<T>();
         
@@ -57,7 +57,7 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
             $"Update failed, no entity found with this primary key: `{primaryProperty.PropertyType.Name}` `{primaryProperty.Name}` = `{primaryProperty.GetValue(entity)}` of type `{type.Name}`");
     }
     
-    public void Delete<T>(string id)
+    public void Delete<T>(string id) where T : IVersionable
     {
         var type = typeof(T);
         
@@ -77,7 +77,7 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
         throw new InvalidOperationException($"{type.Name} having {primaryProperty.Name} with value {id} was not found");
     }
     
-    public IEnumerable<T> FetchAll<T>()
+    public IEnumerable<T> FetchAll<T>() where T : IVersionable
     {
         var type = typeof(T);
         
@@ -91,7 +91,7 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
         }
     }
     
-    public T? FetchById<T>(string id) where T: class
+    public T? FetchById<T>(string id) where T : class, IVersionable
     {
         var type = typeof(T);
         
@@ -101,7 +101,7 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
         {
             var entityIndex = GetEntityIndex(entityList, primaryProperty, id);
             
-            if(entityIndex != -1)
+            if (entityIndex != -1)
             {
                 return DeepCopy((T)entityList[entityIndex]);
             }
@@ -110,7 +110,7 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
         return null;
     }
     
-    private static int GetEntityIndex(List<object> entityList, PropertyInfo primaryProperty, string id) 
+    private static int GetEntityIndex(List<IVersionable> entityList, PropertyInfo primaryProperty, string id)
         => entityList.FindIndex(e => (string)primaryProperty.GetValue(e)! == id);
     
     private static T DeepCopy<T>(T entity) => Copier.Copy(entity) ?? throw new ArgumentException("entity cannot be copied by Copier");
