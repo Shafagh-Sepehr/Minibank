@@ -26,6 +26,12 @@ public class ForeignKeyValidator : IForeignKeyValidator
                 .First(rp => rp.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is PrimaryKeyAttribute);
             
             var referenceListExists = entities.TryGetValue(referenceType, out var referenceEntityList);
+            
+            if (propertyInfo.GetValue(entity) == null)
+            {
+                throw new DatabaseException($"Invalid foreign key, `{type.Name}` can't have `null` as it's `{propertyInfo.Name}`");
+            }
+            
             var referenceIdNotExists = referenceEntityList?.All(e => referencePropertyInfo.GetValue(e) != propertyInfo.GetValue(entity));
             
             if (!referenceListExists || referenceIdNotExists.GetValueOrDefault())
