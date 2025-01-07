@@ -11,7 +11,7 @@ using InMemoryDataBase.Validators.Abstractions;
 
 namespace InMemoryDataBase.Core.Services;
 
-public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator validator, IReferenceInsertHandler referenceInsertHandler) : IShafaghDB
+public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator validator, IReferenceHandler referenceHandler) : IShafaghDB
 {
     private readonly Dictionary<Type, List<IVersionable>> _entities        = new();
     private readonly Dictionary<string, string>           _entityIds       = new();
@@ -25,7 +25,7 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
         
         defaultValueSetter.Apply(entity);
         validator.Validate(entity, _entities, _entityRelatives, DataBaseAction.Save);
-        referenceInsertHandler.Handle(entityCopy, _references);
+        referenceHandler.HandleInsert(entityCopy, _references);
         
         if (_entities.TryGetValue(type, out var entityList))
         {
@@ -45,6 +45,7 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
         defaultValueSetter.Apply(entity);
         validator.Validate(entity, _entities, _entityRelatives, DataBaseAction.Update);
         
+        
         var primaryProperty = GetPrimaryPropertyInfo<T>();
         
         if (_entities.TryGetValue(type, out var entityList))
@@ -59,6 +60,7 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
                         $"entity with type `{type.Name}` with primary key `{primaryProperty.GetValue(entity)}` was modified by another user, fetch the new entity and redo the process");
                 }
                 
+                referenceHandler.HandleUpdate(entityCopy, entityList[entityIndex], _references);
                 entityCopy.IncrementVersion();
                 entityList[entityIndex] = entityCopy;
                 return;
