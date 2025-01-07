@@ -22,17 +22,14 @@ public class DeletionIntegrityValidator : IDeletionIntegrityValidator
         
         foreach (var referenceType in referenceTypes)
         {
-            var referenceProperties = referenceType.GetProperties();
+            var referenceProperties = referenceType.GetProperties()
+                .Where(p =>
+                p.GetCustomAttribute(typeof(ForeignKeyAttribute), true) is ForeignKeyAttribute f && 
+                ForeignKeyDoesNotReferenceThisType(f, type)
+                );
+            
             foreach (var propertyInfo in referenceProperties)
             {
-                if (!PropertyIsAForeignKey(propertyInfo,out var foreignKeyAttribute))
-                {
-                    continue;
-                }
-                if (ForeignKeyReferencesThisType(foreignKeyAttribute, type))
-                {
-                    continue;
-                }
                 if (!entities.TryGetValue(referenceType, out var referenceEntityList))
                 {
                     continue;
@@ -59,5 +56,5 @@ public class DeletionIntegrityValidator : IDeletionIntegrityValidator
         }
     }
     
-    private bool ForeignKeyReferencesThisType(ForeignKeyAttribute foreignKeyAttribute, Type type) => foreignKeyAttribute.ReferenceType != type;
+    private bool ForeignKeyDoesNotReferenceThisType(ForeignKeyAttribute foreignKeyAttribute, Type type) => foreignKeyAttribute.ReferenceType != type;
 }
