@@ -90,7 +90,7 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
         
         if (_entities.TryGetValue(type, out var entityList))
         {
-            return entityList.Cast<T>();
+            return entityList.Cast<T>().Select(DeepCopy);
         }
         else
         {
