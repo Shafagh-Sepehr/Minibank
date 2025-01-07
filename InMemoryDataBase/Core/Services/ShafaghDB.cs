@@ -83,6 +83,7 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
             if (entityIndex != -1)
             {
                 validator.Validate((T)entityList[entityIndex], _entities, _references, DataBaseAction.Delete);
+                referenceHandler.HandleDelete((T)entityList[entityIndex], _references);
                 entityList.RemoveAt(entityIndex);
                 return;
             }

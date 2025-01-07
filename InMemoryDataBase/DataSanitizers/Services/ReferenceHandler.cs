@@ -65,6 +65,16 @@ public class ReferenceHandler : IReferenceHandler
         }
     }
     
+    public void HandleDelete<T>(T entity, List<Reference> references)
+    {
+        var type = typeof(T);
+        var properties = type.GetProperties();
+        var primaryProperty = properties
+            .First(p => p.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is PrimaryKeyAttribute);
+        
+        references.RemoveAll(r=> r.SlaveId == (string)primaryProperty.GetValue(entity)! && r.SlaveType == type);
+    }
+    
     private bool RefStillTheSame<T>(T entity, T oldEntity, PropertyInfo foreignProperty)
         => foreignProperty.GetValue(entity) == foreignProperty.GetValue(oldEntity);
 }
