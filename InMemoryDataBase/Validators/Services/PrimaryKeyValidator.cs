@@ -30,6 +30,11 @@ public class PrimaryKeyValidator : IPrimaryKeyValidator
             throw new DatabaseException($"the primary key property must be of type string in {type.Name}");
         }
         
+        if (primaryProperty.GetValue(entity) == null)
+        {
+            throw new DatabaseException($"Invalid primary key, `{type.Name}` can't have `null` as it's `{primaryProperty.Name}`");
+        }
+        
         if (!entities.TryGetValue(type, out var entityList))
         {
             return;
