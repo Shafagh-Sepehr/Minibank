@@ -26,9 +26,7 @@ public class ForeignKeyValidator : IForeignKeyValidator
             }
             
             var referenceType = foreignKeyAttribute.ReferenceType;
-            var referencePropertyInfo = referenceType
-                .GetProperties()
-                .First(rp => rp.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is PrimaryKeyAttribute);
+            var referencePropertyInfo = Helper.GetPrimaryPropertyInfo(referenceType);
             
             var referenceListExists = entities.TryGetValue(referenceType, out var referenceEntityList);
             

@@ -13,9 +13,7 @@ public class DeletionIntegrityValidator : IDeletionIntegrityValidator
     public void Validate<T>(T entity, IReadOnlyDictionary<Type, List<IVersionable>> entities, List<Reference> references)
     {
         var type = typeof(T);
-        var properties = type.GetProperties();
-        var primaryProperty = properties
-            .First(propertyInfo => propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is PrimaryKeyAttribute);
+        var primaryProperty = Helper.GetPrimaryPropertyInfo(type);
         var reference = references.FirstOrDefault(r => r.MasterType == type && r.MasterId == (string)primaryProperty.GetValue(entity)!);
         
         if (reference == null)

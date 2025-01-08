@@ -11,7 +11,7 @@ public class ReferenceInsertHandler : IReferenceInsertHandler
     {
         var type = typeof(T);
         var properties = type.GetProperties();
-        var primaryProperty = GetPrimaryPropertyInfo<T>();
+        var primaryProperty = Helper.GetPrimaryPropertyInfo(type);
         
         var foreignPropertyAndMasterTypePairs = properties
             .Select(p => new
@@ -30,11 +30,5 @@ public class ReferenceInsertHandler : IReferenceInsertHandler
                 SlaveId = (string)primaryProperty.GetValue(entity)!,
             });
         }
-    }
-    
-    private static PropertyInfo GetPrimaryPropertyInfo<T>()
-    {
-        var properties = typeof(T).GetProperties();
-        return properties.First(propertyInfo => propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is PrimaryKeyAttribute);
     }
 }

@@ -50,7 +50,7 @@ public class ShafaghDB(
         validator.ValidateUpdate(entity, _entities);
         
         
-        var primaryProperty = GetPrimaryPropertyInfo<T>();
+        var primaryProperty = Helper.GetPrimaryPropertyInfo(type);
         
         if (_entities.TryGetValue(type, out var entityList))
         {
@@ -79,7 +79,7 @@ public class ShafaghDB(
     {
         var type = typeof(T);
         
-        var primaryProperty = GetPrimaryPropertyInfo<T>();
+        var primaryProperty = Helper.GetPrimaryPropertyInfo(type);
         
         if (_entities.TryGetValue(type, out var entityList))
         {
@@ -115,7 +115,7 @@ public class ShafaghDB(
     {
         var type = typeof(T);
         
-        var primaryProperty = GetPrimaryPropertyInfo<T>();
+        var primaryProperty = Helper.GetPrimaryPropertyInfo(type);
         
         if (_entities.TryGetValue(type, out var entityList))
         {
@@ -134,10 +134,4 @@ public class ShafaghDB(
         => entityList.FindIndex(e => (string)primaryProperty.GetValue(e)! == id);
     
     private static T DeepCopy<T>(T entity) => Copier.Copy(entity) ?? throw new ArgumentException("entity cannot be copied by Copier");
-    
-    private static PropertyInfo GetPrimaryPropertyInfo<T>()
-    {
-        var properties = typeof(T).GetProperties();
-        return properties.First(propertyInfo => propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is PrimaryKeyAttribute);
-    }
 }

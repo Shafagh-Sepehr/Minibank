@@ -11,7 +11,7 @@ public class ReferenceUpdateHandler : IReferenceUpdateHandler
     {
         var type = typeof(T);
         var properties = type.GetProperties();
-        var primaryProperty = GetPrimaryPropertyInfo<T>();
+        var primaryProperty = Helper.GetPrimaryPropertyInfo(type);
         
         var foreignPropertyAndMasterTypePairs = properties
             .Select(p => new
@@ -40,10 +40,4 @@ public class ReferenceUpdateHandler : IReferenceUpdateHandler
     
     private static bool RefStillTheSame<T>(T entity, T oldEntity, PropertyInfo foreignProperty)
         => foreignProperty.GetValue(entity) == foreignProperty.GetValue(oldEntity);
-    
-    private static PropertyInfo GetPrimaryPropertyInfo<T>()
-    {
-        var properties = typeof(T).GetProperties();
-        return properties.First(propertyInfo => propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is PrimaryKeyAttribute);
-    }
 }
