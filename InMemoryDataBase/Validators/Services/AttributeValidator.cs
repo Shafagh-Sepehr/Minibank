@@ -35,7 +35,7 @@ public class AttributeValidator : IAttributeValidator
             
             if (count > 1)
             {
-                throw new DatabaseException($"type {type}'s {propertyInfo.Name} property can't have more than one attribute");
+                throw new DatabaseException($"type `{type}`'s `{propertyInfo.Name}` property can't have more than one attribute");
             }
         }
     }

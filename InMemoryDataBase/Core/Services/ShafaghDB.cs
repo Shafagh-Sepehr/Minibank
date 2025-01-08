@@ -91,7 +91,7 @@ public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator valida
             }
         }
         
-        throw new InvalidOperationException($"{type.Name} having {primaryProperty.Name} with value {id} was not found");
+        throw new InvalidOperationException($"`{type.Name}` having `{primaryProperty.Name}` with value `{id}` was not found");
     }
     
     public IEnumerable<T> FetchAll<T>() where T : IVersionable

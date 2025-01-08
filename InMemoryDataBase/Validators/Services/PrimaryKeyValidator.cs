@@ -19,15 +19,15 @@ public class PrimaryKeyValidator : IPrimaryKeyValidator
         switch (primaryProperties.Count)
         {
             case 0:
-                throw new DatabaseException($"you must have one string type marked with primary key attribute in {type.Name}");
+                throw new DatabaseException($"you must have one string type marked with primary key attribute in `{type.Name}`");
             case > 1:
-                throw new DatabaseException($"you cannot have more than one string type marked with primaryKeyAttribute in {type.Name}");
+                throw new DatabaseException($"you cannot have more than one string type marked with primaryKeyAttribute in `{type.Name}`");
         }
         
         var primaryProperty = primaryProperties.First();
         if (primaryProperty.PropertyType != typeof(string))
         {
-            throw new DatabaseException($"the primary key property must be of type string in {type.Name}");
+            throw new DatabaseException($"the primary key property must be of type string in `{type.Name}`");
         }
         
         if (primaryProperty.GetValue(entity) == null)
