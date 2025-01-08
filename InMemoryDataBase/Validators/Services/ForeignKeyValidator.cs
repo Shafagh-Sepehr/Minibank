@@ -20,6 +20,11 @@ public class ForeignKeyValidator : IForeignKeyValidator
                 continue;
             }
             
+            if (propertyInfo.PropertyType != typeof(string))
+            {
+                throw new DatabaseException($"foreign key property `{propertyInfo.Name}` must be of type string in `{type.Name}`");
+            }
+            
             var referenceType = foreignKeyAttribute.ReferenceType;
             var referencePropertyInfo = referenceType
                 .GetProperties()
