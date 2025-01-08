@@ -25,16 +25,15 @@ public class ForeignKeyValidator : IForeignKeyValidator
                 throw new DatabaseException($"foreign key property `{propertyInfo.Name}` must be of type string in `{type.Name}`");
             }
             
+            if (propertyInfo.GetValue(entity) == null)
+            {
+                continue;
+            }
+            
             var referenceType = foreignKeyAttribute.ReferenceType;
             var referencePropertyInfo = Helper.GetPrimaryPropertyInfo(referenceType);
             
             var referenceListExists = entities.TryGetValue(referenceType, out var referenceEntityList);
-            
-            if (propertyInfo.GetValue(entity) == null)
-            {
-                throw new DatabaseException($"Invalid foreign key, `{type.Name}` can't have `null` as it's `{propertyInfo.Name}`");
-            }
-            
             var referenceIdNotExists = referenceEntityList?.All(e => referencePropertyInfo.GetValue(e) != propertyInfo.GetValue(entity));
             
             if (!referenceListExists || referenceIdNotExists.GetValueOrDefault())

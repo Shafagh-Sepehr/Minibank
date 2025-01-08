@@ -19,7 +19,7 @@ public class ReferenceInsertHandler : IReferenceInsertHandler
             {
                 MasterType = (p.GetCustomAttribute(typeof(ForeignKeyAttribute), true) as ForeignKeyAttribute)?.ReferenceType,
                 ForeignProperty = p,
-            }).Where(pair => pair.MasterType != null);
+            }).Where(pair => pair.MasterType != null && pair.ForeignProperty.GetValue(entity) != null);
         
         foreach (var pair in foreignPropertyAndMasterTypePairs)
         {

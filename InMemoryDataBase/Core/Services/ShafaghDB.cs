@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using DeepCopier;
-using InMemoryDataBase.Attributes;
 using InMemoryDataBase.Core.Abstractions;
 using InMemoryDataBase.DataSanitizers.Abstractions;
 using InMemoryDataBase.DataSanitizers.ReferenceHandlers.Abstractions;
@@ -103,7 +102,12 @@ public class ShafaghDB(
         
         if (_entities.TryGetValue(type, out var entityList))
         {
-            return entityList.Cast<T>().Select(DeepCopy);
+            return entityList.Cast<T>().Select(e =>
+            {
+                var copied = DeepCopy(e);
+                copied.Version = e.Version;
+                return copied;
+            });
         }
         else
         {
@@ -123,7 +127,9 @@ public class ShafaghDB(
             
             if (entityIndex != -1)
             {
-                return DeepCopy((T)entityList[entityIndex]);
+                var copied = DeepCopy((T)entityList[entityIndex]);
+                copied.Version = entityList[entityIndex].Version;
+                return copied;
             }
         }
         
