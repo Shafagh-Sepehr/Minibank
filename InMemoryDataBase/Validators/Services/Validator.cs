@@ -1,6 +1,4 @@
 ﻿using InMemoryDataBase.Entities.Classes;
-using InMemoryDataBase.Entities.Enums;
-using InMemoryDataBase.Exceptions;
 using InMemoryDataBase.Interfaces;
 using InMemoryDataBase.Validators.Abstractions;
 
@@ -12,26 +10,21 @@ public class Validator(
     INullablePropertyValidator nullablePropertyValidator,
     IDeletionIntegrityValidator deletionIntegrityValidator) : IValidator
 {
-    public void Validate<T>(T entity, IReadOnlyDictionary<Type, List<IVersionable>> entities, List<Reference> references, DataBaseAction dataBaseAction)
+    public void ValidateInsert<T>(T entity, IReadOnlyDictionary<Type, List<IVersionable>> entities)
     {
-        switch (dataBaseAction)
-        {
-            case DataBaseAction.Save:
-                primaryKeyValidator.Validate(entity, entities);
-                nullablePropertyValidator.Validate(entity);
-                foreignKeyValidator.Validate(entity, entities);
-                break;
-            case DataBaseAction.Update:
-                nullablePropertyValidator.Validate(entity);
-                foreignKeyValidator.Validate(entity, entities);
-                break;
-            case DataBaseAction.Delete:
-                deletionIntegrityValidator.Validate(entity, entities, references);
-                break;
-            default:
-                throw new DatabaseException("Wrong invocation of Validator in Database");
-        }
-        
-        
+        primaryKeyValidator.Validate(entity, entities);
+        nullablePropertyValidator.Validate(entity);
+        foreignKeyValidator.Validate(entity, entities);
+    }
+    
+    public void ValidateUpdate<T>(T entity, IReadOnlyDictionary<Type, List<IVersionable>> entities)
+    {
+        nullablePropertyValidator.Validate(entity);
+        foreignKeyValidator.Validate(entity, entities);
+    }
+    
+    public void ValidateDelete<T>(T entity, IReadOnlyDictionary<Type, List<IVersionable>> entities, List<Reference> references)
+    {
+        deletionIntegrityValidator.Validate(entity, entities, references);
     }
 }

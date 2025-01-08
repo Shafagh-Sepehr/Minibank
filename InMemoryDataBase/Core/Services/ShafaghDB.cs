@@ -5,7 +5,6 @@ using InMemoryDataBase.Core.Abstractions;
 using InMemoryDataBase.DataSanitizers.Abstractions;
 using InMemoryDataBase.DataSanitizers.ReferenceHandlers.Abstractions;
 using InMemoryDataBase.Entities.Classes;
-using InMemoryDataBase.Entities.Enums;
 using InMemoryDataBase.Exceptions;
 using InMemoryDataBase.Interfaces;
 using InMemoryDataBase.Validators.Abstractions;
@@ -28,7 +27,7 @@ public class ShafaghDB(
         var entityCopy = DeepCopy(entity);
         
         defaultValueSetter.Apply(entity);
-        validator.Validate(entity, _entities, _references, DataBaseAction.Save);
+        validator.ValidateInsert(entity, _entities);
         referenceHandler.HandleInsert(entityCopy, _references);
         
         if (_entities.TryGetValue(type, out var entityList))
@@ -48,7 +47,7 @@ public class ShafaghDB(
         var entityCopy = DeepCopy(entity);
         
         defaultValueSetter.Apply(entity);
-        validator.Validate(entity, _entities, _references, DataBaseAction.Update);
+        validator.ValidateUpdate(entity, _entities);
         
         
         var primaryProperty = GetPrimaryPropertyInfo<T>();
@@ -88,7 +87,7 @@ public class ShafaghDB(
             
             if (entityIndex != -1)
             {
-                validator.Validate((T)entityList[entityIndex], _entities, _references, DataBaseAction.Delete);
+                validator.ValidateDelete((T)entityList[entityIndex], _entities, _references);
                 referenceHandler.HandleDelete((T)entityList[entityIndex], _references);
                 entityList.RemoveAt(entityIndex);
                 return;
