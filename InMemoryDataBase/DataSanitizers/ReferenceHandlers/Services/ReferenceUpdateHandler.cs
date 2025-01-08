@@ -30,11 +30,11 @@ public class ReferenceUpdateHandler : IReferenceUpdateHandler
             var reference = references.First(r =>
                 r.MasterType == pair.MasterType &&
                 r.SlaveType == type &&
-                r.MasterId == (string)pair.ForeignProperty.GetValue(oldEntity)! &&
-                r.SlaveId == (string)primaryProperty.GetValue(entity)!
+                r.MasterId == Helper.GetStringValueFromProperty(pair.ForeignProperty, oldEntity) &&
+                r.SlaveId == Helper.GetStringValueFromProperty(primaryProperty, entity)
             );
             
-            reference.MasterId = (string)pair.ForeignProperty.GetValue(entity)!;
+            reference.MasterId = Helper.GetStringValueFromProperty(pair.ForeignProperty, entity);
         }
     }
     

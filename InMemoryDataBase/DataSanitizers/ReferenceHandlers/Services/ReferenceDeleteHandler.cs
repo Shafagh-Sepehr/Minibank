@@ -10,6 +10,6 @@ public class ReferenceDeleteHandler : IReferenceDeleteHandler
         var type = typeof(T);
         var primaryProperty = Helper.GetPrimaryPropertyInfo(type);
         
-        references.RemoveAll(r => r.SlaveId == (string)primaryProperty.GetValue(entity)! && r.SlaveType == type);
+        references.RemoveAll(r => r.SlaveId == Helper.GetStringValueFromProperty(primaryProperty, entity) && r.SlaveType == type);
     }
 }
