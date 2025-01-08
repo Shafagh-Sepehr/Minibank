@@ -12,7 +12,7 @@ public static class Helper
         return properties.First(propertyInfo => propertyInfo.GetCustomAttribute(typeof(PrimaryKeyAttribute), true) is PrimaryKeyAttribute);
     }
     
-    public static string GetStringValueFromProperty<T>(PropertyInfo propertyInfo, T entity)
+    public static string GetNonNullStringValueFromPropertyOrThrow<T>(PropertyInfo propertyInfo, T entity)
     {
         if (propertyInfo.GetValue(entity) is string value)
         {

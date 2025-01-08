@@ -27,8 +27,8 @@ public class ReferenceInsertHandler : IReferenceInsertHandler
             {
                 MasterType = pair.MasterType ?? throw new DatabaseException("some how Master type is null in referenceInsertHandler"),
                 SlaveType = type,
-                MasterId = Helper.GetStringValueFromProperty(pair.ForeignProperty, entity),
-                SlaveId = Helper.GetStringValueFromProperty(primaryProperty, entity),
+                MasterId = Helper.GetNonNullStringValueFromPropertyOrThrow(pair.ForeignProperty, entity),
+                SlaveId = Helper.GetNonNullStringValueFromPropertyOrThrow(primaryProperty, entity),
             });
         }
     }

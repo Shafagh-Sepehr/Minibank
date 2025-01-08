@@ -33,18 +33,18 @@ public class ReferenceUpdateHandler : IReferenceUpdateHandler
                 var reference = references.First(r =>
                     r.MasterType == pair.MasterType &&
                     r.SlaveType == type &&
-                    r.MasterId == Helper.GetStringValueFromProperty(pair.ForeignProperty, oldEntity) &&
-                    r.SlaveId == Helper.GetStringValueFromProperty(primaryProperty, entity)
+                    r.MasterId == Helper.GetNonNullStringValueFromPropertyOrThrow(pair.ForeignProperty, oldEntity) &&
+                    r.SlaveId == Helper.GetNonNullStringValueFromPropertyOrThrow(primaryProperty, entity)
                 );
-                reference.MasterId = Helper.GetStringValueFromProperty(pair.ForeignProperty, entity);
+                reference.MasterId = Helper.GetNonNullStringValueFromPropertyOrThrow(pair.ForeignProperty, entity);
             }
             else if (ValueToNull(pair.ForeignProperty,entity,oldEntity))
             {
                 references.RemoveAll(r =>
                     r.SlaveType == type &&
                     r.MasterType == pair.MasterType &&
-                    r.SlaveId == Helper.GetStringValueFromProperty(primaryProperty, oldEntity) &&
-                    r.MasterId == Helper.GetStringValueFromProperty(pair.ForeignProperty, oldEntity)
+                    r.SlaveId == Helper.GetNonNullStringValueFromPropertyOrThrow(primaryProperty, oldEntity) &&
+                    r.MasterId == Helper.GetNonNullStringValueFromPropertyOrThrow(pair.ForeignProperty, oldEntity)
                 );
             }
             else if (NullToValue(pair.ForeignProperty,entity,oldEntity))
@@ -53,8 +53,8 @@ public class ReferenceUpdateHandler : IReferenceUpdateHandler
                 {
                     MasterType = pair.MasterType ?? throw new DatabaseException("some how Master type is null in referenceInsertHandler"),
                     SlaveType = type,
-                    MasterId = Helper.GetStringValueFromProperty(pair.ForeignProperty, entity),
-                    SlaveId = Helper.GetStringValueFromProperty(primaryProperty, entity),
+                    MasterId = Helper.GetNonNullStringValueFromPropertyOrThrow(pair.ForeignProperty, entity),
+                    SlaveId = Helper.GetNonNullStringValueFromPropertyOrThrow(primaryProperty, entity),
                 });
             }
         }
