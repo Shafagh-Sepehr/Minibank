@@ -6,7 +6,8 @@ using InMemoryDataBase.Entities.Classes;
 namespace InMemoryDataBase.DataSanitizers.ReferenceHandlers.Services;
 
 public class ReferenceHandler(IReferenceInsertHandler insertHandler,
-                              IReferenceUpdateHandler updateHandler, IReferenceDeleteHandler deleteHandler)
+                              IReferenceUpdateHandler updateHandler,
+                              IReferenceDeleteHandler deleteHandler)
     : IReferenceHandler
 {
     public void HandleInsert<T>(T entity, List<Reference> references)
