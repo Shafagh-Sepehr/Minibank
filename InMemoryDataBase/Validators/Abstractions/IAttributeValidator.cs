@@ -1,4 +1,4 @@
-namespace InMemoryDataBase.Validators.Services;
+namespace InMemoryDataBase.Validators.Abstractions;
 
 public interface IAttributeValidator
 {

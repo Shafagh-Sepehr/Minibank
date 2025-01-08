@@ -3,20 +3,24 @@ using DeepCopier;
 using InMemoryDataBase.Attributes;
 using InMemoryDataBase.Core.Abstractions;
 using InMemoryDataBase.DataSanitizers.Abstractions;
+using InMemoryDataBase.DataSanitizers.ReferenceHandlers.Abstractions;
 using InMemoryDataBase.Entities.Classes;
 using InMemoryDataBase.Entities.Enums;
 using InMemoryDataBase.Exceptions;
 using InMemoryDataBase.Interfaces;
 using InMemoryDataBase.Validators.Abstractions;
-using InMemoryDataBase.Validators.Services;
 
 namespace InMemoryDataBase.Core.Services;
 
-public class ShafaghDB(IDefaultValueSetter defaultValueSetter, IValidator validator, IReferenceHandler referenceHandler, IAttributeValidator attributeValidator) : IShafaghDB
+public class ShafaghDB(
+    IDefaultValueSetter defaultValueSetter,
+    IValidator validator,
+    IReferenceHandler referenceHandler,
+    IAttributeValidator attributeValidator) : IShafaghDB
 {
-    private readonly Dictionary<Type, List<IVersionable>> _entities        = new();
-    private readonly Dictionary<string, string>           _entityIds       = new();
-    private readonly List<Reference>                      _references      = new();
+    private readonly Dictionary<Type, List<IVersionable>> _entities   = new();
+    private readonly Dictionary<string, string>           _entityIds  = new();
+    private readonly List<Reference>                      _references = new();
     
     public void Insert<T>(T entity) where T : IVersionable
     {

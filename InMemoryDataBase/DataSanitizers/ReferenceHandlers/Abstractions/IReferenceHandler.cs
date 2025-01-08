@@ -1,6 +1,6 @@
 using InMemoryDataBase.Entities.Classes;
 
-namespace InMemoryDataBase.DataSanitizers.Abstractions;
+namespace InMemoryDataBase.DataSanitizers.ReferenceHandlers.Abstractions;
 
 public interface IReferenceHandler
 {

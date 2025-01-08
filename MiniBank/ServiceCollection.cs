@@ -4,6 +4,8 @@ using DB.Validators.Abstractions;
 using InMemoryDataBase.Core.Abstractions;
 using InMemoryDataBase.Core.Services;
 using InMemoryDataBase.DataSanitizers.Abstractions;
+using InMemoryDataBase.DataSanitizers.ReferenceHandlers.Abstractions;
+using InMemoryDataBase.DataSanitizers.ReferenceHandlers.Services;
 using InMemoryDataBase.DataSanitizers.Services;
 using InMemoryDataBase.Validators.Abstractions;
 using InMemoryDataBase.Validators.Services;
@@ -41,7 +43,11 @@ internal static class ServiceCollection
         serviceCollector.AddSingleton<IValidator, Validator>();
         
         serviceCollector.AddSingleton<IDefaultValueSetter, DefaultValueSetter>();
+        
         serviceCollector.AddSingleton<IReferenceHandler, ReferenceHandler>();
+        serviceCollector.AddSingleton<IReferenceInsertHandler, ReferenceInsertHandler>();
+        serviceCollector.AddSingleton<IReferenceUpdateHandler, ReferenceUpdateHandler>();
+        serviceCollector.AddSingleton<IReferenceDeleteHandler, ReferenceDeleteHandler>();
         
         serviceCollector.AddTransient<IValidator<User>, UserValidator>();
         serviceCollector.AddTransient<IValidator<Account>, AccountValidator>();

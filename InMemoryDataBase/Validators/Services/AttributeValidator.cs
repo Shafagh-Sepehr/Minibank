@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using InMemoryDataBase.Attributes;
 using InMemoryDataBase.Exceptions;
+using InMemoryDataBase.Validators.Abstractions;
 
 namespace InMemoryDataBase.Validators.Services;
 
@@ -8,7 +9,6 @@ public class AttributeValidator : IAttributeValidator
 {
     public void Validate<T>()
     {
-        
         var type = typeof(T);
         var properties = type.GetProperties();
         
@@ -20,14 +20,17 @@ public class AttributeValidator : IAttributeValidator
             {
                 count++;
             }
+            
             if (propertyInfo.GetCustomAttribute(typeof(ForeignKeyAttribute), true) != null)
             {
                 count++;
             }
+            
             if (propertyInfo.GetCustomAttribute(typeof(DefaultValueAttribute), true) != null)
             {
                 count++;
             }
+            
             if (propertyInfo.GetCustomAttribute(typeof(NullableAttribute), true) != null)
             {
                 count++;
