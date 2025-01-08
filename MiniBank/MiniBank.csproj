@@ -9,6 +9,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\DB\DB.csproj"/>
+        <ProjectReference Include="..\InMemoryDataBase\InMemoryDataBase.csproj"/>
     </ItemGroup>
 
 
