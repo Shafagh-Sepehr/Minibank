@@ -2,7 +2,7 @@
 
 public enum DataBaseAction
 {
-    Save,
+    Insert,
     Update,
     Delete,
 }
