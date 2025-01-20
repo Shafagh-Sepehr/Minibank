@@ -9,25 +9,24 @@ public class DefaultValueSetter : IDefaultValueSetter
 {
     public void Apply<T>(T entity)
     {
-        var propertyAttributePairs = typeof(T).GetProperties()
-            .Where(p => p.GetCustomAttribute<DefaultValueAttribute>() != null)
-            .Select(p => new
-            {
-                Property = p,
-                Attribute = p.GetCustomAttribute<DefaultValueAttribute>() ?? throw new ArgumentNullException(),
-            });
+        var properties = typeof(T).GetProperties();
         
-        foreach (var pair in propertyAttributePairs)
+        foreach (var propertyInfo in properties)
         {
-            if (pair.Attribute.DefaultValue.GetType() != pair.Property.PropertyType)
+            if (propertyInfo.GetCustomAttribute(typeof(DefaultValueAttribute), true) is not DefaultValueAttribute defaultValueAttribute)
             {
-                throw new DatabaseException(
-                    $"the default value of property `{pair.Property.Name}` must be of type `{pair.Property.PropertyType.Name}`, but was `{pair.Attribute.DefaultValue.GetType()}` was given");
+                continue;
             }
             
-            if (pair.Property.GetValue(entity) == null)
+            if (defaultValueAttribute.DefaultValue.GetType() != propertyInfo.PropertyType)
             {
-                pair.Property.SetValue(entity, pair.Attribute.DefaultValue);
+                throw new DatabaseException(
+                    $"the default value of property `{propertyInfo.Name}` must be of type `{propertyInfo.PropertyType.Name}`, but was `{defaultValueAttribute.DefaultValue.GetType()}` was given");
+            }
+            
+            if (propertyInfo.GetValue(entity) == null)
+            {
+                propertyInfo.SetValue(entity, defaultValueAttribute.DefaultValue);
             }
         }
     }
