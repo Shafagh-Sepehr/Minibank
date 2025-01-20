@@ -22,12 +22,13 @@ public class ShafaghDB(
     public void Insert<T>(T entity) where T : IVersionable
     {
         var type = typeof(T);
-        var entityCopy = DeepCopy(entity);
         
         SetId(entity);
         defaultValueSetter.Apply(entity);
         validator.ValidateInsert(entity, _entities);
-        referenceHandler.HandleInsert(entityCopy, _references);
+        referenceHandler.HandleInsert(entity, _references);
+        
+        var entityCopy = DeepCopy(entity);
         
         if (_entities.TryGetValue(type, out var entityList))
         {
@@ -43,11 +44,9 @@ public class ShafaghDB(
     public void Update<T>(T entity) where T : IVersionable
     {
         var type = typeof(T);
-        var entityCopy = DeepCopy(entity);
         
         defaultValueSetter.Apply(entity);
         validator.ValidateUpdate(entity, _entities);
-        
         
         var primaryProperty = Helper.GetPrimaryPropertyInfo(type);
         
@@ -63,6 +62,7 @@ public class ShafaghDB(
                         $"entity with type `{type.Name}` with primary key `{primaryProperty.GetValue(entity)}` was modified by another user, fetch the new entity and redo the process");
                 }
                 
+                var entityCopy = DeepCopy(entity);
                 referenceHandler.HandleUpdate(entityCopy, (T)entityList[entityIndex], _references);
                 entityCopy.IncrementVersion();
                 entityList[entityIndex] = entityCopy;
