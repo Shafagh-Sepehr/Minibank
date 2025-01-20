@@ -17,7 +17,6 @@ public class ShafaghDB(
     IAttributeValidator attributeValidator) : IShafaghDB
 {
     private readonly Dictionary<Type, List<IVersionable>> _entities   = new();
-    private readonly Dictionary<string, string>           _entityIds  = new();
     private readonly List<Reference>                      _references = new();
     
     public void Insert<T>(T entity) where T : IVersionable
@@ -25,6 +24,7 @@ public class ShafaghDB(
         var type = typeof(T);
         var entityCopy = DeepCopy(entity);
         
+        SetId(entity);
         defaultValueSetter.Apply(entity);
         validator.ValidateInsert(entity, _entities);
         referenceHandler.HandleInsert(entityCopy, _references);
@@ -118,13 +118,11 @@ public class ShafaghDB(
     public T? FetchById<T>(string id) where T : class, IVersionable
     {
         var type = typeof(T);
-        
         var primaryProperty = Helper.GetPrimaryPropertyInfo(type);
         
         if (_entities.TryGetValue(type, out var entityList))
         {
             var entityIndex = GetEntityIndex(entityList, primaryProperty, id);
-            
             if (entityIndex != -1)
             {
                 var copied = DeepCopy((T)entityList[entityIndex]);
@@ -134,6 +132,13 @@ public class ShafaghDB(
         }
         
         return null;
+    }
+    
+    private static void SetId<T>(T entity) where T : IVersionable
+    {
+        var propertyInfo = Helper.GetPrimaryPropertyInfo(entity.GetType());
+        var guid = Guid.NewGuid();
+        propertyInfo.SetValue(entity, guid.ToString());
     }
     
     private static int GetEntityIndex(List<IVersionable> entityList, PropertyInfo primaryProperty, string id)
