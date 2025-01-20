@@ -15,7 +15,7 @@ public class CardValidator(IDataBase dataBase) : BaseValidator<Card>
         var accounts = dataBase.FetchAll<Account>();
         if (accounts.All(x => x.Id != entity.AccountRef))
         {
-            errors.Add("this account's UserRef doesn't exist");
+            errors.Add("this card's AccountRef doesn't exist");
         }
     }
 }
