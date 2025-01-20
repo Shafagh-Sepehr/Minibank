@@ -9,7 +9,7 @@ namespace MiniBank.Handlers.Services;
 
 public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, ISmsService smsService) : ITransactionHandler
 {
-    public ActionResult CreateTransaction_CardToCard(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword,
+    public ActionResult CreateCardToCardTransaction(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword,
                                                      string? description)
     {
         var accounts = dataBase.FetchAll<Account>().ToList();
@@ -48,7 +48,7 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
     }
     
     
-    public ActionResult CreateTransaction_AccountNumberToAccountNumber(string originAccountNumber, string destinationAccountNumber, decimal amount,
+    public ActionResult CreateAccountNumberToAccountNumberTransaction(string originAccountNumber, string destinationAccountNumber, decimal amount,
                                                                        string? description = null)
     {
         var accounts = dataBase.FetchAll<Account>().ToList();
