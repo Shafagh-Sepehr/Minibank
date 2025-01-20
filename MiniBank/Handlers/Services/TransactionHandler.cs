@@ -18,13 +18,13 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
         var originCard = cards.FirstOrDefault(c => c.CardNumber == originCardNumber);
         var destinationCard = cards.FirstOrDefault(c => c.CardNumber == destinationCardNumber);
         
-        var originAccount = accounts.FirstOrDefault(a => a.Id == originCard?.AccountRef)!;
-        var destinationAccount = accounts.FirstOrDefault(a => a.Id == destinationCard?.AccountRef)!;
-        
+        var originAccount = accounts.FirstOrDefault(a => a.Id == originCard?.AccountRef);
+        var destinationAccount = accounts.FirstOrDefault(a => a.Id == destinationCard?.AccountRef);
+
         ActionResult actionResult;
         var transactionType = TransactionType.FailedCardToCard;
         
-        if (originCard == null || destinationCard == null)
+        if (originCard == null || destinationCard == null || originAccount == null || destinationAccount == null)
         {
             actionResult = ActionResult.AccountNotFound;
         }
@@ -34,6 +34,7 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
                 secondPassword, originAccount, destinationAccount, originCard, ref transactionType);
         }
         
+        //TODO: take a closer look to validation. it is not a avalid state to have a transaction without any AccountID
         dataBase.Save(new Transaction
         {
             Amount = amount,
@@ -47,9 +48,8 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
         return actionResult;
     }
     
-    
     public ActionResult CreateAccountNumberToAccountNumberTransaction(string originAccountNumber, string destinationAccountNumber, decimal amount,
-                                                                       string? description = null)
+                                                                      string? description = null)
     {
         var accounts = dataBase.FetchAll<Account>().ToList();
         var originAccount = accounts.FirstOrDefault(x => x.AccountNumber == originAccountNumber);
@@ -147,7 +147,6 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
         dataBase.FetchAll<DynamicPassword>().Any(d =>
             d.OriginCardNumber == originCardNumber && d.DestinationCardNumber == destinationCardNumber && d.Amount == amount &&
             d.DynamicPasswordHash == Helper.ComputeSha256Hash(secondPassword) && d.ExpiryDate <= DateTime.Now);
-    
     
     private ActionResult ValidateBalanceAndUpdateDataBase(Account originAccount, Account destinationAccount)
     {
