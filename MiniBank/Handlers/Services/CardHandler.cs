@@ -35,15 +35,13 @@ public class CardHandler(IDataBase dataBase, ISmsService smsService) : ICardHand
                     join card in cards on account.Id equals card.AccountRef
                     select u).SingleOrDefault();
         
-        
-        if (originCard == null || originCard.Cvv2 != cvv2 || originCard.ExpiryDate.Month != expiryDate.Month ||
-            originCard.ExpiryDate.Year != expiryDate.Year)
+        if (user == null || originCard == null || originCard.Cvv2 != cvv2 || 
+            originCard.ExpiryDate.Month != expiryDate.Month || originCard.ExpiryDate.Year != expiryDate.Year)
         {
             throw new OperationFailedException("a card with this information couldn't be found");
         }
         
         var dynamicPasswordString = Helper.GenerateRandomNumberAsString(8);
-        smsService.Send($"dynamic password: {destinationCardNumber}", user!.PhoneNumber);
         
         var dynamicPassword = new DynamicPassword
         {
@@ -54,6 +52,7 @@ public class CardHandler(IDataBase dataBase, ISmsService smsService) : ICardHand
         };
         
         dataBase.Save(dynamicPassword);
+        smsService.Send($"dynamic password: {destinationCardNumber}", user.PhoneNumber);
     }
     
     private string GenerateCardNumber()
