@@ -16,8 +16,8 @@ public class CardHandler(IDataBase dataBase, ISmsService smsService) : ICardHand
             CardNumber = GenerateCardNumber(),
             Cvv2 = Helper.GenerateRandomNumberAsString(3),
             ExpiryDate = DateTime.Now.AddYears(5),
-            PasswordHash = Helper.ComputeSha256Hash(password),
-            SecondPasswordHash = Helper.ComputeSha256Hash(secondPassword),
+            Password = password,
+            SecondPassword = secondPassword,
         };
         dataBase.Save(card);
         return card;
@@ -43,7 +43,7 @@ public class CardHandler(IDataBase dataBase, ISmsService smsService) : ICardHand
         }
         
         var dynamicPasswordString = Helper.GenerateRandomNumberAsString(8);
-        smsService.Send($"dynamic password: {destinationCardNumber}",user!.PhoneNumber);
+        smsService.Send($"dynamic password: {destinationCardNumber}", user!.PhoneNumber);
         
         var dynamicPassword = new DynamicPassword
         {

@@ -124,7 +124,7 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
     }
     
     private static bool IsStaticPassword(string secondPassword, Card originCard) =>
-        Helper.ComputeSha256Hash(secondPassword) == originCard.SecondPasswordHash;
+        Helper.ComputeSha256Hash(secondPassword) == originCard.GetSecondPasswordHash();
     
     private ActionResult TransactAndValidateAndUpdate(decimal amount, Account originAccount, Account destinationAccount)
     {
