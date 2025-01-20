@@ -14,10 +14,17 @@ public class AttributeValidator : IAttributeValidator
         
         foreach (var propertyInfo in properties)
         {
-            if(propertyInfo.CustomAttributes.Count() > 1 && propertyInfo.CustomAttributes.All(a=>a.AttributeType == typeof(ForeignKeyAttribute) || a.AttributeType == typeof(NullableAttribute)))
+            if (PropertyHasMoreThanOneAttribute(propertyInfo) && PropertyHasAttributesOtherThanForeignKeyAttributeAndNullableAttribute(propertyInfo))
             {
                 throw new DatabaseException($"type `{type}`'s `{propertyInfo.Name}` property can't have more than one attribute");
             }
         }
     }
+    
+    private bool PropertyHasMoreThanOneAttribute(PropertyInfo propertyInfo) => propertyInfo.CustomAttributes
+        .Count() > 1;
+    
+    private bool PropertyHasAttributesOtherThanForeignKeyAttributeAndNullableAttribute(PropertyInfo propertyInfo)
+        => propertyInfo.CustomAttributes
+            .Any(a => a.AttributeType != typeof(ForeignKeyAttribute) && a.AttributeType != typeof(NullableAttribute));
 }
