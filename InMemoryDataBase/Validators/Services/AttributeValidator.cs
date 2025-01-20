@@ -21,10 +21,10 @@ public class AttributeValidator : IAttributeValidator
         }
     }
     
-    private bool PropertyHasMoreThanOneAttribute(PropertyInfo propertyInfo) => propertyInfo.CustomAttributes
-        .Count() > 1;
+    private static bool PropertyHasMoreThanOneAttribute(PropertyInfo propertyInfo) => propertyInfo.CustomAttributes
+        .Count(p => p.AttributeType.Namespace == typeof(ForeignKeyAttribute).Namespace) > 1;
     
-    private bool PropertyHasAttributesOtherThanForeignKeyAttributeAndNullableAttribute(PropertyInfo propertyInfo)
+    private static bool PropertyHasAttributesOtherThanForeignKeyAttributeAndNullableAttribute(PropertyInfo propertyInfo)
         => propertyInfo.CustomAttributes
             .Any(a => a.AttributeType != typeof(ForeignKeyAttribute) && a.AttributeType != typeof(NullableAttribute));
 }
