@@ -21,11 +21,7 @@ public class AccountHandler(IDataBase dataBase) : IAccountHandler
     }
     
     public decimal? GetAccountBalance(User user)
-    {
-        var accounts = dataBase.FetchAll<Account>();
-        var account = accounts.FirstOrDefault(x=> x.UserRef == user.Id);
-        return account?.Balance;
-    }
+        => dataBase.FetchAll<Account>().FirstOrDefault(account=>account.UserRef == user.Id)?.Balance;
     
     private string GenerateAccountNumber()
     {
@@ -35,7 +31,6 @@ public class AccountHandler(IDataBase dataBase) : IAccountHandler
         do
         {
             accountNumber = Helper.GenerateRandomNumberAsString(20);
-            
         } while (accounts.Any(x => x.AccountNumber == accountNumber));
         
         return accountNumber;
