@@ -31,6 +31,7 @@ public class AccountHandler(IDataBase dataBase) : IAccountHandler
     {
         var accounts = dataBase.FetchAll<Account>().ToList();
         string accountNumber;
+        
         do
         {
             accountNumber = Helper.GenerateRandomNumberAsString(20);

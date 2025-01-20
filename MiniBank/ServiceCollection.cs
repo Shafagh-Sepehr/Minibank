@@ -31,7 +31,6 @@ internal static class ServiceCollection
     {
         var serviceCollector = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
         
-        
         serviceCollector.AddSingleton<IDataBase, DataBase>();
         serviceCollector.AddSingleton<IShafaghDB, ShafaghDB>();
         

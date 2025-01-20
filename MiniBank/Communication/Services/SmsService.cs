@@ -12,7 +12,6 @@ public class SmsService: IDisposable, ISmsService
         File.WriteAllText(@"C:\Users\shafaghs\Desktop\PlayGround\SmsSerivce.txt",$"to {phoneNumber}: {message}");
     }
     
-    
     public void Dispose()
     {
         if (!_disposed)

@@ -42,8 +42,6 @@ public class WithdrawalHandler(IDataBase dataBase, ISmsService smsService) : IWi
             Status = actionResult == ActionResult.Success ? TransactionStatus.Success : TransactionStatus.Failed,
         });
         
-        
-        
         return actionResult;
     }
 }
