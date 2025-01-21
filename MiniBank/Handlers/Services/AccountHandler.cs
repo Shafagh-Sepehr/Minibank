@@ -22,6 +22,9 @@ public class AccountHandler(IDataBase dataBase) : IAccountHandler
     
     public decimal? GetAccountBalance(User user)
         => dataBase.FetchAll<Account>().FirstOrDefault(account=>account.UserRef == user.Id)?.Balance;
+
+    public IEnumerable<Account> GetAllUserAccounts(User user)
+        => dataBase.FetchAll<Account>().Where(acc => acc.UserRef == user.Id);
     
     private string GenerateAccountNumber()
     {

@@ -6,4 +6,5 @@ public interface IAccountHandler
 {
     string CreateAccount(long userRef, string password, string secondPassword);
     public decimal? GetAccountBalance(User user);
+    IEnumerable<Account> GetAllUserAccounts(User user);
 }
