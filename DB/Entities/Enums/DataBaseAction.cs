@@ -2,6 +2,7 @@
 
 public enum DataBaseAction
 {
+    Unknown,
     Save,
     Update,
     Delete,

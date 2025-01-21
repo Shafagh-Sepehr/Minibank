@@ -2,6 +2,7 @@
 
 public enum TransactionStatus
 {
+    Unknown,
     Success,
     Failed,
 }

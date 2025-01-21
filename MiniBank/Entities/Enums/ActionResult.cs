@@ -2,6 +2,7 @@
 
 public enum ActionResult
 {
+    Unknown,
     Success,
     AccountNotFound,
     InsufficientBalance,

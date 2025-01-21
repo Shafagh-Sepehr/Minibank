@@ -2,6 +2,7 @@
 
 public enum AccountStatus
 {
+    Unknown,
     Active,
     Inactive,
     Blocked,
