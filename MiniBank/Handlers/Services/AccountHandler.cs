@@ -27,6 +27,11 @@ public class AccountHandler(IDataBase dataBase) : IAccountHandler
 
     public IEnumerable<Account> GetAllUserAccounts(User user)
         => dataBase.FetchAll<Account>().Where(acc => acc.UserRef == user.Id);
+
+    public bool AccountExistsAndBelongsToUser(string accountNumber, long userRef)
+    {
+        return dataBase.FetchAll<Account>().FirstOrDefault(acc => acc.AccountNumber == accountNumber && acc.UserRef == userRef) != null;
+    }
     
     private string GenerateAccountNumber()
     {
