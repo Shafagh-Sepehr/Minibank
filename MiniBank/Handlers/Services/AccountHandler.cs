@@ -20,9 +20,9 @@ public class AccountHandler(IDataBase dataBase) : IAccountHandler
         return newAccount;
     }
     
-    public decimal? GetAccountBalance(User user, string AccountNumber)
+    public decimal? GetAccountBalance(string AccountNumber)
         => dataBase.FetchAll<Account>()
-        .FirstOrDefault(account=>account.UserRef == user.Id && account.AccountNumber == AccountNumber)
+        .FirstOrDefault(account => account.AccountNumber == AccountNumber)
         ?.Balance;
 
     public IEnumerable<Account> GetAllUserAccounts(User user)
