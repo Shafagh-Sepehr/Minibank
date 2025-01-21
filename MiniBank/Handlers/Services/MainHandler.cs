@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MiniBank.Entities.Classes;
+using MiniBank.Handlers.Abstractions;
 
 namespace MiniBank.Handlers.Services;
 
-internal class MainHandler(UserHandler userHandler)
+internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHandler, ICardHandler cardHandler)
 {
     private User? user;
 
@@ -19,7 +20,35 @@ internal class MainHandler(UserHandler userHandler)
             {
                 user ??= LoginOrSingup();
 
+                Console.WriteLine("1-See All of My Accounts");
+                Console.WriteLine("2-Create A new Bank Account");
+                Console.WriteLine("3-Select A Bank Account");
+                Console.WriteLine("4-Log out");
+                var input = ReadLine();
+
+                switch (input)
+                {
+                    case "1":
+                        PrintAllAccounts();
+                        break;
+
+                    case "2":
+                        CreateAccount();
+                        break;
+
+                    case "3":
+                        break;
+
+                    case "4":
+                        user = null;
+                        continue;
+
+                    default:
+                        throw new Exception("Invalid input");
+
             }
+            }
+
             catch (Exception e)
             {
                 Console.WriteLine("-Error-");
@@ -27,6 +56,31 @@ internal class MainHandler(UserHandler userHandler)
                 Console.WriteLine("-ErrorEnd-");
                 Thread.Sleep(1000);
             }
+        }
+    }
+
+    private void CreateAccount()
+    {
+        Console.WriteLine("card's first password: ");
+        var firstPassword = ReadLine();
+        Console.WriteLine("card's second(static) password: ");
+        var secondPassword = ReadLine();
+
+        var account = accountHandler.CreateAccount(user.Id);
+        Console.WriteLine($"your new account's number: {account.AccountNumber}");
+
+        var card = cardHandler.CreateCard(account.Id, firstPassword, secondPassword);
+        Console.WriteLine($"your card number: {card.CardNumber}");
+        Console.WriteLine($"your card Cvv2: {card.Cvv2}");
+        Console.WriteLine($"your card ExpiryDate: {card.ExpiryDate}");
+    }
+
+    private void PrintAllAccounts()
+    {
+        var accounts = accountHandler.GetAllUserAccounts(user).ToList();
+        for (int i = 0; i < accounts.Count; i++)
+        {
+            Console.WriteLine($"  {i}- {accounts[i].AccountNumber}");
         }
     }
 
