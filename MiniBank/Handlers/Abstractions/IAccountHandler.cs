@@ -4,7 +4,7 @@ namespace MiniBank.Handlers.Abstractions;
 
 public interface IAccountHandler
 {
-    string CreateAccount(long userRef, string password, string secondPassword);
+    Account CreateAccount(long userRef);
     decimal? GetAccountBalance(User user, string AccountNumber);
     IEnumerable<Account> GetAllUserAccounts(User user);
 }

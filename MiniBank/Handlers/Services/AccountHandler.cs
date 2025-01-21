@@ -7,7 +7,7 @@ namespace MiniBank.Handlers.Services;
 
 public class AccountHandler(IDataBase dataBase) : IAccountHandler
 {
-    public string CreateAccount(long userRef, string password, string secondPassword)
+    public Account CreateAccount(long userRef)
     {
         var newAccount = new Account
         {
@@ -17,7 +17,7 @@ public class AccountHandler(IDataBase dataBase) : IAccountHandler
         };
         
         dataBase.Save(newAccount);
-        return newAccount.AccountNumber;
+        return newAccount;
     }
     
     public decimal? GetAccountBalance(User user, string AccountNumber)
