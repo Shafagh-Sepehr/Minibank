@@ -8,15 +8,7 @@ public static class Helper
     public static string GenerateRandomNumberAsString(int length)
     {
         var random = new Random();
-        var stringBuilder = new StringBuilder(length);
-        
-        for (var i = 0; i < length; i++)
-        {
-            var digit = random.Next(0, 10);
-            stringBuilder.Append(digit);
-        }
-        
-        return stringBuilder.ToString();
+        return string.Concat(Enumerable.Range(0, length).Select(_ => random.Next(0, 10).ToString()));
     }
     
     public static string ComputeSha256Hash(string rawData)
