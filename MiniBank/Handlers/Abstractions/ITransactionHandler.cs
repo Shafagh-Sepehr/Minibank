@@ -7,6 +7,6 @@ public interface ITransactionHandler
     ActionResult CreateCardToCardTransaction(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword,
                                               string? description);
     
-    ActionResult CreateAccountNumberToAccountNumberTransaction(string originAccountNumber, string destinationAccountNumber, decimal amount,
+    ActionResult CreateAccountToAccountTransaction(string originAccountNumber, string destinationAccountNumber, decimal amount,
                                                                 string? description = null);
 }

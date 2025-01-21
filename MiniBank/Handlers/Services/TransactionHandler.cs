@@ -48,7 +48,7 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
         return actionResult;
     }
     
-    public ActionResult CreateAccountNumberToAccountNumberTransaction(string originAccountNumber, string destinationAccountNumber, decimal amount,
+    public ActionResult CreateAccountToAccountTransaction(string originAccountNumber, string destinationAccountNumber, decimal amount,
                                                                       string? description = null)
     {
         var accounts = dataBase.FetchAll<Account>().ToList();
