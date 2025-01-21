@@ -54,7 +54,13 @@ public class CardHandler(IDataBase dataBase, ISmsService smsService) : ICardHand
         dataBase.Save(dynamicPassword);
         smsService.Send($"dynamic password: {destinationCardNumber}", user.PhoneNumber);
     }
-    
+
+    public Card GetCard(Account account)
+    {
+        var card = dataBase.FetchAll<Card>().FirstOrDefault(card => card.AccountRef == account.Id);
+        return card ?? throw new OperationFailedException("couldn't find the requested card");
+    }
+
     private string GenerateCardNumber()
     {
         var cards = dataBase.FetchAll<Card>().ToList();
