@@ -17,10 +17,7 @@ internal class MainHandler(UserHandler userHandler)
         {
             try
             {
-                if (user == null)
-                {
-                    LoginOrSingup();
-                }
+                user ??= LoginOrSingup();
 
             }
             catch (Exception e)
@@ -33,7 +30,7 @@ internal class MainHandler(UserHandler userHandler)
         }
     }
 
-    private void LoginOrSingup()
+    private User LoginOrSingup()
     {
         Console.WriteLine("1-Login");
         Console.WriteLine("2-SignUp");
@@ -44,16 +41,14 @@ internal class MainHandler(UserHandler userHandler)
         switch (input)
         {
             case "1":
-                Login();
-                return;
+                return Login();
 
             case "2":
-                SignUp();
-                return;
+                return SignUp();
 
             case "3":
                 Environment.Exit(0);
-                return;
+                return null;
 
             default:
                 throw new Exception("Invalid input");
@@ -61,7 +56,7 @@ internal class MainHandler(UserHandler userHandler)
 
     }
 
-    private void SignUp()
+    private User SignUp()
     {
         Console.Write("UserName: ");
         var newUsername = ReadLine();
@@ -77,22 +72,24 @@ internal class MainHandler(UserHandler userHandler)
         var nationalId = ReadLine();
 
         userHandler.CreateUser(newUsername, newPassword, firstName, lastName, phoneNumber, nationalId);
-        user = userHandler.Login(newUsername, newPassword);
+        var user = userHandler.Login(newUsername, newPassword);
+
+        return user ?? throw new Exception("Invalid username or password");
     }
 
-    private void Login()
+    private User Login()
     {
         Console.Write("UserName: ");
         var username = ReadLine();
         Console.Write("Password: ");
         var password = ReadLine();
 
-        user = userHandler.Login(username, password);
+        var user = userHandler.Login(username, password);
         if (user == null)
         {
-            Console.WriteLine("Invalid username or password");
-            Thread.Sleep(1000);
+            throw new Exception("Invalid username or password");
         }
+        return user;
     }
 
     static string ReadLine()
