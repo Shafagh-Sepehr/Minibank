@@ -34,7 +34,6 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
                 secondPassword, originAccount, destinationAccount, originCard, ref transactionType);
         }
         
-        //TODO: take a closer look to validation. it is not a avalid state to have a transaction without any AccountID
         dataBase.Save(new Transaction
         {
             Amount = amount,

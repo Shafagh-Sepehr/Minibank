@@ -10,8 +10,7 @@ public class DepositHandler(IDataBase dataBase, ISmsService smsService) : IDepos
 {
     public ActionResult Deposit(string accountNumber, decimal amount)
     {
-        var accounts = dataBase.FetchAll<Account>();
-        var account = accounts.FirstOrDefault(x => x.AccountNumber == accountNumber);
+        var account = dataBase.FetchAll<Account>().FirstOrDefault(x => x.AccountNumber == accountNumber);
         ActionResult actionResult;
         
         if (account == null)
