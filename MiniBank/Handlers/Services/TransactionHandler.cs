@@ -172,7 +172,7 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
     private bool IsDynamicPassword(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword) =>
         dataBase.FetchAll<DynamicPassword>().Any(d =>
             d.OriginCardNumber == originCardNumber && d.DestinationCardNumber == destinationCardNumber && d.Amount == amount &&
-            d.DynamicPasswordHash == Helper.ComputeSha256Hash(secondPassword) && d.ExpiryDate <= DateTime.Now);
+            d.DynamicPasswordHash == Helper.ComputeSha256Hash(secondPassword) && d.ExpiryDate >= DateTime.Now);
 
     private ActionResult ValidateBalanceAndUpdateDataBase(Account originAccount, Account destinationAccount)
     {
