@@ -278,7 +278,7 @@ internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHand
 
     static string ReadLine()
     {
-        var input = ReadLine();
+        var input = Console.ReadLine();
         if (input == null || string.IsNullOrWhiteSpace(input))
         {
             throw new Exception("invalid input");
