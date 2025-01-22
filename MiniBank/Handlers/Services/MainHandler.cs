@@ -111,43 +111,15 @@ internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHand
                     break;
 
                 case "6":
-                    var transactions = transactionHandler.GetAllTransactions(accountNumber);
-
-                    foreach (var transaction in transactions)
-                    {
-                        Console.WriteLine($"origin account number: {transaction.OriginAccountNumber}");
-                        Console.WriteLine($"destination account number: {transaction.DestinationAccountNumber}");
-                        Console.WriteLine($"amount: {transaction.Amount}");
-                        Console.WriteLine($"date: {transaction.Date}");
-                        Console.WriteLine($"description: {transaction.Description}");
-                        Console.WriteLine($"type: {transaction.Type}");
-                        Console.WriteLine($"status: {transaction.Status}");
-                        Console.WriteLine("-------------------------------");
-                    }
+                    ShowAllTransactions(accountNumber);
                     break;
 
                 case "7":
-                    var deposits = depositHandler.GetAllDeposits(accountNumber);
-
-                    foreach (var deposit in deposits)
-                    {
-                        Console.WriteLine($"amount: {deposit.Amount}");
-                        Console.WriteLine($"date: {deposit.Date}");
-                        Console.WriteLine($"status: {deposit.Status}");
-                        Console.WriteLine("-------------------------------");
-                    }
+                    ShowAllDeposits(accountNumber);
                     break;
 
                 case "8":
-                    var withdrawals = withdrawalHandler.GetAllWithdrawals(accountNumber);
-
-                    foreach (var withdrawal in withdrawals)
-                    {
-                        Console.WriteLine($"amount: {withdrawal.Amount}");
-                        Console.WriteLine($"date: {withdrawal.Date}");
-                        Console.WriteLine($"status: {withdrawal.Status}");
-                        Console.WriteLine("-------------------------------");
-                    }
+                    ShowAllWithdrawals(accountNumber);
                     break;
 
                 case "9":
@@ -312,5 +284,47 @@ internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHand
             throw new Exception("invalid input");
         }
         return input;
+    }
+    private void ShowAllTransactions(string accountNumber)
+    {
+        var transactions = transactionHandler.GetAllTransactions(accountNumber);
+
+        foreach (var transaction in transactions)
+        {
+            Console.WriteLine($"origin account number: {transaction.OriginAccountNumber}");
+            Console.WriteLine($"destination account number: {transaction.DestinationAccountNumber}");
+            Console.WriteLine($"amount: {transaction.Amount}");
+            Console.WriteLine($"date: {transaction.Date}");
+            Console.WriteLine($"description: {transaction.Description}");
+            Console.WriteLine($"type: {transaction.Type}");
+            Console.WriteLine($"status: {transaction.Status}");
+            Console.WriteLine("-------------------------------");
+        }
+    }
+
+    private void ShowAllDeposits(string accountNumber)
+    {
+        var deposits = depositHandler.GetAllDeposits(accountNumber);
+
+        foreach (var deposit in deposits)
+        {
+            Console.WriteLine($"amount: {deposit.Amount}");
+            Console.WriteLine($"date: {deposit.Date}");
+            Console.WriteLine($"status: {deposit.Status}");
+            Console.WriteLine("-------------------------------");
+        }
+    }
+
+    private void ShowAllWithdrawals(string accountNumber)
+    {
+        var withdrawals = withdrawalHandler.GetAllWithdrawals(accountNumber);
+
+        foreach (var withdrawal in withdrawals)
+        {
+            Console.WriteLine($"amount: {withdrawal.Amount}");
+            Console.WriteLine($"date: {withdrawal.Date}");
+            Console.WriteLine($"status: {withdrawal.Status}");
+            Console.WriteLine("-------------------------------");
+        }
     }
 }
