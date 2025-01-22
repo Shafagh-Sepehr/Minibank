@@ -4,23 +4,10 @@ using MiniBank.Communication.Abstractions;
 
 namespace MiniBank.Communication.Services;
 
-public class SmsService(IAppSettings appSettings) : IDisposable, ISmsService
+public class SmsService(IAppSettings appSettings) : ISmsService
 {
-    private readonly FileStream _fileStream = File.OpenWrite(appSettings.SmsServiceFilePath);
-    private bool _disposed;
-    
-    public void Dispose()
+    public void Send(string message, string accountNumber, string phoneNumber)
     {
-        if (!_disposed)
-        {
-            _fileStream.Dispose();
-            _disposed = true;
-            GC.SuppressFinalize(this);
-        }
-    }
-    
-    public void Send(string message, string phoneNumber)
-    {
-        _fileStream.Write(Encoding.UTF8.GetBytes($"to {phoneNumber}: {message}"));
+        File.AppendAllText(appSettings.SmsServiceFilePath, $"phone number:{phoneNumber}, account number:{accountNumber}, message:{message}\n");
     }
 }

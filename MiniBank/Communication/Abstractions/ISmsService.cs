@@ -2,6 +2,5 @@
 
 public interface ISmsService
 {
-    void Send(string message, string phoneNumber);
-    void Dispose();
+    void Send(string message, string accountNumber, string phoneNumber);
 }
