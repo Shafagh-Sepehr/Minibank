@@ -64,7 +64,7 @@ internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHand
         ArgumentNullException.ThrowIfNull(user);
         var correctAccount = accountHandler.AccountExistsAndBelongsToUser(accountNumber, user.Id);
 
-        if(correctAccount == false)
+        if (correctAccount == false)
         {
             throw new OperationFailedException("entered account number is wrong");
         }
@@ -76,7 +76,10 @@ internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHand
             Console.WriteLine("3-Withdraw Money");
             Console.WriteLine("4-Create Account To Account Transaction");
             Console.WriteLine("5-Create Card To Card Transaction");
-            Console.WriteLine("6-Go Back");
+            Console.WriteLine("6-See All Transactions");
+            Console.WriteLine("7-See All Deposits");
+            Console.WriteLine("8-See All Withdrawals");
+            Console.WriteLine("9-Go Back");
 
             var input = ReadLine();
             decimal amount;
@@ -108,11 +111,50 @@ internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHand
                     break;
 
                 case "6":
+                    var transactions = transactionHandler.GetAllTransactions(accountNumber);
 
+                    foreach (var transaction in transactions)
+                    {
+                        Console.WriteLine($"origin account number: {transaction.OriginAccountNumber}");
+                        Console.WriteLine($"destination account number: {transaction.DestinationAccountNumber}");
+                        Console.WriteLine($"amount: {transaction.Amount}");
+                        Console.WriteLine($"date: {transaction.Date}");
+                        Console.WriteLine($"description: {transaction.Description}");
+                        Console.WriteLine($"type: {transaction.Type}");
+                        Console.WriteLine($"status: {transaction.Status}");
+                        Console.WriteLine("-------------------------------");
+                    }
+                    break;
+
+                case "7":
+                    var deposits = depositHandler.GetAllDeposits(accountNumber);
+
+                    foreach (var deposit in deposits)
+                    {
+                        Console.WriteLine($"amount: {deposit.Amount}");
+                        Console.WriteLine($"date: {deposit.Date}");
+                        Console.WriteLine($"status: {deposit.Status}");
+                        Console.WriteLine("-------------------------------");
+                    }
+                    break;
+
+                case "8":
+                    var withdrawals = withdrawalHandler.GetAllWithdrawals(accountNumber);
+
+                    foreach (var withdrawal in withdrawals)
+                    {
+                        Console.WriteLine($"amount: {withdrawal.Amount}");
+                        Console.WriteLine($"date: {withdrawal.Date}");
+                        Console.WriteLine($"status: {withdrawal.Status}");
+                        Console.WriteLine("-------------------------------");
+                    }
+                    break;
+
+                case "9":
                     return;
 
                 default:
-                    break;
+                    throw new Exception("invalid input");
             }
         }
         catch (Exception e)
@@ -267,7 +309,7 @@ internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHand
         var input = ReadLine();
         if (input == null || string.IsNullOrWhiteSpace(input))
         {
-            throw new Exception($"invalid input");
+            throw new Exception("invalid input");
         }
         return input;
     }
