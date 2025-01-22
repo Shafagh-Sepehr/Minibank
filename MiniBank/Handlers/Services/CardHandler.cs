@@ -30,11 +30,11 @@ public class CardHandler(IDataBase dataBase, ISmsService smsService) : ICardHand
         var accounts = dataBase.FetchAll<Account>().ToList();
         var users = dataBase.FetchAll<User>().ToList();
         var originCard = cards.FirstOrDefault(c => c.CardNumber == originCardNumber);
-        
+
         var user = (from u in users
-                    join account in accounts on u.Id equals account.UserRef
-                    join card in cards on account.Id equals card.AccountRef
-                    select u).SingleOrDefault();
+                join account in accounts on u.Id equals account.UserRef
+                join card in cards on account.Id equals card.AccountRef
+                select u).Distinct().SingleOrDefault();
         
         if (user == null || originCard == null || originCard.Cvv2 != cvv2 || 
             originCard.ExpiryDate.Month != expiryDate.Month || originCard.ExpiryDate.Year != expiryDate.Year)
@@ -53,7 +53,7 @@ public class CardHandler(IDataBase dataBase, ISmsService smsService) : ICardHand
         };
         
         dataBase.Save(dynamicPassword);
-        smsService.Send($"dynamic password: {destinationCardNumber}", accounts.First(acc => acc.Id == originCard.AccountRef).AccountNumber, user.PhoneNumber);
+        smsService.Send($"dynamic password: {dynamicPasswordString}", accounts.First(acc => acc.Id == originCard.AccountRef).AccountNumber, user.PhoneNumber);
     }
 
     public Card GetCard(Account account)
