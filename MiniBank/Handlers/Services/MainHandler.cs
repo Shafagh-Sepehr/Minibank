@@ -35,7 +35,7 @@ internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHand
                         break;
 
                     case "3":
-                        Console.WriteLine("enter account number: ");
+                        Console.Write("enter account number: ");
                         var accountNumber = ReadLine();
                         AccountManager(accountNumber);
                         break;
@@ -153,13 +153,13 @@ internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHand
         Console.Write("enter transaction description (or leave empty): ");
         var description = Console.ReadLine();
 
-        Console.WriteLine("enter second password or enter '0' to send dynamic password: ");
+        Console.Write("enter second password or enter '0' to send dynamic password: ");
         var input = ReadLine();
 
-        Console.WriteLine("enter cvv2: ");
+        Console.Write("enter cvv2: ");
         var cvv2 = ReadLine();
 
-        Console.WriteLine("enter expiry date(e.g. 2027/5): ");
+        Console.Write("enter expiry date(e.g. 2027/5): ");
         var expiryDate = ReadLine();
         var expiryDateTime = DateTime.Parse(expiryDate);
 
@@ -194,9 +194,9 @@ internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHand
 
     private void CreateAccount()
     {
-        Console.WriteLine("card's first password: ");
+        Console.Write("card's first password: ");
         var firstPassword = ReadLine();
-        Console.WriteLine("card's second(static) password: ");
+        Console.Write("card's second(static) password: ");
         var secondPassword = ReadLine();
 
         var account = accountHandler.CreateAccount(user.Id);
@@ -205,7 +205,7 @@ internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHand
         var card = cardHandler.CreateCard(account.Id, firstPassword, secondPassword);
         Console.WriteLine($"your card number: {card.CardNumber}");
         Console.WriteLine($"your card Cvv2: {card.Cvv2}");
-        Console.WriteLine($"your card ExpiryDate: {card.ExpiryDate}");
+        Console.WriteLine($"your card ExpiryDate: {card.ExpiryDate.Year}/{card.ExpiryDate.Month}");
     }
 
     private void PrintAllAccounts()
