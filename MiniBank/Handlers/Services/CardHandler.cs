@@ -53,7 +53,7 @@ public class CardHandler(IDataBase dataBase, ISmsService smsService) : ICardHand
         };
         
         dataBase.Save(dynamicPassword);
-        smsService.Send($"dynamic password: {destinationCardNumber}", user.PhoneNumber);
+        smsService.Send($"dynamic password: {destinationCardNumber}", accounts.First(acc => acc.Id == originCard.AccountRef).AccountNumber, user.PhoneNumber);
     }
 
     public Card GetCard(Account account)

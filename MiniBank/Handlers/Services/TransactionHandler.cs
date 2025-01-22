@@ -195,9 +195,9 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
     private void Sms(Account originAccount, Account destinationAccount, decimal amount)
     {
         var originUser = dataBase.FetchAll<User>().First(x => x.Id == originAccount.UserRef);
-        smsService.Send($"{amount} was taken from your account", originUser.PhoneNumber);
+        smsService.Send($"{amount} was taken from your account", originAccount.AccountNumber, originUser.PhoneNumber);
         
         var destinationUser = dataBase.FetchAll<User>().First(x => x.Id == destinationAccount.UserRef);
-        smsService.Send($"{amount} was sent to your account", destinationUser.PhoneNumber);
+        smsService.Send($"{amount} was sent to your account", destinationAccount.AccountNumber ,destinationUser.PhoneNumber);
     }
 }
