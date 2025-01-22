@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MiniBank.Entities.Classes;
+﻿using MiniBank.Entities.Classes;
+using MiniBank.Exceptions;
 using MiniBank.Handlers.Abstractions;
 
 namespace MiniBank.Handlers.Services;
 
-internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHandler, ICardHandler cardHandler)
+internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHandler, ICardHandler cardHandler,
+    IDepositHandler depositHandler, IWithdrawalHandler withdrawalHandler, ITransactionHandler transactionHandler)
 {
     private User? user;
 
@@ -37,6 +34,9 @@ internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHand
                         break;
 
                     case "3":
+                        Console.WriteLine("enter account number: ");
+                        var accountNumber = ReadLine();
+                        AccountManager(accountNumber);
                         break;
 
                     case "4":
@@ -46,7 +46,7 @@ internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHand
                     default:
                         throw new Exception("Invalid input");
 
-            }
+                }
             }
 
             catch (Exception e)
@@ -57,6 +57,123 @@ internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHand
                 Thread.Sleep(1000);
             }
         }
+    }
+
+    private void AccountManager(string accountNumber)
+    {
+        ArgumentNullException.ThrowIfNull(user);
+        var correctAccount = accountHandler.AccountExistsAndBelongsToUser(accountNumber, user.Id);
+
+        if(correctAccount == false)
+        {
+            throw new OperationFailedException("entered account number is wrong");
+        }
+
+        try
+        {
+            Console.WriteLine("1-Show Balance");
+            Console.WriteLine("2-Deposit Money");
+            Console.WriteLine("3-Withdraw Money");
+            Console.WriteLine("4-Create Account To Account Transaction");
+            Console.WriteLine("5-Create Card To Card Transaction");
+            Console.WriteLine("6-Go Back");
+
+            var input = ReadLine();
+            decimal amount;
+            switch (input)
+            {
+                case "1":
+                    var balance = accountHandler.GetAccountBalance(accountNumber);
+                    Console.WriteLine($"your balance: {balance}");
+                    break;
+
+                case "2":
+                    Console.Write("How much do you want to deposit? =: ");
+                    amount = decimal.Parse(ReadLine());
+                    depositHandler.Deposit(accountNumber, amount);
+                    break;
+
+                case "3":
+                    Console.Write("How much do you want to withdraw? =: ");
+                    amount = decimal.Parse(ReadLine());
+                    withdrawalHandler.Withdraw(accountNumber, amount);
+                    break;
+
+                case "4":
+                    AccountToAccountTransaction(accountNumber);
+                    break;
+
+                case "5":
+                    CardToCardTransaction(accountNumber);
+                    break;
+
+                case "6":
+
+                    return;
+
+                default:
+                    break;
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("-Error-");
+            Console.WriteLine(e.GetType().Name + " : " + e.Message);
+            Console.WriteLine("-ErrorEnd-");
+            Thread.Sleep(1000);
+        }
+    }
+
+    private void CardToCardTransaction(string accountNumber)
+    {
+        var originCardNumber = cardHandler.GetCard(accountNumber).CardNumber;
+
+        Console.Write("enter the destination card number: ");
+        var destinationCardNumber = ReadLine();
+
+        Console.Write("How much do you want to send? =: ");
+        var amount = decimal.Parse(ReadLine());
+
+        Console.Write("enter transaction description (or leave empty): ");
+        var description = Console.ReadLine();
+
+        Console.WriteLine("enter second password or enter '0' to send dynamic password: ");
+        var input = ReadLine();
+
+        Console.WriteLine("enter cvv2: ");
+        var cvv2 = ReadLine();
+
+        Console.WriteLine("enter expiry date(e.g. 2027/5): ");
+        var expiryDate = ReadLine();
+        var expiryDateTime = DateTime.Parse(expiryDate);
+
+        string password;
+        if (input == "0")
+        {
+            cardHandler.RequestDynamicPassword(amount, originCardNumber, destinationCardNumber, cvv2, expiryDateTime);
+            Console.WriteLine("enter dynamic password: ");
+            password = ReadLine();
+        }
+        else
+        {
+            password = input;
+        }
+
+        transactionHandler.CreateCardToCardTransaction(originCardNumber, destinationCardNumber, amount, password, description);
+    }
+
+    private void AccountToAccountTransaction(string accountNumber)
+    {
+        Console.Write("enter the destination account number: ");
+        var destinationAccountNumber = ReadLine();
+
+        Console.Write("How much do you want to send? =: ");
+        var amount = decimal.Parse(ReadLine());
+
+        Console.Write("enter transaction description (or leave empty): ");
+        var description = Console.ReadLine();
+
+        transactionHandler.CreateAccountToAccountTransaction(accountNumber, destinationAccountNumber, amount, description);
     }
 
     private void CreateAccount()
@@ -90,7 +207,6 @@ internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHand
         Console.WriteLine("2-SignUp");
         Console.WriteLine("3-Exit");
         var input = ReadLine();
-        Console.Clear();
 
         switch (input)
         {
