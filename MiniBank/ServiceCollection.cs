@@ -34,6 +34,8 @@ internal static class ServiceCollection
         serviceCollector.AddSingleton<IDataBase, DataBase>();
         serviceCollector.AddSingleton<IShafaghDB, ShafaghDB>();
         
+        serviceCollector.AddSingleton<IMainHandler, MainHandler>();
+
         serviceCollector.AddSingleton<IPrimaryKeyValidator, PrimaryKeyValidator>();
         serviceCollector.AddSingleton<IForeignKeyValidator, ForeignKeyValidator>();
         serviceCollector.AddSingleton<IDeletionIntegrityValidator, DeletionIntegrityValidator>();

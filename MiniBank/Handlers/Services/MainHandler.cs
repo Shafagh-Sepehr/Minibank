@@ -5,7 +5,7 @@ using MiniBank.Handlers.Abstractions;
 namespace MiniBank.Handlers.Services;
 
 internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHandler, ICardHandler cardHandler,
-    IDepositHandler depositHandler, IWithdrawalHandler withdrawalHandler, ITransactionHandler transactionHandler)
+    IDepositHandler depositHandler, IWithdrawalHandler withdrawalHandler, ITransactionHandler transactionHandler) : IMainHandler
 {
     private User? user;
 
