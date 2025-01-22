@@ -14,16 +14,16 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
     {
         var accounts = dataBase.FetchAll<Account>().ToList();
         var cards = dataBase.FetchAll<Card>().ToList();
-        
+
         var originCard = cards.FirstOrDefault(c => c.CardNumber == originCardNumber);
         var destinationCard = cards.FirstOrDefault(c => c.CardNumber == destinationCardNumber);
-        
+
         var originAccount = accounts.FirstOrDefault(a => a.Id == originCard?.AccountRef);
         var destinationAccount = accounts.FirstOrDefault(a => a.Id == destinationCard?.AccountRef);
 
         ActionResult actionResult;
         var transactionType = TransactionType.FailedCardToCard;
-        
+
         if (originCard == null || destinationCard == null || originAccount == null || destinationAccount == null)
         {
             actionResult = ActionResult.AccountNotFound;
@@ -34,12 +34,12 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
                 secondPassword, originAccount, destinationAccount, originCard, ref transactionType);
         }
 
-        if(actionResult == ActionResult.Success)
+        if (actionResult == ActionResult.Success)
         {
             dataBase.Update(originAccount!);
             dataBase.Update(destinationAccount!);
         }
-        
+
         dataBase.Save(new Transaction
         {
             Amount = amount,
@@ -51,19 +51,19 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
             Status = actionResult == ActionResult.Success ? TransactionStatus.Success : TransactionStatus.Failed,
             Type = transactionType,
         });
-        
+
         Helper.ThrowExceptionIfActionFailed(actionResult);
     }
-    
+
     public void CreateAccountToAccountTransaction(string originAccountNumber, string destinationAccountNumber, decimal amount,
                                                                       string? description = null)
     {
         var accounts = dataBase.FetchAll<Account>().ToList();
         var originAccount = accounts.FirstOrDefault(x => x.AccountNumber == originAccountNumber);
         var destinationAccount = accounts.FirstOrDefault(x => x.AccountNumber == destinationAccountNumber);
-        
+
         ActionResult actionResult;
-        
+
         if (originAccount == null || destinationAccount == null)
         {
             actionResult = ActionResult.AccountNotFound;
@@ -71,7 +71,7 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
         else
         {
             actionResult = TransactAndValidateAndUpdate(amount, originAccount, destinationAccount);
-            if(actionResult == ActionResult.Success)
+            if (actionResult == ActionResult.Success)
             {
                 Sms(originAccount, destinationAccount, amount);
             }
@@ -112,9 +112,9 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
         if (IsDynamicPassword(originCardNumber, destinationCardNumber, amount, secondPassword))
         {
             transactionType = TransactionType.DynamicCardToCard;
-            
+
             actionResult = TransactAndValidateAndUpdate(amount, originAccount, destinationAccount);
-            if(actionResult == ActionResult.Success)
+            if (actionResult == ActionResult.Success)
             {
                 Sms(originAccount, destinationAccount, amount);
             }
@@ -122,15 +122,15 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
         else if (IsStaticPassword(secondPassword, originCard))
         {
             transactionType = TransactionType.StaticCardToCard;
-            
-            if (CanUseStaticPassword(originAccount))
+
+            if (CanUseStaticPassword(originAccount, amount))
             {
                 actionResult = ActionResult.MaximumStaticPasswordPurchaseLimitExceeded;
             }
             else
             {
                 actionResult = TransactAndValidateAndUpdate(amount, originAccount, destinationAccount);
-                if(actionResult == ActionResult.Success)
+                if (actionResult == ActionResult.Success)
                 {
                     Sms(originAccount, destinationAccount, amount);
                 }
@@ -140,35 +140,40 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
         {
             actionResult = ActionResult.IncorrectPassword;
         }
-        
+
         return actionResult;
     }
-    
+
     private static bool IsStaticPassword(string secondPassword, Card originCard) =>
         Helper.ComputeSha256Hash(secondPassword) == originCard.GetSecondPasswordHash();
-    
+
     private ActionResult TransactAndValidateAndUpdate(decimal amount, Account originAccount, Account destinationAccount)
     {
         Transact(originAccount, destinationAccount, amount);
         var actionResult = ValidateBalanceAndUpdateDataBase(originAccount, destinationAccount);
         return actionResult;
     }
-    
-    private bool CanUseStaticPassword(Account account)
+
+    private bool CanUseStaticPassword(Account account, decimal amount)
     {
-        var transactions = dataBase.FetchAll<Transaction>();
-        var staticPasswordPurchaseAmount = transactions.Where(x => account.Id == x.OriginAccountRef && x.Date == DateTime.Today &&
-                                                                   x.Type == TransactionType.StaticCardToCard)
+        var transactions = dataBase.FetchAll<Transaction>().ToList();
+        var staticPasswordPurchaseAmount = transactions.Where(x => account.Id == x.OriginAccountRef && AreSameDay(x.Date, DateTime.Now) &&
+                                                              x.Type == TransactionType.StaticCardToCard && x.Status == TransactionStatus.Success)
             .Sum(x => x.Amount);
-        
-        return staticPasswordPurchaseAmount > appSettings.MaximumStaticPasswordPurchaseLimit;
+
+        return staticPasswordPurchaseAmount + amount > appSettings.MaximumStaticPasswordPurchaseLimit;
     }
-    
+
+    private static bool AreSameDay(DateTime dt1, DateTime dt2)
+    {
+        return dt1.Year == dt2.Year && dt1.Month == dt2.Month && dt1.Day == dt2.Day;
+    }
+
     private bool IsDynamicPassword(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword) =>
         dataBase.FetchAll<DynamicPassword>().Any(d =>
             d.OriginCardNumber == originCardNumber && d.DestinationCardNumber == destinationCardNumber && d.Amount == amount &&
             d.DynamicPasswordHash == Helper.ComputeSha256Hash(secondPassword) && d.ExpiryDate <= DateTime.Now);
-    
+
     private ActionResult ValidateBalanceAndUpdateDataBase(Account originAccount, Account destinationAccount)
     {
         ActionResult actionResult;
@@ -182,22 +187,22 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
             dataBase.Update(destinationAccount);
             actionResult = ActionResult.Success;
         }
-        
+
         return actionResult;
     }
-    
+
     private static void Transact(Account originAccount, Account destinationAccount, decimal amount)
     {
         originAccount.DecreaseBalance(amount);
         destinationAccount.IncreaseBalance(amount);
     }
-    
+
     private void Sms(Account originAccount, Account destinationAccount, decimal amount)
     {
         var originUser = dataBase.FetchAll<User>().First(x => x.Id == originAccount.UserRef);
         smsService.Send($"{amount} was taken from your account", originAccount.AccountNumber, originUser.PhoneNumber);
-        
+
         var destinationUser = dataBase.FetchAll<User>().First(x => x.Id == destinationAccount.UserRef);
-        smsService.Send($"{amount} was sent to your account", destinationAccount.AccountNumber ,destinationUser.PhoneNumber);
+        smsService.Send($"{amount} was sent to your account", destinationAccount.AccountNumber, destinationUser.PhoneNumber);
     }
 }
