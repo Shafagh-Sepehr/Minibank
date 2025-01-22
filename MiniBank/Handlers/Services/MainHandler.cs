@@ -70,73 +70,76 @@ internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHand
             throw new OperationFailedException("entered account number is wrong");
         }
 
-        try
+        while (true)
         {
-            Console.WriteLine();
-            Console.WriteLine("1-Show Balance");
-            Console.WriteLine("2-Deposit Money");
-            Console.WriteLine("3-Withdraw Money");
-            Console.WriteLine("4-Create Account To Account Transaction");
-            Console.WriteLine("5-Create Card To Card Transaction");
-            Console.WriteLine("6-See All Transactions");
-            Console.WriteLine("7-See All Deposits");
-            Console.WriteLine("8-See All Withdrawals");
-            Console.WriteLine("9-Go Back");
-
-            var input = ReadLine();
-            decimal amount;
-            switch (input)
+            try
             {
-                case "1":
-                    var balance = accountHandler.GetAccountBalance(accountNumber);
-                    Console.WriteLine($"your balance: {balance}");
-                    break;
+                Console.WriteLine();
+                Console.WriteLine("1-Show Balance");
+                Console.WriteLine("2-Deposit Money");
+                Console.WriteLine("3-Withdraw Money");
+                Console.WriteLine("4-Create Account To Account Transaction");
+                Console.WriteLine("5-Create Card To Card Transaction");
+                Console.WriteLine("6-See All Transactions");
+                Console.WriteLine("7-See All Deposits");
+                Console.WriteLine("8-See All Withdrawals");
+                Console.WriteLine("9-Go Back");
 
-                case "2":
-                    Console.Write("How much do you want to deposit? =: ");
-                    amount = decimal.Parse(ReadLine());
-                    depositHandler.Deposit(accountNumber, amount);
-                    break;
+                var input = ReadLine();
+                decimal amount;
+                switch (input)
+                {
+                    case "1":
+                        var balance = accountHandler.GetAccountBalance(accountNumber);
+                        Console.WriteLine($"your balance: {balance}");
+                        break;
 
-                case "3":
-                    Console.Write("How much do you want to withdraw? =: ");
-                    amount = decimal.Parse(ReadLine());
-                    withdrawalHandler.Withdraw(accountNumber, amount);
-                    break;
+                    case "2":
+                        Console.Write("How much do you want to deposit? =: ");
+                        amount = decimal.Parse(ReadLine());
+                        depositHandler.Deposit(accountNumber, amount);
+                        break;
 
-                case "4":
-                    AccountToAccountTransaction(accountNumber);
-                    break;
+                    case "3":
+                        Console.Write("How much do you want to withdraw? =: ");
+                        amount = decimal.Parse(ReadLine());
+                        withdrawalHandler.Withdraw(accountNumber, amount);
+                        break;
 
-                case "5":
-                    CardToCardTransaction(accountNumber);
-                    break;
+                    case "4":
+                        AccountToAccountTransaction(accountNumber);
+                        break;
 
-                case "6":
-                    ShowAllTransactions(accountNumber);
-                    break;
+                    case "5":
+                        CardToCardTransaction(accountNumber);
+                        break;
 
-                case "7":
-                    ShowAllDeposits(accountNumber);
-                    break;
+                    case "6":
+                        ShowAllTransactions(accountNumber);
+                        break;
 
-                case "8":
-                    ShowAllWithdrawals(accountNumber);
-                    break;
+                    case "7":
+                        ShowAllDeposits(accountNumber);
+                        break;
 
-                case "9":
-                    return;
+                    case "8":
+                        ShowAllWithdrawals(accountNumber);
+                        break;
 
-                default:
-                    throw new Exception("invalid input");
+                    case "9":
+                        return;
+
+                    default:
+                        throw new Exception("invalid input");
+                }
             }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("-Error-");
-            Console.WriteLine(e.GetType().Name + " : " + e.Message);
-            Console.WriteLine("-ErrorEnd-");
-            Thread.Sleep(1000);
+            catch (Exception e)
+            {
+                Console.WriteLine("-Error-");
+                Console.WriteLine(e.GetType().Name + " : " + e.Message);
+                Console.WriteLine("-ErrorEnd-");
+                Thread.Sleep(1000);
+            } 
         }
     }
 
