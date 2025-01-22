@@ -25,7 +25,7 @@ public class Card : DataBaseEntity
     }
     public required string SecondPassword
     {
-        init => _passwordHash = Helper.ComputeSha256Hash(value);
+        init => _secondPasswordHash = Helper.ComputeSha256Hash(value);
     }
     
     public required DateTime ExpiryDate { get; init; }
