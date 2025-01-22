@@ -3,7 +3,7 @@ using DB.Data.Abstractions;
 using DB.Entities.Enums;
 using DB.Exceptions;
 using DB.Validators.Abstractions;
-using DeepCopier;
+using Force.DeepCloner;
 
 namespace DB.Data.Services;
 
@@ -24,7 +24,7 @@ public sealed class DataBase : IDataBase
         var typeName = typeof(TDatabaseEntity).Name;
         
         SetId(entity, typeName);
-        var entityCopy = Copier.Copy(entity);
+        var entityCopy = entity.DeepClone();
         
         if (_entities.TryGetValue(typeName, out var entityList))
         {
@@ -43,7 +43,7 @@ public sealed class DataBase : IDataBase
         Validate(entity, DataBaseAction.Update);
         
         var typeName = typeof(TDatabaseEntity).Name;
-        var entityCopy = Copier.Copy(entity);
+        var entityCopy = entity.DeepClone();
         
         if (_entities.TryGetValue(typeName, out var entityList))
         {
@@ -84,7 +84,7 @@ public sealed class DataBase : IDataBase
         
         if (_entities.TryGetValue(typeName, out var entityList))
         {
-            return entityList.Where(x => x is TDatabaseEntity).Cast<TDatabaseEntity>();
+            return entityList.Where(x => x is TDatabaseEntity).Cast<TDatabaseEntity>().Select(e => e.DeepClone());
         }
         else
         {
