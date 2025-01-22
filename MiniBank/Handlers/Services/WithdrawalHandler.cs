@@ -29,10 +29,10 @@ public class WithdrawalHandler(IDataBase dataBase, ISmsService smsService) : IWi
             {
                 dataBase.Update(account);
                 actionResult = ActionResult.Success;
+                var user = dataBase.FetchAll<User>().First(x => x.Id == account.UserRef);
+                smsService.Send($"{amount} was withdrawn from your account", accountNumber, user.PhoneNumber);
             }
             
-            var user = dataBase.FetchAll<User>().First(x => x.Id == account.UserRef);
-            smsService.Send($"{amount} was withdrawn from your account", accountNumber, user.PhoneNumber);
         }
         
         dataBase.Save(new Withdrawal

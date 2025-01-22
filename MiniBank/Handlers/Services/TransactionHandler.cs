@@ -32,13 +32,19 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
         {
             actionResult = ExecuteCardToCardTransaction(originCardNumber, destinationCardNumber, amount,
                 secondPassword, originAccount, destinationAccount, originCard, ref transactionType);
+
+            if (actionResult == ActionResult.Success)
+            {
+                dataBase.Update(originAccount!);
+                dataBase.Update(destinationAccount!);
+            }
+
+            if (actionResult == ActionResult.Success)
+            {
+                Sms(originAccount, destinationAccount, amount);
+            }
         }
 
-        if (actionResult == ActionResult.Success)
-        {
-            dataBase.Update(originAccount!);
-            dataBase.Update(destinationAccount!);
-        }
 
         dataBase.Save(new Transaction
         {
@@ -71,16 +77,16 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
         else
         {
             actionResult = TransactAndValidateAndUpdate(amount, originAccount, destinationAccount);
+
+            if (actionResult == ActionResult.Success)
+            {
+                dataBase.Update(originAccount!);
+                dataBase.Update(destinationAccount!);
+            }
             if (actionResult == ActionResult.Success)
             {
                 Sms(originAccount, destinationAccount, amount);
             }
-        }
-
-        if (actionResult == ActionResult.Success)
-        {
-            dataBase.Update(originAccount!);
-            dataBase.Update(destinationAccount!);
         }
 
         dataBase.Save(new Transaction
@@ -114,10 +120,6 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
             transactionType = TransactionType.DynamicCardToCard;
 
             actionResult = TransactAndValidateAndUpdate(amount, originAccount, destinationAccount);
-            if (actionResult == ActionResult.Success)
-            {
-                Sms(originAccount, destinationAccount, amount);
-            }
         }
         else if (IsStaticPassword(secondPassword, originCard))
         {
@@ -130,10 +132,6 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
             else
             {
                 actionResult = TransactAndValidateAndUpdate(amount, originAccount, destinationAccount);
-                if (actionResult == ActionResult.Success)
-                {
-                    Sms(originAccount, destinationAccount, amount);
-                }
             }
         }
         else
