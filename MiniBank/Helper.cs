@@ -37,7 +37,7 @@ public static class Helper
                 throw new OperationFailedException("Destination account doesn't exist");
 
             case ActionResult.InsufficientBalance:
-                throw new OperationFailedException("You don't have the sufficient balance to create this transaction");
+                throw new OperationFailedException("You don't have the sufficient balance");
 
             case ActionResult.IncorrectPassword:
                 throw new OperationFailedException("The Provided Credentials are incorrect");
