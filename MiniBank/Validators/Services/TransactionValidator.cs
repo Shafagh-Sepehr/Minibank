@@ -8,6 +8,11 @@ public class TransactionValidator(IDataBase dataBase) : BaseValidator<Transactio
 {
     protected override void ValidateSaveState(Transaction entity, List<string> errors)
     {
+        if(entity.Status == Entities.Enums.TransactionStatus.Failed)
+        {
+            return;
+        }
+
         if (entity.Amount <= 0)
         {
             errors.Add("Withdrawal amount must be greater than 0");
@@ -52,6 +57,11 @@ public class TransactionValidator(IDataBase dataBase) : BaseValidator<Transactio
         if (DestianaitonAccountNumberAndRefMismatch(accounts, entity.DestinationAccountRef, entity.DestinationAccountNumber))
         {
             errors.Add("Destination account number and reference mismatch");
+        }
+
+        if(entity.DestinationAccountNumber.Length != 20)
+        {
+            errors.Add("The field DestinationAccountNumber must be a string with a minimum length of 20 and a maximum length of 20.");
         }
     }
     
