@@ -214,6 +214,13 @@ internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHand
     private void PrintAllAccounts()
     {
         var accounts = accountHandler.GetAllUserAccounts(user).ToList();
+
+        if (accounts.Count == 0)
+        {
+            Console.WriteLine("you don't have any account yet");
+            return;
+        }
+
         for (int i = 0; i < accounts.Count; i++)
         {
             Console.WriteLine($"  {i}- {accounts[i].AccountNumber}");
