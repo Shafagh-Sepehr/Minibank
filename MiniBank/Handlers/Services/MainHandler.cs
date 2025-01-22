@@ -17,6 +17,7 @@ internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHand
             {
                 user ??= LoginOrSingup();
 
+                Console.WriteLine();
                 Console.WriteLine("1-See All of My Accounts");
                 Console.WriteLine("2-Create A new Bank Account");
                 Console.WriteLine("3-Select A Bank Account");
@@ -71,6 +72,7 @@ internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHand
 
         try
         {
+            Console.WriteLine();
             Console.WriteLine("1-Show Balance");
             Console.WriteLine("2-Deposit Money");
             Console.WriteLine("3-Withdraw Money");
@@ -217,6 +219,7 @@ internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHand
 
     private User LoginOrSingup()
     {
+        Console.WriteLine();
         Console.WriteLine("1-Login");
         Console.WriteLine("2-SignUp");
         Console.WriteLine("3-Exit");
@@ -248,11 +251,11 @@ internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHand
         var newPassword = ReadLine();
         Console.Write("FirstName: ");
         var firstName = ReadLine();
-        Console.WriteLine("LastName: ");
+        Console.Write("LastName: ");
         var lastName = ReadLine();
-        Console.WriteLine("PhoneNumber: ");
+        Console.Write("PhoneNumber: ");
         var phoneNumber = ReadLine();
-        Console.WriteLine("NationalId: ");
+        Console.Write("NationalId: ");
         var nationalId = ReadLine();
 
         userHandler.CreateUser(newUsername, newPassword, firstName, lastName, phoneNumber, nationalId);
