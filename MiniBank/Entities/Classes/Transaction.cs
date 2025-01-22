@@ -5,7 +5,7 @@ using MiniBank.Entities.Enums;
 
 namespace MiniBank.Entities.Classes;
 
-[Validator(typeof(IValidator<Account>), typeof(Account))]
+[Validator(typeof(IValidator<Transaction>), typeof(Transaction))]
 public class Transaction : DataBaseEntity
 {
     public required decimal Amount { get; init; }
@@ -14,13 +14,11 @@ public class Transaction : DataBaseEntity
     public DateTime Date { get; } = DateTime.Now;
     public string? Description { get; init; }
 
-    [Range(1, long.MaxValue)]
+    [Range(0, long.MaxValue)]
     public required long OriginAccountRef { get; init; }
-    [StringLength(20, MinimumLength = 20)]
     public required string OriginAccountNumber { get; init; }
 
-    [Range(1, long.MaxValue)]
+    [Range(0, long.MaxValue)]
     public required long DestinationAccountRef { get; init; }
-    [StringLength(20, MinimumLength = 20)]
     public required string DestinationAccountNumber { get; init; }
 }
