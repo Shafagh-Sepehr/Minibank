@@ -22,9 +22,9 @@ public sealed class DataBase : IDataBase
         Validate(entity, DataBaseAction.Save);
         
         var typeName = typeof(TDatabaseEntity).Name;
-        var entityCopy = Copier.Copy(entity);
         
-        SetId(entityCopy, typeName);
+        SetId(entity, typeName);
+        var entityCopy = Copier.Copy(entity);
         
         if (_entities.TryGetValue(typeName, out var entityList))
         {
