@@ -81,7 +81,13 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
 
         Helper.ThrowExceptionIfActionFailed(actionResult);
     }
-    
+
+    public IEnumerable<Transaction> GetAllTransactions(string accountNumber)
+    {
+        var account = dataBase.FetchAll<Account>().First(acc => acc.AccountNumber == accountNumber);
+        return dataBase.FetchAll<Transaction>().Where(dep => dep.OriginAccountRef == account.Id || dep.DestinationAccountRef == account.Id);
+    }
+
     private ActionResult ExecuteCardToCardTransaction(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword,
                                                       Account originAccount, Account destinationAccount, Card originCard,
                                                       ref TransactionType transactionType)

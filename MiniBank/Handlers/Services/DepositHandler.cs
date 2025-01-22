@@ -36,4 +36,10 @@ public class DepositHandler(IDataBase dataBase, ISmsService smsService) : IDepos
         
         Helper.ThrowExceptionIfActionFailed(actionResult);
     }
+
+    public IEnumerable<Deposit> GetAllDeposits(string accountNumber)
+    {
+        var account = dataBase.FetchAll<Account>().First(acc => acc.AccountNumber == accountNumber);
+        return dataBase.FetchAll<Deposit>().Where(dep => dep.AccountRef == account.Id);
+    }
 }

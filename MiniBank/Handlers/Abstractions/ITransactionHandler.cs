@@ -1,4 +1,4 @@
-﻿using MiniBank.Entities.Enums;
+﻿using MiniBank.Entities.Classes;
 
 namespace MiniBank.Handlers.Abstractions;
 
@@ -9,4 +9,5 @@ public interface ITransactionHandler
     
     void CreateAccountToAccountTransaction(string originAccountNumber, string destinationAccountNumber, decimal amount,
                                                                 string? description = null);
+    IEnumerable<Transaction> GetAllTransactions(string accountNumber);
 }

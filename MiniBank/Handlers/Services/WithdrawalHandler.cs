@@ -44,4 +44,10 @@ public class WithdrawalHandler(IDataBase dataBase, ISmsService smsService) : IWi
 
         Helper.ThrowExceptionIfActionFailed(actionResult);
     }
+
+    public IEnumerable<Withdrawal> GetAllWithdrawals(string accountNumber)
+    {
+        var account = dataBase.FetchAll<Account>().First(acc => acc.AccountNumber == accountNumber);
+        return dataBase.FetchAll<Withdrawal>().Where(dep => dep.AccountRef == account.Id);
+    }
 }
