@@ -156,9 +156,6 @@ internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHand
         Console.Write("enter transaction description (or leave empty): ");
         var description = Console.ReadLine();
 
-        Console.Write("enter second password or enter '0' to send dynamic password: ");
-        var input = ReadLine();
-
         Console.Write("enter cvv2: ");
         var cvv2 = ReadLine();
 
@@ -166,11 +163,14 @@ internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHand
         var expiryDate = ReadLine();
         var expiryDateTime = DateTime.Parse(expiryDate);
 
+        Console.Write("enter second password or enter '0' to send dynamic password: ");
+        var input = ReadLine();
+
         string password;
         if (input == "0")
         {
             cardHandler.RequestDynamicPassword(amount, originCardNumber, destinationCardNumber, cvv2, expiryDateTime);
-            Console.WriteLine("enter dynamic password: ");
+            Console.Write("enter dynamic password: ");
             password = ReadLine();
         }
         else
