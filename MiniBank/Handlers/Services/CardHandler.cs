@@ -1,4 +1,5 @@
-﻿using DB.Data.Abstractions;
+﻿using System.Security.Principal;
+using DB.Data.Abstractions;
 using MiniBank.Communication.Abstractions;
 using MiniBank.Entities.Classes;
 using MiniBank.Exceptions;
@@ -57,6 +58,13 @@ public class CardHandler(IDataBase dataBase, ISmsService smsService) : ICardHand
 
     public Card GetCard(Account account)
     {
+        var card = dataBase.FetchAll<Card>().FirstOrDefault(card => card.AccountRef == account.Id);
+        return card ?? throw new OperationFailedException("couldn't find the requested card");
+    }
+
+    public Card GetCard(string accountNumber)
+    {
+        var account = dataBase.FetchAll<Account>().Where(acc => acc.AccountNumber == accountNumber).First();
         var card = dataBase.FetchAll<Card>().FirstOrDefault(card => card.AccountRef == account.Id);
         return card ?? throw new OperationFailedException("couldn't find the requested card");
     }
