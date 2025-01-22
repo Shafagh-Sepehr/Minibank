@@ -33,6 +33,12 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
             actionResult = ExecuteCardToCardTransaction(originCardNumber, destinationCardNumber, amount,
                 secondPassword, originAccount, destinationAccount, originCard, ref transactionType);
         }
+
+        if(actionResult == ActionResult.Success)
+        {
+            dataBase.Update(originAccount!);
+            dataBase.Update(destinationAccount!);
+        }
         
         dataBase.Save(new Transaction
         {
@@ -70,7 +76,13 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
                 Sms(originAccount, destinationAccount, amount);
             }
         }
-        
+
+        if (actionResult == ActionResult.Success)
+        {
+            dataBase.Update(originAccount!);
+            dataBase.Update(destinationAccount!);
+        }
+
         dataBase.Save(new Transaction
         {
             Amount = amount,

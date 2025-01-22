@@ -22,6 +22,8 @@ public class DepositHandler(IDataBase dataBase, ISmsService smsService) : IDepos
             account.IncreaseBalance(amount);
             dataBase.Update(account);
             actionResult = ActionResult.Success;
+
+            dataBase.Update(account);
             
             var user = dataBase.FetchAll<User>().First(x => x.Id == account.UserRef);
             smsService.Send($"{amount} was deposited to your account", user.PhoneNumber);
