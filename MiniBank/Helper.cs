@@ -1,5 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using MiniBank.Entities.Enums;
+using MiniBank.Exceptions;
 
 namespace MiniBank;
 
@@ -19,5 +21,32 @@ public static class Helper
 
         // Convert byte array to a string
         return Convert.ToHexString(bytes).ToLower();
+    }
+
+    public static void ThrowExceptionIfActionFailed(ActionResult actionResult)
+    {
+        switch (actionResult)
+        {
+            case ActionResult.Unknown:
+                throw new OperationFailedException("Unknown error occurred with action result");
+
+            case ActionResult.Success:
+                break;
+
+            case ActionResult.AccountNotFound:
+                throw new OperationFailedException("Destination account doesn't exist");
+
+            case ActionResult.InsufficientBalance:
+                throw new OperationFailedException("You don't have the sufficient balance to create this transaction");
+
+            case ActionResult.IncorrectPassword:
+                throw new OperationFailedException("The Provided Credentials are incorrect");
+
+            case ActionResult.MaximumStaticPasswordPurchaseLimitExceeded:
+                throw new OperationFailedException("Maximum static password purchase limit exceeded");
+
+            default:
+                break;
+        }
     }
 }

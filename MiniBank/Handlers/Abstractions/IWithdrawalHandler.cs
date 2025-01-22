@@ -4,5 +4,5 @@ namespace MiniBank.Handlers.Abstractions;
 
 public interface IWithdrawalHandler
 {
-    ActionResult Withdraw(string accountNumber, decimal amount);
+    void Withdraw(string accountNumber, decimal amount);
 }

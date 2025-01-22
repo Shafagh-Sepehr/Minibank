@@ -8,7 +8,7 @@ namespace MiniBank.Handlers.Services;
 
 public class WithdrawalHandler(IDataBase dataBase, ISmsService smsService) : IWithdrawalHandler
 {
-    public ActionResult Withdraw(string accountNumber, decimal amount)
+    public void Withdraw(string accountNumber, decimal amount)
     {
         var accounts = dataBase.FetchAll<Account>();
         var account = accounts.FirstOrDefault(x => x.AccountNumber == accountNumber);
@@ -41,7 +41,7 @@ public class WithdrawalHandler(IDataBase dataBase, ISmsService smsService) : IWi
             AccountRef = account?.Id ?? 0,
             Status = actionResult == ActionResult.Success ? TransactionStatus.Success : TransactionStatus.Failed,
         });
-        
-        return actionResult;
+
+        Helper.ThrowExceptionIfActionFailed(actionResult);
     }
 }

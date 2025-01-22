@@ -4,9 +4,9 @@ namespace MiniBank.Handlers.Abstractions;
 
 public interface ITransactionHandler
 {
-    ActionResult CreateCardToCardTransaction(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword,
+    void CreateCardToCardTransaction(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword,
                                               string? description);
     
-    ActionResult CreateAccountToAccountTransaction(string originAccountNumber, string destinationAccountNumber, decimal amount,
+    void CreateAccountToAccountTransaction(string originAccountNumber, string destinationAccountNumber, decimal amount,
                                                                 string? description = null);
 }

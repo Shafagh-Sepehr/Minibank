@@ -8,7 +8,7 @@ namespace MiniBank.Handlers.Services;
 
 public class DepositHandler(IDataBase dataBase, ISmsService smsService) : IDepositHandler
 {
-    public ActionResult Deposit(string accountNumber, decimal amount)
+    public void Deposit(string accountNumber, decimal amount)
     {
         var account = dataBase.FetchAll<Account>().FirstOrDefault(x => x.AccountNumber == accountNumber);
         ActionResult actionResult;
@@ -34,6 +34,6 @@ public class DepositHandler(IDataBase dataBase, ISmsService smsService) : IDepos
             Status = actionResult == ActionResult.Success ? TransactionStatus.Success : TransactionStatus.Failed,
         });
         
-        return actionResult;
+        Helper.ThrowExceptionIfActionFailed(actionResult);
     }
 }
