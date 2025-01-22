@@ -8,6 +8,6 @@ public class SmsService(IAppSettings appSettings) : ISmsService
 {
     public void Send(string message, string accountNumber, string phoneNumber)
     {
-        File.AppendAllText(appSettings.SmsServiceFilePath, $"phone number:{phoneNumber}, account number:{accountNumber}, message:{message}\n");
+        File.AppendAllText(appSettings.SmsServiceFilePath, $"{DateTime.Now:g} - phone number:{phoneNumber}, account number:{accountNumber}, message:{message}\n");
     }
 }
