@@ -23,7 +23,10 @@ public class DefaultValueSetter : IDefaultValueSetter
             {
                 if(Convert.ChangeType(defaultValueAttribute.DefaultValue, propertyInfo.PropertyType) is { } value)
                 {
-                    propertyInfo.SetValue(entity, value);
+                    if (propertyInfo.GetValue(entity) == null)
+                    {
+                        propertyInfo.SetValue(entity, value);
+                    }
                 }
                 else
                 {
