@@ -6,7 +6,7 @@ namespace Repository;
 
 internal static class Helper
 {
-    public static void SetValue(object obj, string memberName, object value)
+    public static void SetValue(object obj, string memberName, object? value)
     {
         if (obj == null)
             throw new ArgumentNullException(nameof(obj));
