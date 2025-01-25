@@ -26,5 +26,5 @@ public class AttributeValidator : IAttributeValidator
     
     private static bool PropertyHasAttributesOtherThanForeignKeyAttributeAndNullableAttribute(PropertyInfo propertyInfo)
         => propertyInfo.CustomAttributes
-            .Any(a => a.AttributeType != typeof(ForeignKeyAttribute) && a.AttributeType != typeof(NullableAttribute));
+            .Any(a => a.AttributeType == typeof(PrimaryKeyAttribute) || a.AttributeType == typeof(DefaultMemberAttribute));
 }
