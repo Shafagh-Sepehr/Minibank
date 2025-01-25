@@ -6,8 +6,16 @@ namespace Repository.DaoConversion.DaoToEntity.Services;
 
 public class AccountToDao : IDaoToEntity< AccountDao,  Account>
 {
-    public Account Convert(AccountDao dao)
+    public Account DaoToEntity(AccountDao dao)
     {
-        throw new NotImplementedException();
+        var account = new Account
+        {
+            AccountNumber = dao.AccountNumber,
+            Status = dao.Status,
+            UserRef = dao.UserRef,
+            Id = dao.Id,
+        };
+        account.IncreaseBalance(dao.Balance);
+        return account;
     }
 }

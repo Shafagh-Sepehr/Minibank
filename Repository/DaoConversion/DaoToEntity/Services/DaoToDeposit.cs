@@ -6,8 +6,16 @@ namespace Repository.DaoConversion.DaoToEntity.Services;
 
 public class DaoToDeposit : IDaoToEntity<DepositDao, Deposit>
 {
-    public Deposit Convert(DepositDao dao)
+    public Deposit DaoToEntity(DepositDao dao)
     {
-        throw new NotImplementedException();
+        var deposit = new Deposit
+        {
+            Status = dao.Status,
+            Id = dao.Id,
+            AccountRef = dao.AccountRef,
+            Amount = dao.Amount,
+        };
+        Helper.SetValue(deposit, nameof(deposit.Date), dao.Date);
+        return deposit;
     }
 }

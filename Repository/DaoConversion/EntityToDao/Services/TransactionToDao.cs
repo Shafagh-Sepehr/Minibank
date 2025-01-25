@@ -6,8 +6,20 @@ namespace Repository.DaoConversion.EntityToDao.Services;
 
 public class TransactionToDao : IEntityToDao<Transaction, TransactionDao>
 {
-    public TransactionDao Convert(Transaction dao)
+    public TransactionDao EntityToData(Transaction entity)
     {
-        throw new NotImplementedException();
+        return new TransactionDao
+        {
+            Id = entity.Id,
+            Amount = entity.Amount,
+            Status = entity.Status,
+            Date = entity.Date,
+            Description = entity.Description,
+            DestinationAccountNumber = entity.DestinationAccountNumber,
+            DestinationAccountRef = entity.DestinationAccountRef,
+            OriginAccountNumber = entity.OriginAccountNumber,
+            OriginAccountRef = entity.OriginAccountRef,
+            Type = entity.Type
+        };
     }
 }

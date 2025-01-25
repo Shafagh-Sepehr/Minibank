@@ -6,8 +6,17 @@ namespace Repository.DaoConversion.EntityToDao.Services;
 
 public class UserToDao : IEntityToDao<User, UserDao>
 {
-    public UserDao Convert(User dao)
+    public UserDao EntityToData(User entity)
     {
-        throw new NotImplementedException();
+        return new UserDao
+        {
+            Id = entity.Id,
+            FirstName = entity.FirstName,
+            LastName = entity.LastName,
+            NationalId = entity.NationalId,
+            PasswordHash = entity.PasswordHash,
+            PhoneNumber = entity.PhoneNumber,
+            Username = entity.Username
+        };
     }
 }

@@ -6,8 +6,16 @@ namespace Repository.DaoConversion.EntityToDao.Services;
 
 public class DynamicPasswordToDao : IEntityToDao<DynamicPassword, DynamicPasswordDao>
 {
-    public DynamicPasswordDao Convert(DynamicPassword dao)
+    public DynamicPasswordDao EntityToData(DynamicPassword entity)
     {
-        throw new NotImplementedException();
+        return new DynamicPasswordDao
+        {
+            Id = entity.Id,
+            Amount = entity.Amount,
+            DestinationCardNumber = entity.DestinationCardNumber,
+            DynamicPasswordHash = entity.DynamicPasswordHash,
+            ExpiryDate = entity.ExpiryDate,
+            OriginCardNumber = entity.OriginCardNumber
+        };
     }
 }

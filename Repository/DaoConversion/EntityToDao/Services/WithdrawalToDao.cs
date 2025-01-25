@@ -6,8 +6,15 @@ namespace Repository.DaoConversion.EntityToDao.Services;
 
 public class WithdrawalToDao : IEntityToDao<Withdrawal, WithdrawalDao>
 {
-    public WithdrawalDao Convert(Withdrawal dao)
+    public WithdrawalDao EntityToData(Withdrawal entity)
     {
-        throw new NotImplementedException();
+        return new WithdrawalDao
+        {
+            Id = entity.Id,
+            Status = entity.Status,
+            AccountRef = entity.AccountRef,
+            Amount = entity.Amount,
+            Date = entity.Date
+        };
     }
 }

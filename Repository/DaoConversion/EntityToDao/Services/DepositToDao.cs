@@ -6,8 +6,15 @@ namespace Repository.DaoConversion.EntityToDao.Services;
 
 public class DepositToDao : IEntityToDao<Deposit, DepositDao>
 {
-    public DepositDao Convert(Deposit dao)
+    public DepositDao EntityToData(Deposit entity)
     {
-        throw new NotImplementedException();
+        return new DepositDao
+        {
+            Status = entity.Status,
+            Id = entity.Id,
+            AccountRef = entity.AccountRef,
+            Amount = entity.Amount,
+            Date = entity.Date
+        };
     }
 }

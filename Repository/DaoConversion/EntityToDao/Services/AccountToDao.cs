@@ -6,8 +6,15 @@ namespace Repository.DaoConversion.EntityToDao.Services;
 
 public class AccountToDao : IEntityToDao<Account, AccountDao>
 {
-    public AccountDao Convert(Account dao)
+    public AccountDao EntityToData(Account entity)
     {
-        throw new NotImplementedException();
+        return new AccountDao
+        {
+            AccountNumber = entity.AccountNumber,
+            Balance = entity.Balance,
+            Status = entity.Status,
+            UserRef = entity.UserRef,
+            Id = entity.Id,
+        };
     }
 }

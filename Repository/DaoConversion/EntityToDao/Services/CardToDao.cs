@@ -6,8 +6,17 @@ namespace Repository.DaoConversion.EntityToDao.Services;
 
 public class CardToDao : IEntityToDao<Card, CardDao>
 {
-    public CardDao Convert(Card dao)
+    public CardDao EntityToData(Card entity)
     {
-        throw new NotImplementedException();
+        return new CardDao
+        {
+            CardNumber = entity.CardNumber,
+            Id = entity.Id,
+            AccountRef = entity.AccountRef,
+            Cvv2 = entity.Cvv2,
+            Password = entity.GetPasswordHash(),
+            SecondPassword = entity.GetSecondPasswordHash(),
+            ExpiryDate = entity.ExpiryDate
+        };
     }
 }
