@@ -35,12 +35,6 @@ public class TransactionHandler(IRepository repository, IAppSettings appSettings
 
             if (actionResult == ActionResult.Success)
             {
-                repository.Update(originAccount!);
-                repository.Update(destinationAccount!);
-            }
-
-            if (actionResult == ActionResult.Success)
-            {
                 Sms(originAccount, destinationAccount, amount);
             }
         }
@@ -80,11 +74,6 @@ public class TransactionHandler(IRepository repository, IAppSettings appSettings
 
             if (actionResult == ActionResult.Success)
             {
-                repository.Update(originAccount!);
-                repository.Update(destinationAccount!);
-            }
-            if (actionResult == ActionResult.Success)
-            {
                 Sms(originAccount, destinationAccount, amount);
             }
         }
@@ -107,12 +96,12 @@ public class TransactionHandler(IRepository repository, IAppSettings appSettings
     public IEnumerable<Transaction> GetAllTransactions(string accountNumber)
     {
         var account = repository.FetchAll<Account>().First(acc => acc.AccountNumber == accountNumber);
-        return repository.FetchAll<Transaction>().Where(dep => dep.OriginAccountRef == account.Id || dep.DestinationAccountRef == account.Id);
+        return repository
+            .FetchAll<Transaction>()
+            .Where(dep => dep.OriginAccountRef == account.Id || dep.DestinationAccountRef == account.Id);
     }
 
-    private ActionResult ExecuteCardToCardTransaction(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword,
-                                                      Account originAccount, Account destinationAccount, Card originCard,
-                                                      ref TransactionType transactionType)
+    private ActionResult ExecuteCardToCardTransaction(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword, Account originAccount, Account destinationAccount, Card originCard, ref TransactionType transactionType)
     {
         ActionResult actionResult;
         if (IsDynamicPassword(originCardNumber, destinationCardNumber, amount, secondPassword))
