@@ -15,17 +15,17 @@ public class DepositInMemoryRepository : IEntityRepository<Deposit>
         throw new NotImplementedException();
     }
 
-    public Deposit Insert(Deposit entity)
+    public void Insert(Deposit entity)
     {
         throw new NotImplementedException();
     }
 
-    public Deposit Update(Deposit entity)
+    public void Update(Deposit entity)
     {
         throw new NotImplementedException();
     }
 
-    public Deposit Delete(string id)
+    public void Delete(string id)
     {
         throw new NotImplementedException();
     }

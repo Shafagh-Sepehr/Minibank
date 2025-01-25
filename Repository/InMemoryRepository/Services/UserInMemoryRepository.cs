@@ -15,17 +15,17 @@ public class UserInMemoryRepository : IEntityRepository<User>
         throw new NotImplementedException();
     }
 
-    public User Insert(User entity)
+    public void Insert(User entity)
     {
         throw new NotImplementedException();
     }
 
-    public User Update(User entity)
+    public void Update(User entity)
     {
         throw new NotImplementedException();
     }
 
-    public User Delete(string id)
+    public void Delete(string id)
     {
         throw new NotImplementedException();
     }

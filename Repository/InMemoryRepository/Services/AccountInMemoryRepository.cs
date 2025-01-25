@@ -15,17 +15,17 @@ public class AccountInMemoryRepository : IEntityRepository<Account>
         throw new NotImplementedException();
     }
 
-    public Account Insert(Account entity)
+    public void Insert(Account entity)
     {
         throw new NotImplementedException();
     }
 
-    public Account Update(Account entity)
+    public void Update(Account entity)
     {
         throw new NotImplementedException();
     }
 
-    public Account Delete(string id)
+    public void Delete(string id)
     {
         throw new NotImplementedException();
     }

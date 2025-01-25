@@ -15,17 +15,17 @@ public class CardInMemoryRepository : IEntityRepository<Card>
         throw new NotImplementedException();
     }
 
-    public Card Insert(Card entity)
+    public void Insert(Card entity)
     {
         throw new NotImplementedException();
     }
 
-    public Card Update(Card entity)
+    public void Update(Card entity)
     {
         throw new NotImplementedException();
     }
 
-    public Card Delete(string id)
+    public void Delete(string id)
     {
         throw new NotImplementedException();
     }

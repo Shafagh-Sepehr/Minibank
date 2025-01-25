@@ -15,17 +15,17 @@ public class DynamicPasswordInMemoryRepository : IEntityRepository<DynamicPasswo
         throw new NotImplementedException();
     }
 
-    public DynamicPassword Insert(DynamicPassword entity)
+    public void Insert(DynamicPassword entity)
     {
         throw new NotImplementedException();
     }
 
-    public DynamicPassword Update(DynamicPassword entity)
+    public void Update(DynamicPassword entity)
     {
         throw new NotImplementedException();
     }
 
-    public DynamicPassword Delete(string id)
+    public void Delete(string id)
     {
         throw new NotImplementedException();
     }

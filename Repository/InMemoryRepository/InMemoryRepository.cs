@@ -10,11 +10,11 @@ public class InMemoryRepository : IRepository
 
     public T FetchById<T>(string id) where T : DataBaseEntity => GetEntityRepository<T>().FetchById(id);
 
-    public T Insert<T>(T entity) where T : DataBaseEntity => GetEntityRepository<T>().Insert(entity);
+    public void Insert<T>(T entity) where T : DataBaseEntity => GetEntityRepository<T>().Insert(entity);
 
-    public T Update<T>(T entity) where T : DataBaseEntity => GetEntityRepository<T>().Update(entity);
+    public void Update<T>(T entity) where T : DataBaseEntity => GetEntityRepository<T>().Update(entity);
 
-    public T Delete<T>(string id) where T : DataBaseEntity => GetEntityRepository<T>().Delete(id);
+    public void Delete<T>(string id) where T : DataBaseEntity => GetEntityRepository<T>().Delete(id);
 
     private static IEntityRepository<T> GetEntityRepository<T>() where T : DataBaseEntity
     => ServiceCollection.ServiceProvider.GetRequiredService<IEntityRepository<T>>();

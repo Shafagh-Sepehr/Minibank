@@ -15,17 +15,17 @@ public class WithdrawalInMemoryRepository : IEntityRepository<Withdrawal>
         throw new NotImplementedException();
     }
 
-    public Withdrawal Insert(Withdrawal entity)
+    public void Insert(Withdrawal entity)
     {
         throw new NotImplementedException();
     }
 
-    public Withdrawal Update(Withdrawal entity)
+    public void Update(Withdrawal entity)
     {
         throw new NotImplementedException();
     }
 
-    public Withdrawal Delete(string id)
+    public void Delete(string id)
     {
         throw new NotImplementedException();
     }

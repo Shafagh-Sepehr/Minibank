@@ -15,17 +15,17 @@ public class TransactionInMemoryRepository : IEntityRepository<Transaction>
         throw new NotImplementedException();
     }
 
-    public Transaction Insert(Transaction entity)
+    public void Insert(Transaction entity)
     {
         throw new NotImplementedException();
     }
 
-    public Transaction Update(Transaction entity)
+    public void Update(Transaction entity)
     {
         throw new NotImplementedException();
     }
 
-    public Transaction Delete(string id)
+    public void Delete(string id)
     {
         throw new NotImplementedException();
     }
