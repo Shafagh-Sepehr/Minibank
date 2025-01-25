@@ -11,8 +11,8 @@ public class AccountUpdater : IEntityUpdateFromDao< AccountDao,  Account>
     {
         entity.Status = dao.Status;
         entity.Id = dao.Id;
-        Helper.SetValue(entity, "AccountNumber",dao.AccountNumber);
-        Helper.SetValue(entity, "UserRef", dao.UserRef);
-        Helper.SetValue(entity, "Balance", dao.Balance);
+        Helper.SetValue(entity, nameof(dao.AccountNumber),dao.AccountNumber);
+        Helper.SetValue(entity, nameof(dao.UserRef), dao.UserRef);
+        Helper.SetValue(entity, "_balance", dao.Balance);
     }
 }
