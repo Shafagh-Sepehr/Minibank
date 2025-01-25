@@ -8,7 +8,6 @@ public class ValidatorAttribute : Attribute
 {
     public ValidatorAttribute(Type validatorType, Type modelType)
     {
-        ArgumentNullException.ThrowIfNull(ServiceCollection.ServiceProvider);
         var validatorObj = ServiceCollection.ServiceProvider.GetRequiredService(validatorType);
         
         if (validatorObj.GetType().IsAssignableTo(typeof(IValidator<>).MakeGenericType(modelType)))

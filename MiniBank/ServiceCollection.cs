@@ -4,5 +4,10 @@ namespace MiniBank;
 
 public static class ServiceCollection
 {
-    public static ServiceProvider? ServiceProvider { get; set; }
+    private static ServiceProvider? _serviceProvider;
+    public static ServiceProvider ServiceProvider
+    {
+        get => _serviceProvider ?? throw new ArgumentNullException(nameof(ServiceProvider));
+        set => _serviceProvider ??= value;
+    }
 }

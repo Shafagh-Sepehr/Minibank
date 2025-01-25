@@ -65,7 +65,6 @@ public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity
 
     private static void ValidateThatEntityExists_BeforeUpdateOrDelete(TEntity entity)
     {
-        ArgumentNullException.ThrowIfNull(ServiceCollection.ServiceProvider);
         var repository = ServiceCollection.ServiceProvider.GetRequiredService<IRepository>();
         var ent = repository.FetchAll<TEntity>().FirstOrDefault(x => x.Id == entity.Id);
         if (ent == null)
