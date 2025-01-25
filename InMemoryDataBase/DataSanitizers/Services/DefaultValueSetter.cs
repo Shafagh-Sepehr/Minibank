@@ -17,16 +17,26 @@ public class DefaultValueSetter : IDefaultValueSetter
             {
                 continue;
             }
+
             
             if (defaultValueAttribute.DefaultValue.GetType() != propertyInfo.PropertyType)
             {
-                throw new DatabaseException(
-                    $"the default value of property `{propertyInfo.Name}` must be of type `{propertyInfo.PropertyType.Name}`, but was `{defaultValueAttribute.DefaultValue.GetType()}` was given");
+                if(Convert.ChangeType(defaultValueAttribute.DefaultValue, propertyInfo.PropertyType) is { } value)
+                {
+                    propertyInfo.SetValue(entity, value);
+                }
+                else
+                {
+                    throw new DatabaseException(
+                        $"the default value of property `{propertyInfo.Name}` must be of type `{propertyInfo.PropertyType.Name}`, but was `{defaultValueAttribute.DefaultValue.GetType()}` was given");
+                }
             }
-            
-            if (propertyInfo.GetValue(entity) == null)
+            else
             {
-                propertyInfo.SetValue(entity, defaultValueAttribute.DefaultValue);
+                if (propertyInfo.GetValue(entity) == null)
+                {
+                    propertyInfo.SetValue(entity, defaultValueAttribute.DefaultValue);
+                }
             }
         }
     }
