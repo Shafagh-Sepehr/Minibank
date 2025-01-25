@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using DB.Validators.Abstractions;
+using Abstractions.Repository;
 using MiniBank.Attributes;
+using MiniBank.Validators.Abstractions;
 
 namespace MiniBank.Entities.Classes;
 
@@ -9,9 +10,9 @@ public class Card : DataBaseEntity
 {
     private string _passwordHash = null!;
     private string _secondPasswordHash = null!;
-    
-    [Range(1, long.MaxValue)]
-    public required long AccountRef { get; init; }
+
+    [StringLength(36, MinimumLength = 36)]
+    public required string AccountRef { get; init; }
     
     [StringLength(16, MinimumLength = 16)]
     public required string CardNumber { get; init; }

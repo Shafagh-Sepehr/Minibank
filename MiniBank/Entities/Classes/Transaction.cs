@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using DB.Validators.Abstractions;
+using Abstractions.Repository;
 using MiniBank.Attributes;
 using MiniBank.Entities.Enums;
+using MiniBank.Validators.Abstractions;
 
 namespace MiniBank.Entities.Classes;
 
@@ -14,11 +15,11 @@ public class Transaction : DataBaseEntity
     public DateTime Date { get; } = DateTime.Now;
     public string? Description { get; init; }
 
-    [Range(0, long.MaxValue)]
-    public required long OriginAccountRef { get; init; }
+    [StringLength(36, MinimumLength = 36)]
+    public required string OriginAccountRef { get; init; }
     public required string OriginAccountNumber { get; init; }
 
-    [Range(0, long.MaxValue)]
-    public required long DestinationAccountRef { get; init; }
+    [StringLength(36, MinimumLength = 36)]
+    public required string DestinationAccountRef { get; init; }
     public required string DestinationAccountNumber { get; init; }
 }

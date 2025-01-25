@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Abstractions.Repository;
 using MiniBank.Entities.Enums;
 
-namespace MiniBank.Entities.Classes;
+namespace Repository.Data;
 
 public class AccountDao : DataBaseEntity
 {

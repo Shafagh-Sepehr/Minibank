@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using DB.Validators.Abstractions;
+using Abstractions.Repository;
 using MiniBank.Attributes;
+using MiniBank.Validators.Abstractions;
 
 namespace MiniBank.Entities.Classes;
 

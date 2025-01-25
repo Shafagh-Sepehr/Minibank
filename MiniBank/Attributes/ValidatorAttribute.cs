@@ -1,14 +1,14 @@
-﻿using DB.Data.Abstractions;
-using DB.Validators.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using MiniBank.Validators.Abstractions;
 
 namespace MiniBank.Attributes;
 
 [AttributeUsage(AttributeTargets.Class)]
-public class ValidatorAttribute : ValidatorAttributeBase
+public class ValidatorAttribute : Attribute
 {
     public ValidatorAttribute(Type validatorType, Type modelType)
     {
+        ArgumentNullException.ThrowIfNull(ServiceCollection.ServiceProvider);
         var validatorObj = ServiceCollection.ServiceProvider.GetRequiredService(validatorType);
         
         if (validatorObj.GetType().IsAssignableTo(typeof(IValidator<>).MakeGenericType(modelType)))
@@ -21,5 +21,5 @@ public class ValidatorAttribute : ValidatorAttributeBase
         }
     }
     
-    public override object Validator { get; set; }
+    public object Validator { get; set; }
 }

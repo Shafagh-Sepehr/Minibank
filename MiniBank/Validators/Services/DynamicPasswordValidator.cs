@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using DB.Data.Abstractions;
+using Abstractions.Repository;
 using MiniBank.Entities.Classes;
+using MiniBank.Validators.Abstractions;
 
 namespace MiniBank.Validators.Services;
 
-public class DynamicPasswordValidator(IDataBase dataBase) : BaseValidator<DynamicPassword>
+public class DynamicPasswordValidator(IRepository repository) : BaseValidator<DynamicPassword>
 {
     protected override void ValidateSaveState(DynamicPassword entity, List<string> errors)
     {
@@ -13,7 +14,7 @@ public class DynamicPasswordValidator(IDataBase dataBase) : BaseValidator<Dynami
             errors.Add("Withdrawal amount must be greater than 0");
         }
         
-        var cards = dataBase.FetchAll<Card>().ToArray();
+        var cards = repository.FetchAll<Card>().ToArray();
         if (OriginCardNotFound(cards, entity.OriginCardNumber))
         {
             errors.Add("no card found for this request's OriginCardNumber");

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+﻿using System.Reflection;
 using InMemoryDataBase.Attributes;
 using InMemoryDataBase.Entities.Classes;
 using InMemoryDataBase.Exceptions;

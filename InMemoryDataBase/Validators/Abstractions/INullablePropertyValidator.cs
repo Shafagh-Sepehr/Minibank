@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace InMemoryDataBase.Validators.Abstractions;
+﻿namespace InMemoryDataBase.Validators.Abstractions;
 
 public interface INullablePropertyValidator
 {

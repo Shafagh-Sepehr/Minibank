@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using DB.Data.Abstractions;
+using Abstractions.Repository;
 using MiniBank.Entities.Classes;
+using MiniBank.Validators.Abstractions;
 
 namespace MiniBank.Validators.Services;
 
-public class TransactionValidator(IDataBase dataBase) : BaseValidator<Transaction> // not complete
+public class TransactionValidator(IRepository repository) : BaseValidator<Transaction>
 {
     protected override void ValidateSaveState(Transaction entity, List<string> errors)
     {
@@ -18,7 +19,7 @@ public class TransactionValidator(IDataBase dataBase) : BaseValidator<Transactio
             errors.Add("Withdrawal amount must be greater than 0");
         }
 
-        var accounts = dataBase.FetchAll<Account>().ToArray();
+        var accounts = repository.FetchAll<Account>().ToArray();
         if (OriginAccountNotFound(accounts, entity.OriginAccountRef))
         {
             errors.Add("no account found for this transaction's OriginAccountRef");
@@ -65,10 +66,10 @@ public class TransactionValidator(IDataBase dataBase) : BaseValidator<Transactio
         }
     }
     
-    private static bool OriginAccountNotFound(IEnumerable<Account> accounts, long originAccountRef)
+    private static bool OriginAccountNotFound(IEnumerable<Account> accounts, string originAccountRef)
         => accounts.All(x => x.Id != originAccountRef);
     
-    private static bool DestinationAccountNotFound(IEnumerable<Account> accounts, long destinationAccountRef)
+    private static bool DestinationAccountNotFound(IEnumerable<Account> accounts, string destinationAccountRef)
         => accounts.All(x => x.Id != destinationAccountRef);
 
     private static bool OriginAccountNumberNotFound(IEnumerable<Account> accounts, string originAccountNumber)
@@ -77,10 +78,10 @@ public class TransactionValidator(IDataBase dataBase) : BaseValidator<Transactio
     private static bool DestinationAccountNumberNotFound(IEnumerable<Account> accounts, string destinationAccountNumber)
         => accounts.All(x => x.AccountNumber != destinationAccountNumber);
 
-    private static bool OriginAccountNumberAndRefMismatch(IEnumerable<Account> accounts, long originAccountRef, string originAccountNumber)
+    private static bool OriginAccountNumberAndRefMismatch(IEnumerable<Account> accounts, string originAccountRef, string originAccountNumber)
         => accounts.All(x => x.Id != originAccountRef && x.AccountNumber != originAccountNumber);
 
-    private static bool DestianaitonAccountNumberAndRefMismatch(IEnumerable<Account> accounts, long destinationAccountRef, string destinationAccountNumber)
+    private static bool DestianaitonAccountNumberAndRefMismatch(IEnumerable<Account> accounts, string destinationAccountRef, string destinationAccountNumber)
         => accounts.All(x => x.Id != destinationAccountRef && x.AccountNumber != destinationAccountNumber);
 
 

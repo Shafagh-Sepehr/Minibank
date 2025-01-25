@@ -1,5 +1,4 @@
-﻿using System.Text;
-using MiniBank.AppSettings.Abstractions;
+﻿using MiniBank.AppSettings.Abstractions;
 using MiniBank.Communication.Abstractions;
 
 namespace MiniBank.Communication.Services;

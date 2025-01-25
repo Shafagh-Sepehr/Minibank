@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Abstractions.Repository;
 
-namespace MiniBank.Entities.Classes;
+namespace Repository.Data;
 
 public class UserDao : DataBaseEntity
 {

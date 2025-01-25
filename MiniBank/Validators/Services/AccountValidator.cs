@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using DB.Data.Abstractions;
+using Abstractions.Repository;
 using MiniBank.Entities.Classes;
+using MiniBank.Validators.Abstractions;
 
 namespace MiniBank.Validators.Services;
 
-public class AccountValidator(IDataBase dataBase) : BaseValidator<Account>
+public class AccountValidator(IRepository repository) : BaseValidator<Account>
 {
     protected override void ValidateGeneralState(Account entity, List<string> errors)
     {
@@ -13,7 +14,7 @@ public class AccountValidator(IDataBase dataBase) : BaseValidator<Account>
             errors.Add("Account balance cannot be less than zero");
         }
         
-        var users = dataBase.FetchAll<User>();
+        var users = repository.FetchAll<User>();
         if (users.All(x => x.Id != entity.UserRef))
         {
             errors.Add("no user found for this account's UserRef");
@@ -30,7 +31,7 @@ public class AccountValidator(IDataBase dataBase) : BaseValidator<Account>
     
     protected override void ValidateUpdateState(Account entity, List<string> errors)
     {
-        var accounts = dataBase.FetchAll<Account>();
+        var accounts = repository.FetchAll<Account>();
         var oldAccount = accounts.First(x => x.Id == entity.Id);
         if (oldAccount.UserRef != entity.UserRef || oldAccount.AccountNumber != entity.AccountNumber)
         {
@@ -45,7 +46,7 @@ public class AccountValidator(IDataBase dataBase) : BaseValidator<Account>
             throw new ValidationException("Account balance cannot be more than 1 when deleting, withdraw money");
         }
         
-        var cards = dataBase.FetchAll<Card>();
+        var cards = repository.FetchAll<Card>();
         if (cards.Any(x => x.AccountRef == entity.Id))
         {
             throw new ValidationException("Account can't have cards when deleting, first delete its cards");

@@ -1,4 +1,4 @@
-﻿using DB.Data.Abstractions;
+﻿using Abstractions.Repository;
 using MiniBank.AppSettings.Abstractions;
 using MiniBank.Communication.Abstractions;
 using MiniBank.Entities.Classes;
@@ -7,13 +7,13 @@ using MiniBank.Handlers.Abstractions;
 
 namespace MiniBank.Handlers.Services;
 
-public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, ISmsService smsService) : ITransactionHandler
+public class TransactionHandler(IRepository repository, IAppSettings appSettings, ISmsService smsService) : ITransactionHandler
 {
     public void CreateCardToCardTransaction(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword,
                                                      string? description)
     {
-        var accounts = dataBase.FetchAll<Account>().ToList();
-        var cards = dataBase.FetchAll<Card>().ToList();
+        var accounts = repository.FetchAll<Account>();
+        var cards = repository.FetchAll<Card>();
 
         var originCard = cards.FirstOrDefault(c => c.CardNumber == originCardNumber);
         var destinationCard = cards.FirstOrDefault(c => c.CardNumber == destinationCardNumber);
@@ -35,8 +35,8 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
 
             if (actionResult == ActionResult.Success)
             {
-                dataBase.Update(originAccount!);
-                dataBase.Update(destinationAccount!);
+                repository.Update(originAccount!);
+                repository.Update(destinationAccount!);
             }
 
             if (actionResult == ActionResult.Success)
@@ -46,13 +46,13 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
         }
 
 
-        dataBase.Save(new Transaction
+        repository.Insert(new Transaction
         {
             Amount = amount,
-            OriginAccountRef = originAccount?.Id ?? 0,
-            DestinationAccountRef = destinationAccount?.Id ?? 0,
-            OriginAccountNumber = originAccount?.AccountNumber ?? "",
-            DestinationAccountNumber = destinationAccount?.AccountNumber ?? "",
+            OriginAccountRef = originAccount?.Id ?? string.Empty,
+            DestinationAccountRef = destinationAccount?.Id ?? string.Empty,
+            OriginAccountNumber = originAccount?.AccountNumber ?? string.Empty,
+            DestinationAccountNumber = destinationAccount?.AccountNumber ?? string.Empty,
             Description = description,
             Status = actionResult == ActionResult.Success ? TransactionStatus.Success : TransactionStatus.Failed,
             Type = transactionType,
@@ -64,7 +64,7 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
     public void CreateAccountToAccountTransaction(string originAccountNumber, string destinationAccountNumber, decimal amount,
                                                                       string? description = null)
     {
-        var accounts = dataBase.FetchAll<Account>().ToList();
+        var accounts = repository.FetchAll<Account>();
         var originAccount = accounts.FirstOrDefault(x => x.AccountNumber == originAccountNumber);
         var destinationAccount = accounts.FirstOrDefault(x => x.AccountNumber == destinationAccountNumber);
 
@@ -80,8 +80,8 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
 
             if (actionResult == ActionResult.Success)
             {
-                dataBase.Update(originAccount!);
-                dataBase.Update(destinationAccount!);
+                repository.Update(originAccount!);
+                repository.Update(destinationAccount!);
             }
             if (actionResult == ActionResult.Success)
             {
@@ -89,13 +89,13 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
             }
         }
 
-        dataBase.Save(new Transaction
+        repository.Insert(new Transaction
         {
             Amount = amount,
-            OriginAccountRef = originAccount?.Id ?? 0,
-            DestinationAccountRef = destinationAccount?.Id ?? 0,
-            OriginAccountNumber = originAccount?.AccountNumber ?? "",
-            DestinationAccountNumber = destinationAccount?.AccountNumber ?? "",
+            OriginAccountRef = originAccount?.Id ?? string.Empty,
+            DestinationAccountRef = destinationAccount?.Id ?? string.Empty,
+            OriginAccountNumber = originAccount?.AccountNumber ?? string.Empty,
+            DestinationAccountNumber = destinationAccount?.AccountNumber ?? string.Empty,
             Description = description,
             Status = actionResult == ActionResult.Success ? TransactionStatus.Success : TransactionStatus.Failed,
             Type = TransactionType.AccountToAccount,
@@ -106,8 +106,8 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
 
     public IEnumerable<Transaction> GetAllTransactions(string accountNumber)
     {
-        var account = dataBase.FetchAll<Account>().First(acc => acc.AccountNumber == accountNumber);
-        return dataBase.FetchAll<Transaction>().Where(dep => dep.OriginAccountRef == account.Id || dep.DestinationAccountRef == account.Id);
+        var account = repository.FetchAll<Account>().First(acc => acc.AccountNumber == accountNumber);
+        return repository.FetchAll<Transaction>().Where(dep => dep.OriginAccountRef == account.Id || dep.DestinationAccountRef == account.Id);
     }
 
     private ActionResult ExecuteCardToCardTransaction(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword,
@@ -154,7 +154,7 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
 
     private bool CanUseStaticPassword(Account account, decimal amount)
     {
-        var transactions = dataBase.FetchAll<Transaction>().ToList();
+        var transactions = repository.FetchAll<Transaction>();
         var staticPasswordPurchaseAmount = transactions.Where(x => account.Id == x.OriginAccountRef && AreSameDay(x.Date, DateTime.Now) &&
                                                               x.Type == TransactionType.StaticCardToCard && x.Status == TransactionStatus.Success)
             .Sum(x => x.Amount);
@@ -168,7 +168,7 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
     }
 
     private bool IsDynamicPassword(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword) =>
-        dataBase.FetchAll<DynamicPassword>().Any(d =>
+        repository.FetchAll<DynamicPassword>().Any(d =>
             d.OriginCardNumber == originCardNumber && d.DestinationCardNumber == destinationCardNumber && d.Amount == amount &&
             d.DynamicPasswordHash == Helper.ComputeSha256Hash(secondPassword) && d.ExpiryDate >= DateTime.Now);
 
@@ -181,8 +181,8 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
         }
         else
         {
-            dataBase.Update(originAccount);
-            dataBase.Update(destinationAccount);
+            repository.Update(originAccount);
+            repository.Update(destinationAccount);
             actionResult = ActionResult.Success;
         }
 
@@ -197,10 +197,10 @@ public class TransactionHandler(IDataBase dataBase, IAppSettings appSettings, IS
 
     private void Sms(Account originAccount, Account destinationAccount, decimal amount)
     {
-        var originUser = dataBase.FetchAll<User>().First(x => x.Id == originAccount.UserRef);
+        var originUser = repository.FetchAll<User>().First(x => x.Id == originAccount.UserRef);
         smsService.Send($"{amount} was taken from your account", originAccount.AccountNumber, originUser.PhoneNumber);
 
-        var destinationUser = dataBase.FetchAll<User>().First(x => x.Id == destinationAccount.UserRef);
+        var destinationUser = repository.FetchAll<User>().First(x => x.Id == destinationAccount.UserRef);
         smsService.Send($"{amount} was sent to your account", destinationAccount.AccountNumber, destinationUser.PhoneNumber);
     }
 }

@@ -1,16 +1,19 @@
-﻿using MiniBank.Entities.Classes;
+﻿using Abstractions.MiniBank;
+using MiniBank.Entities.Classes;
 using MiniBank.Exceptions;
 using MiniBank.Handlers.Abstractions;
 
 namespace MiniBank.Handlers.Services;
 
-internal class MainHandler(IUserHandler userHandler, IAccountHandler accountHandler, ICardHandler cardHandler,
+public class MainHandler(IUserHandler userHandler, IAccountHandler accountHandler, ICardHandler cardHandler,
     IDepositHandler depositHandler, IWithdrawalHandler withdrawalHandler, ITransactionHandler transactionHandler) : IMainHandler
 {
     private User? user;
 
     public void Run()
     {
+        ArgumentNullException.ThrowIfNull(ServiceCollection.ServiceProvider);
+
         while (true)
         {
             try

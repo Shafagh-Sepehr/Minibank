@@ -1,13 +1,13 @@
-﻿using DB.Data.Abstractions;
+﻿using Abstractions.Repository;
 using MiniBank.Entities.Classes;
 using MiniBank.Entities.Enums;
 using MiniBank.Handlers.Abstractions;
 
 namespace MiniBank.Handlers.Services;
 
-public class AccountHandler(IDataBase dataBase) : IAccountHandler
+public class AccountHandler(IRepository repository) : IAccountHandler
 {
-    public Account CreateAccount(long userRef)
+    public Account CreateAccount(string userRef)
     {
         var newAccount = new Account
         {
@@ -15,34 +15,34 @@ public class AccountHandler(IDataBase dataBase) : IAccountHandler
             UserRef = userRef,
             Status = AccountStatus.Active,
         };
-        
-        dataBase.Save(newAccount);
+
+        repository.Insert(newAccount);
         return newAccount;
     }
-    
+
     public decimal? GetAccountBalance(string AccountNumber)
-        => dataBase.FetchAll<Account>()
+        => repository.FetchAll<Account>()
         .FirstOrDefault(account => account.AccountNumber == AccountNumber)
         ?.Balance;
 
     public IEnumerable<Account> GetAllUserAccounts(User user)
-        => dataBase.FetchAll<Account>().Where(acc => acc.UserRef == user.Id);
+        => repository.FetchAll<Account>().Where(acc => acc.UserRef == user.Id);
 
-    public bool AccountExistsAndBelongsToUser(string accountNumber, long userRef)
+    public bool AccountExistsAndBelongsToUser(string accountNumber, string userRef)
     {
-        return dataBase.FetchAll<Account>().FirstOrDefault(acc => acc.AccountNumber == accountNumber && acc.UserRef == userRef) != null;
+        return repository.FetchAll<Account>().FirstOrDefault(acc => acc.AccountNumber == accountNumber && acc.UserRef == userRef) != null;
     }
-    
+
     private string GenerateAccountNumber()
     {
-        var accounts = dataBase.FetchAll<Account>().ToList();
+        var accounts = repository.FetchAll<Account>();
         string accountNumber;
-        
+
         do
         {
             accountNumber = Helper.GenerateRandomNumberAsString(20);
         } while (accounts.Any(x => x.AccountNumber == accountNumber));
-        
+
         return accountNumber;
     }
 }

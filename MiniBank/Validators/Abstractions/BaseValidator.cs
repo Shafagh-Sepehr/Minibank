@@ -1,12 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using DB.Data.Abstractions;
-using DB.Entities.Enums;
-using DB.Validators.Abstractions;
+using Abstractions.Repository;
 using Microsoft.Extensions.DependencyInjection;
+using MiniBank.Entities.Enums;
 
-namespace MiniBank.Validators;
+namespace MiniBank.Validators.Abstractions;
 
-public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity : IDatabaseEntity
+public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity : DataBaseEntity
 {
     public void Validate(TEntity entity, DataBaseAction dataBaseAction)
     {
@@ -16,13 +15,13 @@ public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity
             ValidateDeleteState(entity);
             return;
         }
-        
+
         var validationResults = new List<ValidationResult>();
         var validationContext = new ValidationContext(entity, null, null);
-        
+
         // Validate the user object
         var isValid = Validator.TryValidateObject(entity, validationContext, validationResults, true);
-        
+
         // Collect error messages if the object is not valid
         var errors = new List<string>();
         if (!isValid)
@@ -35,8 +34,8 @@ public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity
                 }
             }
         }
-        
-        
+
+
         if (dataBaseAction == DataBaseAction.Save)
         {
             ValidateIdIsNotSet_BeforeSave(entity, errors);
@@ -49,35 +48,36 @@ public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity
             ValidateGeneralState(entity, errors);
             ValidateUpdateState(entity, errors);
         }
-        
+
         if (errors.Count > 0)
         {
             throw new ValidationException(string.Join("|", errors));
         }
     }
-    
+
     private static void ValidateIdIsNotSet_BeforeSave(TEntity entity, List<string> errors)
     {
-        if (entity.Id != 0)
+        if (entity.Id != string.Empty)
         {
             errors.Add("Id must not be set when creating a new entity");
         }
     }
-    
+
     private static void ValidateThatEntityExists_BeforeUpdateOrDelete(TEntity entity)
     {
-        var dataBase = ServiceCollection.ServiceProvider.GetRequiredService<IDataBase>();
-        var ent = dataBase.FetchAll<TEntity>().FirstOrDefault(x => x.Id == entity.Id);
+        ArgumentNullException.ThrowIfNull(ServiceCollection.ServiceProvider);
+        var repository = ServiceCollection.ServiceProvider.GetRequiredService<IRepository>();
+        var ent = repository.FetchAll<TEntity>().FirstOrDefault(x => x.Id == entity.Id);
         if (ent == null)
         {
             throw new ValidationException($"cannot update/delete non-existing {entity.GetType().Name}");
         }
     }
-    
-    
+
+
     protected virtual void ValidateGeneralState(TEntity entity, List<string> errors) { }
     protected virtual void ValidateSaveState(TEntity entity, List<string> errors) { }
     protected virtual void ValidateUpdateState(TEntity entity, List<string> errors) { }
     protected virtual void ValidateDeleteState(TEntity entity) { }
-    
+
 }
