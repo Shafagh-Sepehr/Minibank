@@ -10,7 +10,7 @@ public class TransactionInMemoryRepository : IEntityRepository<Transaction>
         throw new NotImplementedException();
     }
 
-    public Transaction Read(string id)
+    public Transaction FetchById(string id)
     {
         throw new NotImplementedException();
     }
@@ -25,7 +25,7 @@ public class TransactionInMemoryRepository : IEntityRepository<Transaction>
         throw new NotImplementedException();
     }
 
-    public Transaction Delete(Transaction entity)
+    public Transaction Delete(string id)
     {
         throw new NotImplementedException();
     }

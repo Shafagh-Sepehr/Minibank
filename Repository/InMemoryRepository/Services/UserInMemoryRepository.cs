@@ -10,7 +10,7 @@ public class UserInMemoryRepository : IEntityRepository<User>
         throw new NotImplementedException();
     }
 
-    public User Read(string id)
+    public User FetchById(string id)
     {
         throw new NotImplementedException();
     }
@@ -25,7 +25,7 @@ public class UserInMemoryRepository : IEntityRepository<User>
         throw new NotImplementedException();
     }
 
-    public User Delete(User entity)
+    public User Delete(string id)
     {
         throw new NotImplementedException();
     }

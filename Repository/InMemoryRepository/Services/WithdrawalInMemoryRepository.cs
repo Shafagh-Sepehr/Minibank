@@ -10,7 +10,7 @@ public class WithdrawalInMemoryRepository : IEntityRepository<Withdrawal>
         throw new NotImplementedException();
     }
 
-    public Withdrawal Read(string id)
+    public Withdrawal FetchById(string id)
     {
         throw new NotImplementedException();
     }
@@ -25,7 +25,7 @@ public class WithdrawalInMemoryRepository : IEntityRepository<Withdrawal>
         throw new NotImplementedException();
     }
 
-    public Withdrawal Delete(Withdrawal entity)
+    public Withdrawal Delete(string id)
     {
         throw new NotImplementedException();
     }

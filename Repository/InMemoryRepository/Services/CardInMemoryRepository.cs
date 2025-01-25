@@ -10,7 +10,7 @@ public class CardInMemoryRepository : IEntityRepository<Card>
         throw new NotImplementedException();
     }
 
-    public Card Read(string id)
+    public Card FetchById(string id)
     {
         throw new NotImplementedException();
     }
@@ -25,7 +25,7 @@ public class CardInMemoryRepository : IEntityRepository<Card>
         throw new NotImplementedException();
     }
 
-    public Card Delete(Card entity)
+    public Card Delete(string id)
     {
         throw new NotImplementedException();
     }

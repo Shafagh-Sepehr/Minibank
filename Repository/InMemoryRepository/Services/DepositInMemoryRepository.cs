@@ -10,7 +10,7 @@ public class DepositInMemoryRepository : IEntityRepository<Deposit>
         throw new NotImplementedException();
     }
 
-    public Deposit Read(string id)
+    public Deposit FetchById(string id)
     {
         throw new NotImplementedException();
     }
@@ -25,7 +25,7 @@ public class DepositInMemoryRepository : IEntityRepository<Deposit>
         throw new NotImplementedException();
     }
 
-    public Deposit Delete(Deposit entity)
+    public Deposit Delete(string id)
     {
         throw new NotImplementedException();
     }

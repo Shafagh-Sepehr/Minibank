@@ -10,7 +10,7 @@ public class DynamicPasswordInMemoryRepository : IEntityRepository<DynamicPasswo
         throw new NotImplementedException();
     }
 
-    public DynamicPassword Read(string id)
+    public DynamicPassword FetchById(string id)
     {
         throw new NotImplementedException();
     }
@@ -25,7 +25,7 @@ public class DynamicPasswordInMemoryRepository : IEntityRepository<DynamicPasswo
         throw new NotImplementedException();
     }
 
-    public DynamicPassword Delete(DynamicPassword entity)
+    public DynamicPassword Delete(string id)
     {
         throw new NotImplementedException();
     }
