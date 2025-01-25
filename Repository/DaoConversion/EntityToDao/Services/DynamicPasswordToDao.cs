@@ -6,7 +6,7 @@ namespace Repository.DaoConversion.EntityToDao.Services;
 
 public class DynamicPasswordToDao : IEntityToDao<DynamicPassword, DynamicPasswordDao>
 {
-    public DynamicPasswordDao EntityToData(DynamicPassword entity)
+    public DynamicPasswordDao EntityToDao(DynamicPassword entity)
     {
         return new DynamicPasswordDao
         {

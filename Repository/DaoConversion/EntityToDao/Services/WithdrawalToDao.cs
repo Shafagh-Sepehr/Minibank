@@ -6,7 +6,7 @@ namespace Repository.DaoConversion.EntityToDao.Services;
 
 public class WithdrawalToDao : IEntityToDao<Withdrawal, WithdrawalDao>
 {
-    public WithdrawalDao EntityToData(Withdrawal entity)
+    public WithdrawalDao EntityToDao(Withdrawal entity)
     {
         return new WithdrawalDao
         {

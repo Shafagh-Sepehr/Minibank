@@ -6,7 +6,7 @@ namespace Repository.DaoConversion.EntityToDao.Services;
 
 public class DepositToDao : IEntityToDao<Deposit, DepositDao>
 {
-    public DepositDao EntityToData(Deposit entity)
+    public DepositDao EntityToDao(Deposit entity)
     {
         return new DepositDao
         {

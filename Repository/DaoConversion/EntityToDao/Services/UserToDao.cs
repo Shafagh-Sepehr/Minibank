@@ -6,7 +6,7 @@ namespace Repository.DaoConversion.EntityToDao.Services;
 
 public class UserToDao : IEntityToDao<User, UserDao>
 {
-    public UserDao EntityToData(User entity)
+    public UserDao EntityToDao(User entity)
     {
         return new UserDao
         {

@@ -6,7 +6,7 @@ namespace Repository.DaoConversion.EntityToDao.Services;
 
 public class TransactionToDao : IEntityToDao<Transaction, TransactionDao>
 {
-    public TransactionDao EntityToData(Transaction entity)
+    public TransactionDao EntityToDao(Transaction entity)
     {
         return new TransactionDao
         {

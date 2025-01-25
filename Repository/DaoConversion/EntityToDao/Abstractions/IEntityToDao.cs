@@ -6,9 +6,9 @@ public interface IEntityToDao<in TEntity, out TDao> where TDao : DataBaseEntity 
 {
     TDao Convert(TEntity entity)
     {
-        var newDao = EntityToData(entity);
+        var newDao = EntityToDao(entity);
         Helper.CopyVersion(entity, newDao);
         return newDao;
     }
-    TDao EntityToData(TEntity entity);
+    TDao EntityToDao(TEntity entity);
 }

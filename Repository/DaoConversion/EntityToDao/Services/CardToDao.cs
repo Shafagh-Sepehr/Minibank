@@ -6,7 +6,7 @@ namespace Repository.DaoConversion.EntityToDao.Services;
 
 public class CardToDao : IEntityToDao<Card, CardDao>
 {
-    public CardDao EntityToData(Card entity)
+    public CardDao EntityToDao(Card entity)
     {
         return new CardDao
         {

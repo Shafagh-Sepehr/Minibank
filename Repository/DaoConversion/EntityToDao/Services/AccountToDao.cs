@@ -6,7 +6,7 @@ namespace Repository.DaoConversion.EntityToDao.Services;
 
 public class AccountToDao : IEntityToDao<Account, AccountDao>
 {
-    public AccountDao EntityToData(Account entity)
+    public AccountDao EntityToDao(Account entity)
     {
         return new AccountDao
         {
