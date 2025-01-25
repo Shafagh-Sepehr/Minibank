@@ -4,6 +4,6 @@ namespace Abstractions.Repository;
 
 public abstract class DataBaseEntity : IVersionable
 {
-    public string Id { get; set; } = string.Empty;
+    public virtual string Id { get; set; } = string.Empty;
     int IVersionable.Version { get; set; }
 }

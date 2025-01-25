@@ -7,7 +7,7 @@ namespace Repository.Data;
 public class AccountDao : DataBaseEntity
 {
     [PrimaryKey]
-    public new string Id { get; set; } = string.Empty;
+    public override string Id { get; set; } = string.Empty;
 
     [DefaultValue(0)]
     public required decimal Balance { get; init; }

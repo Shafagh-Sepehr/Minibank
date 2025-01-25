@@ -7,7 +7,7 @@ namespace Repository.Data;
 public class WithdrawalDao : DataBaseEntity
 {
     [PrimaryKey]
-    public new string Id { get; set; } = string.Empty;
+    public override string Id { get; set; } = string.Empty;
 
     public required decimal Amount { get; init; }
 

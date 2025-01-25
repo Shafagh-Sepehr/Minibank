@@ -6,7 +6,7 @@ namespace Repository.Data;
 public class UserDao : DataBaseEntity
 {
     [PrimaryKey]
-    public new string Id { get; set; } = string.Empty;
+    public override string Id { get; set; } = string.Empty;
 
     public required string Username { get; init; }
 
