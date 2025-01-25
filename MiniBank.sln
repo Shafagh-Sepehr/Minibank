@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniBank", "MiniBank\MiniBank.csproj", "{EC370AF4-F890-4C4F-97D8-AAC51E24FC04}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InMemoryDataBase", "InMemoryDataBase\InMemoryDataBase.csproj", "{F5AABA3B-8DC4-44CF-A249-EFE661D44392}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{81790968-23ED-4A98-BDFF-4EF4AE47D0A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository", "Repository\Repository.csproj", "{9055D28C-72CD-4E49-A857-8AEF4632C2B8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{F5AABA3B-8DC4-44CF-A249-EFE661D44392}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5AABA3B-8DC4-44CF-A249-EFE661D44392}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5AABA3B-8DC4-44CF-A249-EFE661D44392}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9055D28C-72CD-4E49-A857-8AEF4632C2B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9055D28C-72CD-4E49-A857-8AEF4632C2B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9055D28C-72CD-4E49-A857-8AEF4632C2B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9055D28C-72CD-4E49-A857-8AEF4632C2B8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
