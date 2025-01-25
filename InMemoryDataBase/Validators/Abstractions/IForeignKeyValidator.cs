@@ -1,4 +1,5 @@
-﻿using InMemoryDataBase.Interfaces;
+﻿
+using Abstractions.InMemoryDatabase;
 
 namespace InMemoryDataBase.Validators.Abstractions;
 

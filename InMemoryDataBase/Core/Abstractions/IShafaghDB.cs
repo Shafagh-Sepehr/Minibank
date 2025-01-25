@@ -1,4 +1,4 @@
-﻿using InMemoryDataBase.Interfaces;
+﻿using Abstractions.InMemoryDatabase;
 
 namespace InMemoryDataBase.Core.Abstractions;
 

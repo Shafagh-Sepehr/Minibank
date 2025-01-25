@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
+using Abstractions.InMemoryDatabase;
 using InMemoryDataBase.Attributes;
 using InMemoryDataBase.Entities.Classes;
 using InMemoryDataBase.Exceptions;
-using InMemoryDataBase.Interfaces;
 using InMemoryDataBase.Validators.Abstractions;
 
 namespace InMemoryDataBase.Validators.Services;

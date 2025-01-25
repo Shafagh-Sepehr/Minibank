@@ -1,5 +1,5 @@
-﻿using InMemoryDataBase.Entities.Classes;
-using InMemoryDataBase.Interfaces;
+﻿using Abstractions.InMemoryDatabase;
+using InMemoryDataBase.Entities.Classes;
 
 namespace InMemoryDataBase.Validators.Abstractions;
 
