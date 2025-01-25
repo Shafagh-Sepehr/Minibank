@@ -1,6 +1,13 @@
-﻿namespace Repository.DaoConversion.DaoToEntity.Services;
+﻿using MiniBank.Entities.Classes;
+using Repository.DaoConversion.DaoToEntity.Abstractions;
+using Repository.Data;
 
-public class DaoToUser
+namespace Repository.DaoConversion.DaoToEntity.Services;
+
+public class DaoToUser : IDaoToEntity<UserDao, User>
 {
-    
+    public User Convert(UserDao dao)
+    {
+        throw new NotImplementedException();
+    }
 }
