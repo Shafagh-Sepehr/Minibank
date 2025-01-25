@@ -65,15 +65,8 @@ public class CardInMemoryRepository(IShafaghDB shafaghDB) : IEntityRepository<Ca
             ExpiryDate = cardDao.ExpiryDate
         };
 
-        var passwordHashType = typeof(Card)
-            .GetField("_passwordHash", BindingFlags.NonPublic | BindingFlags.Instance);
-        ArgumentNullException.ThrowIfNull(passwordHashType);
-        passwordHashType.SetValue(card, cardDao.Password);
-
-        var secondPasswordHashType = typeof(Card)
-            .GetField("_secondPasswordHash", BindingFlags.NonPublic | BindingFlags.Instance);
-        ArgumentNullException.ThrowIfNull(secondPasswordHashType);
-        secondPasswordHashType.SetValue(card, cardDao.SecondPassword);
+        Helper.SetValue(card, "_passwordHash", cardDao.Password);
+        Helper.SetValue(card, "_secondPasswordHash", cardDao.SecondPassword);
 
         return card;
     }
