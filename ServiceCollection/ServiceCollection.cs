@@ -24,6 +24,8 @@ using Repository.DaoConversion.DaoToEntity.Abstractions;
 using Repository.DaoConversion.DaoToEntity.Services;
 using Repository.DaoConversion.EntityToDao.Abstractions;
 using Repository.DaoConversion.EntityToDao.Services;
+using Repository.DaoConversion.ExistingEntityUpdate.Abstractions;
+using Repository.DaoConversion.ExistingEntityUpdate.Services;
 using Repository.Data;
 using Repository.InMemoryRepository;
 using Repository.InMemoryRepository.Services;
@@ -107,6 +109,14 @@ public static class ServiceCollection
         serviceCollector.AddSingleton<IDaoToEntity<DepositDao, Deposit>, DaoToDeposit>();
         serviceCollector.AddSingleton<IDaoToEntity<WithdrawalDao, Withdrawal>, DaoToWithdrawal>();
         serviceCollector.AddSingleton<IDaoToEntity<DynamicPasswordDao, DynamicPassword>, DaoToDynamicPassword>();
+
+        serviceCollector.AddSingleton<IEntityUpdateFromDao<AccountDao,Account>, AccountUpdater>();
+        serviceCollector.AddSingleton<IEntityUpdateFromDao<UserDao,User>, UserUpdater>();
+        serviceCollector.AddSingleton<IEntityUpdateFromDao<CardDao, Card>, CardUpdater>();
+        serviceCollector.AddSingleton<IEntityUpdateFromDao<TransactionDao, Transaction>, TransactionUpdater>();
+        serviceCollector.AddSingleton<IEntityUpdateFromDao<DepositDao, Deposit>, DepositUpdater>();
+        serviceCollector.AddSingleton<IEntityUpdateFromDao<WithdrawalDao, Withdrawal>, WithdrawalUpdater>();
+        serviceCollector.AddSingleton<IEntityUpdateFromDao<DynamicPasswordDao, DynamicPassword>, DynamicPasswordUpdater>();
 
         serviceCollector.AddSingleton<IEntityToDao<Account, AccountDao>, AccountToDao>();
         serviceCollector.AddSingleton<IEntityToDao<User, UserDao>, UserToDao>();
