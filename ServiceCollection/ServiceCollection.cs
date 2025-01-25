@@ -1,4 +1,5 @@
 using Abstractions.MiniBank;
+using Abstractions.Repository;
 using InMemoryDataBase.Core.Abstractions;
 using InMemoryDataBase.Core.Services;
 using InMemoryDataBase.DataSanitizers.Abstractions;
@@ -18,6 +19,9 @@ using MiniBank.Handlers.Abstractions;
 using MiniBank.Handlers.Services;
 using MiniBank.Validators.Abstractions;
 using MiniBank.Validators.Services;
+using Repository.Abstractions;
+using Repository.InMemoryRepository;
+using Repository.InMemoryRepository.Services;
 
 namespace ServiceCollection;
 
@@ -31,9 +35,15 @@ public static class ServiceCollection
     {
         var serviceCollector = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
 
+        // InMemoryDatabase project
         serviceCollector.AddSingleton<IShafaghDB, ShafaghDB>();
 
-        serviceCollector.AddSingleton<IMainHandler, MainHandler>();
+        serviceCollector.AddSingleton<IReferenceHandler, ReferenceHandler>();
+        serviceCollector.AddSingleton<IReferenceInsertHandler, ReferenceInsertHandler>();
+        serviceCollector.AddSingleton<IReferenceUpdateHandler, ReferenceUpdateHandler>();
+        serviceCollector.AddSingleton<IReferenceDeleteHandler, ReferenceDeleteHandler>();
+
+        serviceCollector.AddSingleton<IDefaultValueSetter, DefaultValueSetter>();
 
         serviceCollector.AddSingleton<IPrimaryKeyValidator, PrimaryKeyValidator>();
         serviceCollector.AddSingleton<IForeignKeyValidator, ForeignKeyValidator>();
@@ -42,12 +52,18 @@ public static class ServiceCollection
         serviceCollector.AddSingleton<IAttributeValidator, AttributeValidator>();
         serviceCollector.AddSingleton<IValidator, Validator>();
 
-        serviceCollector.AddSingleton<IDefaultValueSetter, DefaultValueSetter>();
+        // MiniBank project
+        serviceCollector.AddSingleton<IConfiguration>(new ConfigurationBuilder()
+            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+            .AddJsonFile("appsettings.json", false, true)
+            .Build());
 
-        serviceCollector.AddSingleton<IReferenceHandler, ReferenceHandler>();
-        serviceCollector.AddSingleton<IReferenceInsertHandler, ReferenceInsertHandler>();
-        serviceCollector.AddSingleton<IReferenceUpdateHandler, ReferenceUpdateHandler>();
-        serviceCollector.AddSingleton<IReferenceDeleteHandler, ReferenceDeleteHandler>();
+        serviceCollector.AddSingleton<IAppSettings>(sp =>
+        {
+            var appSettings = sp.GetRequiredService<IConfiguration>().GetSection("AppSettings").Get<AppSettings>();
+            ArgumentNullException.ThrowIfNull(appSettings);
+            return appSettings;
+        });
 
         serviceCollector.AddTransient<IValidator<User>, UserValidator>();
         serviceCollector.AddTransient<IValidator<Account>, AccountValidator>();
@@ -66,19 +82,18 @@ public static class ServiceCollection
 
         serviceCollector.AddSingleton<ISmsService, SmsService>();
 
+        // Abstractions project
+        serviceCollector.AddSingleton<IMainHandler, MainHandler>();
+        serviceCollector.AddSingleton<IRepository, InMemoryRepository>();
 
-        serviceCollector.AddSingleton<IConfiguration>(new ConfigurationBuilder()
-            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-            .AddJsonFile("appsettings.json", false, true)
-            .Build());
-
-        serviceCollector.AddSingleton<IAppSettings>(sp =>
-        {
-            var appSettings = sp.GetRequiredService<IConfiguration>().GetSection("AppSettings").Get<AppSettings>();
-            ArgumentNullException.ThrowIfNull(appSettings);
-            return appSettings;
-        });
-
+        // Repository project
+        serviceCollector.AddSingleton<IEntityRepository<Account>, AccountInMemoryRepository>();
+        serviceCollector.AddSingleton<IEntityRepository<User>, UserInMemoryRepository>();
+        serviceCollector.AddSingleton<IEntityRepository<Card>, CardInMemoryRepository>();
+        serviceCollector.AddSingleton<IEntityRepository<Transaction>, TransactionInMemoryRepository>();
+        serviceCollector.AddSingleton<IEntityRepository<Deposit>, DepositInMemoryRepository>();
+        serviceCollector.AddSingleton<IEntityRepository<Withdrawal>, WithdrawalInMemoryRepository>();
+        serviceCollector.AddSingleton<IEntityRepository<DynamicPassword>, DynamicPasswordInMemoryRepository>();
 
         return serviceCollector.BuildServiceProvider();
     }
