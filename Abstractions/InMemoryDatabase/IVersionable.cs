@@ -1,4 +1,4 @@
-﻿namespace InMemoryDataBase.Interfaces;
+﻿namespace Abstractions.InMemoryDatabase;
 
 public interface IVersionable
 {
