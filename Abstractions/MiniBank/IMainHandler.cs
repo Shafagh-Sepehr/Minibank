@@ -1,7 +1,6 @@
-﻿namespace Abstractions.MiniBank
+﻿namespace Abstractions.MiniBank;
+
+public interface IMainHandler
 {
-    public interface IMainHandler
-    {
-        void Run();
-    }
+    void Run();
 }
