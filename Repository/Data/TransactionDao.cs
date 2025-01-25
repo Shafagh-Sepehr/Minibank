@@ -1,10 +1,15 @@
 ﻿using Abstractions.Repository;
+using InMemoryDataBase.Attributes;
+using MiniBank.Entities.Classes;
 using MiniBank.Entities.Enums;
 
 namespace Repository.Data;
 
 public class TransactionDao : DataBaseEntity
 {
+    [PrimaryKey]
+    public new string Id { get; set; } = string.Empty;
+
     public required decimal Amount { get; init; }
 
     public required TransactionStatus Status { get; init; }
@@ -13,12 +18,15 @@ public class TransactionDao : DataBaseEntity
 
     public required DateTime Date { get; init; }
 
+    [Nullable]
     public required string? Description { get; init; }
 
+    [ForeignKey(typeof(Account))]
     public required string OriginAccountRef { get; init; }
 
     public required string OriginAccountNumber { get; init; }
 
+    [ForeignKey(typeof(Account))]
     public required string DestinationAccountRef { get; init; }
 
     public required string DestinationAccountNumber { get; init; }
