@@ -1,6 +1,5 @@
 ﻿using Abstractions.Repository;
 using InMemoryDataBase.Attributes;
-using MiniBank.Entities.Classes;
 using MiniBank.Entities.Enums;
 
 namespace Repository.Data;
@@ -21,14 +20,14 @@ public class TransactionDao : DataBaseEntity
     [Nullable]
     public required string? Description { get; init; }
 
-    [ForeignKey(typeof(Account))]
+    [ForeignKey(typeof(AccountDao))]
     [Nullable]
     public required string? OriginAccountRef { get; init; }
 
     [Nullable]
     public required string? OriginAccountNumber { get; init; }
 
-    [ForeignKey(typeof(Account))]
+    [ForeignKey(typeof(AccountDao))]
     [Nullable]
     public required string? DestinationAccountRef { get; init; }
 

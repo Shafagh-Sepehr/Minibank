@@ -1,6 +1,5 @@
 ﻿using Abstractions.Repository;
 using InMemoryDataBase.Attributes;
-using MiniBank.Entities.Classes;
 using MiniBank.Entities.Enums;
 
 namespace Repository.Data;
@@ -16,7 +15,7 @@ public class WithdrawalDao : DataBaseEntity
 
     public required DateTime Date { get; init; }
 
-    [ForeignKey(typeof(Account))]
+    [ForeignKey(typeof(AccountDao))]
     [Nullable]
     public required string? AccountRef { get; init; }
 }
