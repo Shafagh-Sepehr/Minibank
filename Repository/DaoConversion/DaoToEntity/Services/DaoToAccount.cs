@@ -4,7 +4,7 @@ using Repository.Data;
 
 namespace Repository.DaoConversion.DaoToEntity.Services;
 
-public class AccountToDao : IDaoToEntity< AccountDao,  Account>
+public class DaoToAccount : IDaoToEntity< AccountDao,  Account>
 {
     public Account DaoToEntity(AccountDao dao)
     {
