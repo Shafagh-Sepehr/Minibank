@@ -8,7 +8,7 @@ public class InMemoryRepository : IRepository
 {
     public List<T> FetchAll<T>() where T : DataBaseEntity => GetEntityRepository<T>().FetchAll();
 
-    public T FetchById<T>(string id) where T : DataBaseEntity => GetEntityRepository<T>().FetchById(id);
+    public T? FetchById<T>(string id) where T : DataBaseEntity => GetEntityRepository<T>().FetchById(id);
 
     public void Insert<T>(T entity) where T : DataBaseEntity => GetEntityRepository<T>().Insert(entity);
 

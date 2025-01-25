@@ -10,7 +10,7 @@ public class UserInMemoryRepository : IEntityRepository<User>
         throw new NotImplementedException();
     }
 
-    public User FetchById(string id)
+    public User? FetchById(string id)
     {
         throw new NotImplementedException();
     }

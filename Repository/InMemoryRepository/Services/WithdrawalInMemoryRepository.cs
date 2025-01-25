@@ -10,7 +10,7 @@ public class WithdrawalInMemoryRepository : IEntityRepository<Withdrawal>
         throw new NotImplementedException();
     }
 
-    public Withdrawal FetchById(string id)
+    public Withdrawal? FetchById(string id)
     {
         throw new NotImplementedException();
     }

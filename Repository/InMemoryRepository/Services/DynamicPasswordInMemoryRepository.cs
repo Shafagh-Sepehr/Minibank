@@ -10,7 +10,7 @@ public class DynamicPasswordInMemoryRepository : IEntityRepository<DynamicPasswo
         throw new NotImplementedException();
     }
 
-    public DynamicPassword FetchById(string id)
+    public DynamicPassword? FetchById(string id)
     {
         throw new NotImplementedException();
     }

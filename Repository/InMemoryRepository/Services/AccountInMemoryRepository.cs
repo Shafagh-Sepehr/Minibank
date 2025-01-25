@@ -10,7 +10,7 @@ public class AccountInMemoryRepository : IEntityRepository<Account>
         throw new NotImplementedException();
     }
 
-    public Account FetchById(string id)
+    public Account? FetchById(string id)
     {
         throw new NotImplementedException();
     }

@@ -10,7 +10,7 @@ public class TransactionInMemoryRepository : IEntityRepository<Transaction>
         throw new NotImplementedException();
     }
 
-    public Transaction FetchById(string id)
+    public Transaction? FetchById(string id)
     {
         throw new NotImplementedException();
     }
