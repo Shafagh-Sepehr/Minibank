@@ -15,11 +15,11 @@ public class TransactionDao : DataBaseEntity
 
     public required string? Description { get; init; }
 
-    public required long OriginAccountRef { get; init; }
+    public required string OriginAccountRef { get; init; }
 
     public required string OriginAccountNumber { get; init; }
 
-    public required long DestinationAccountRef { get; init; }
+    public required string DestinationAccountRef { get; init; }
 
     public required string DestinationAccountNumber { get; init; }
 }

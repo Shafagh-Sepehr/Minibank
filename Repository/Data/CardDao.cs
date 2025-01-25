@@ -4,7 +4,7 @@ namespace Repository.Data;
 
 public class CardDao : DataBaseEntity
 {
-    public required long AccountRef { get; init; }
+    public required string AccountRef { get; init; }
 
     public required string CardNumber { get; init; }
 

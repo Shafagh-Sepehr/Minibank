@@ -9,7 +9,7 @@ public class AccountDao : DataBaseEntity
 
     public required AccountStatus Status { get; init; }
 
-    public required long UserRef { get; init; }
+    public required string UserRef { get; init; }
 
     public required string AccountNumber { get; init; }
 }

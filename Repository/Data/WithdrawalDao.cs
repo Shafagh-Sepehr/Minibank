@@ -11,5 +11,5 @@ public class WithdrawalDao : DataBaseEntity
 
     public required DateTime Date { get; init; }
 
-    public required long AccountRef { get; init; }
+    public required string AccountRef { get; init; }
 }
