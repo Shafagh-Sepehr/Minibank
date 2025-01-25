@@ -1,32 +1,11 @@
-﻿using MiniBank.Entities.Classes;
-using Repository.Abstractions;
+﻿using InMemoryDataBase.Core.Abstractions;
+using MiniBank.Entities.Classes;
+using Repository.DaoConversion.DaoToEntity.Abstractions;
+using Repository.DaoConversion.EntityToDao.Abstractions;
+using Repository.Data;
 
 namespace Repository.InMemoryRepository.Services;
 
-public class TransactionInMemoryRepository : IEntityRepository<Transaction>
+public class TransactionInMemoryRepository(IShafaghDB shafaghDB, IEntityToDao<Transaction, TransactionDao> entityToDao, IDaoToEntity<TransactionDao, Transaction> daoToEntity) : GeneralInMemoryRepository<Transaction, TransactionDao>(shafaghDB, entityToDao, daoToEntity)
 {
-    public List<Transaction> FetchAll()
-    {
-        throw new NotImplementedException();
-    }
-
-    public Transaction? FetchById(string id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Insert(Transaction entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Update(Transaction entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Delete(string id)
-    {
-        throw new NotImplementedException();
-    }
 }

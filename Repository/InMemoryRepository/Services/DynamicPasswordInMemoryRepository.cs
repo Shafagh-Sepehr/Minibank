@@ -1,32 +1,11 @@
-﻿using MiniBank.Entities.Classes;
-using Repository.Abstractions;
+﻿using InMemoryDataBase.Core.Abstractions;
+using MiniBank.Entities.Classes;
+using Repository.DaoConversion.DaoToEntity.Abstractions;
+using Repository.DaoConversion.EntityToDao.Abstractions;
+using Repository.Data;
 
 namespace Repository.InMemoryRepository.Services;
 
-public class DynamicPasswordInMemoryRepository : IEntityRepository<DynamicPassword>
+public class DynamicPasswordInMemoryRepository(IShafaghDB shafaghDB, IEntityToDao<DynamicPassword, DynamicPasswordDao> entityToDao, IDaoToEntity<DynamicPasswordDao, DynamicPassword> daoToEntity) : GeneralInMemoryRepository<DynamicPassword, DynamicPasswordDao>(shafaghDB, entityToDao, daoToEntity)
 {
-    public List<DynamicPassword> FetchAll()
-    {
-        throw new NotImplementedException();
-    }
-
-    public DynamicPassword? FetchById(string id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Insert(DynamicPassword entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Update(DynamicPassword entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Delete(string id)
-    {
-        throw new NotImplementedException();
-    }
 }
