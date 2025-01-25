@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using DeepCopier;
+using Force.DeepCloner;
 using InMemoryDataBase.Core.Abstractions;
 using InMemoryDataBase.DataSanitizers.Abstractions;
 using InMemoryDataBase.DataSanitizers.ReferenceHandlers.Abstractions;
@@ -144,5 +144,5 @@ public class ShafaghDB(
     private static int GetEntityIndex(List<IVersionable> entityList, PropertyInfo primaryProperty, string id)
         => entityList.FindIndex(e => (string)primaryProperty.GetValue(e)! == id);
     
-    private static T DeepCopy<T>(T entity) => Copier.Copy(entity) ?? throw new ArgumentException("entity cannot be copied by Copier");
+    private static T DeepCopy<T>(T entity) => entity.DeepClone();
 }

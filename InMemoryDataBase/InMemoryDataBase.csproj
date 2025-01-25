@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="DeepCopier" Version="1.0.4"/>
+      <PackageReference Include="DeepCloner" Version="0.10.4" />
     </ItemGroup>
     
 </Project>
