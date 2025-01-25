@@ -1,32 +1,80 @@
-﻿using MiniBank.Entities.Classes;
+﻿using System.Reflection;
+using Abstractions.InMemoryDatabase;
+using InMemoryDataBase.Core.Abstractions;
+using MiniBank.Entities.Classes;
 using Repository.Abstractions;
+using Repository.Data;
 
 namespace Repository.InMemoryRepository.Services;
 
-public class CardInMemoryRepository : IEntityRepository<Card>
+public class CardInMemoryRepository(IShafaghDB shafaghDB) : IEntityRepository<Card>
 {
     public List<Card> FetchAll()
     {
-        throw new NotImplementedException();
+        return shafaghDB.FetchAll<CardDao>().Select(CardToDao).ToList();
     }
 
     public Card? FetchById(string id)
     {
-        throw new NotImplementedException();
+        var cardDao = shafaghDB.FetchById<CardDao>(id);
+        return cardDao == null ? null : CardToDao(cardDao);
     }
 
     public void Insert(Card entity)
     {
-        throw new NotImplementedException();
+        var cardDao = DaoToCard(entity);
+        shafaghDB.Insert(cardDao);
     }
 
     public void Update(Card entity)
     {
-        throw new NotImplementedException();
+        var cardDao = DaoToCard(entity);
+        ((IVersionable)cardDao).Version = ((IVersionable)cardDao).Version;
+        shafaghDB.Update(cardDao);
     }
 
     public void Delete(string id)
     {
-        throw new NotImplementedException();
+        shafaghDB.Delete<CardDao>(id);
+    }
+
+    private static CardDao DaoToCard(Card card)
+    {
+        return new CardDao
+        {
+            CardNumber = card.CardNumber,
+            Id = card.Id,
+            AccountRef = card.AccountRef,
+            Cvv2 = card.Cvv2,
+            Password = card.GetPasswordHash(),
+            SecondPassword = card.GetSecondPasswordHash(),
+            ExpiryDate = card.ExpiryDate
+        };
+    }
+
+    private static Card CardToDao(CardDao cardDao)
+    {
+        var card = new Card
+        {
+            Id = cardDao.Id,
+            CardNumber = cardDao.CardNumber,
+            AccountRef = cardDao.AccountRef,
+            Cvv2 = cardDao.Cvv2,
+            Password = "holder",
+            SecondPassword = "holder",
+            ExpiryDate = cardDao.ExpiryDate
+        };
+
+        var passwordHashType = typeof(Card)
+            .GetField("_passwordHash", BindingFlags.NonPublic | BindingFlags.Instance);
+        ArgumentNullException.ThrowIfNull(passwordHashType);
+        passwordHashType.SetValue(card, cardDao.Password);
+
+        var secondPasswordHashType = typeof(Card)
+            .GetField("_secondPasswordHash", BindingFlags.NonPublic | BindingFlags.Instance);
+        ArgumentNullException.ThrowIfNull(secondPasswordHashType);
+        secondPasswordHashType.SetValue(card, cardDao.SecondPassword);
+
+        return card;
     }
 }
