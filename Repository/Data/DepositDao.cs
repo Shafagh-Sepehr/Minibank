@@ -17,5 +17,6 @@ public class DepositDao : DataBaseEntity
     public required DateTime Date { get; init; }
 
     [ForeignKey(typeof(Account))]
-    public required string AccountRef { get; init; }
+    [Nullable]
+    public required string? AccountRef { get; init; }
 }

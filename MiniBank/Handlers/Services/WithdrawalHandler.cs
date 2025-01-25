@@ -38,7 +38,7 @@ public class WithdrawalHandler(IRepository repository, ISmsService smsService) :
         repository.Insert(new Withdrawal
         {
             Amount = amount,
-            AccountRef = account?.Id ?? string.Empty,
+            AccountRef = account?.Id,
             Status = actionResult == ActionResult.Success ? TransactionStatus.Success : TransactionStatus.Failed,
         });
 

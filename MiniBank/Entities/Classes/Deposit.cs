@@ -14,5 +14,5 @@ public class Deposit : DataBaseEntity
     public DateTime Date { get; } = DateTime.Now;
 
     [StringLength(36, MinimumLength = 36)]
-    public required string AccountRef { get; init; }
+    public required string? AccountRef { get; init; }
 }

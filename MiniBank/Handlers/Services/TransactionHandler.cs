@@ -49,10 +49,10 @@ public class TransactionHandler(IRepository repository, IAppSettings appSettings
         repository.Insert(new Transaction
         {
             Amount = amount,
-            OriginAccountRef = originAccount?.Id ?? string.Empty,
-            DestinationAccountRef = destinationAccount?.Id ?? string.Empty,
-            OriginAccountNumber = originAccount?.AccountNumber ?? string.Empty,
-            DestinationAccountNumber = destinationAccount?.AccountNumber ?? string.Empty,
+            OriginAccountRef = originAccount?.Id,
+            DestinationAccountRef = destinationAccount?.Id,
+            OriginAccountNumber = originAccount?.AccountNumber,
+            DestinationAccountNumber = destinationAccount?.AccountNumber,
             Description = description,
             Status = actionResult == ActionResult.Success ? TransactionStatus.Success : TransactionStatus.Failed,
             Type = transactionType,
@@ -92,10 +92,10 @@ public class TransactionHandler(IRepository repository, IAppSettings appSettings
         repository.Insert(new Transaction
         {
             Amount = amount,
-            OriginAccountRef = originAccount?.Id ?? string.Empty,
-            DestinationAccountRef = destinationAccount?.Id ?? string.Empty,
-            OriginAccountNumber = originAccount?.AccountNumber ?? string.Empty,
-            DestinationAccountNumber = destinationAccount?.AccountNumber ?? string.Empty,
+            OriginAccountRef = originAccount?.Id,
+            DestinationAccountRef = destinationAccount?.Id,
+            OriginAccountNumber = originAccount?.AccountNumber,
+            DestinationAccountNumber = destinationAccount?.AccountNumber,
             Description = description,
             Status = actionResult == ActionResult.Success ? TransactionStatus.Success : TransactionStatus.Failed,
             Type = TransactionType.AccountToAccount,

@@ -22,12 +22,16 @@ public class TransactionDao : DataBaseEntity
     public required string? Description { get; init; }
 
     [ForeignKey(typeof(Account))]
-    public required string OriginAccountRef { get; init; }
+    [Nullable]
+    public required string? OriginAccountRef { get; init; }
 
-    public required string OriginAccountNumber { get; init; }
+    [Nullable]
+    public required string? OriginAccountNumber { get; init; }
 
     [ForeignKey(typeof(Account))]
-    public required string DestinationAccountRef { get; init; }
+    [Nullable]
+    public required string? DestinationAccountRef { get; init; }
 
-    public required string DestinationAccountNumber { get; init; }
+    [Nullable]
+    public required string? DestinationAccountNumber { get; init; }
 }

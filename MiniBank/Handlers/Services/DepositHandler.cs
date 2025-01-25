@@ -32,7 +32,7 @@ public class DepositHandler(IRepository repository, ISmsService smsService) : ID
         repository.Insert(new Deposit
         {
             Amount = amount,
-            AccountRef = account?.Id ?? string.Empty,
+            AccountRef = account?.Id,
             Status = actionResult == ActionResult.Success ? TransactionStatus.Success : TransactionStatus.Failed,
         });
 
