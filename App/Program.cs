@@ -9,6 +9,7 @@ internal class Program
     {
         var sp = ServiceCollection.ServiceCollection.ServiceProvider;
         MiniBank.ServiceCollection.ServiceProvider = sp;
+        Repository.ServiceCollection.ServiceProvider = sp;
         var mainHandler = sp.GetRequiredService<IMainHandler>();
         mainHandler.Run();
     }
