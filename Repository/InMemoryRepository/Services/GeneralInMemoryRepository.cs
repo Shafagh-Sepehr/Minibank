@@ -4,13 +4,15 @@ using InMemoryDataBase.Core.Abstractions;
 using Repository.Abstractions;
 using Repository.DaoConversion.DaoToEntity.Abstractions;
 using Repository.DaoConversion.EntityToDao.Abstractions;
+using Repository.DaoConversion.ExistingEntityUpdate.Abstractions;
 
 namespace Repository.InMemoryRepository.Services;
 
 public abstract class GeneralInMemoryRepository<TEntity, TDao>
     (IShafaghDB shafaghDB,
      IEntityToDao<TEntity, TDao> entityToDao,
-     IDaoToEntity<TDao, TEntity> daoToEntity
+     IDaoToEntity<TDao, TEntity> daoToEntity,
+     IEntityUpdateFromDao<TDao,TEntity> entityUpdater
      ) : IEntityRepository<TEntity> where TEntity : DataBaseEntity where TDao : DataBaseEntity
 {
     public List<TEntity> FetchAll()
@@ -28,6 +30,7 @@ public abstract class GeneralInMemoryRepository<TEntity, TDao>
     {
         var accountDao = entityToDao.Convert(entity);
         shafaghDB.Insert(accountDao);
+        entityUpdater.Update(entity, accountDao);
     }
 
     public void Update(TEntity entity)
@@ -35,6 +38,7 @@ public abstract class GeneralInMemoryRepository<TEntity, TDao>
         var accountDao = entityToDao.Convert(entity);
         ((IVersionable)accountDao).Version = ((IVersionable)accountDao).Version;
         shafaghDB.Update(accountDao);
+        entityUpdater.Update(entity, accountDao);
     }
 
     public void Delete(string id)
