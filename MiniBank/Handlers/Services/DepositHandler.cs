@@ -23,8 +23,6 @@ public class DepositHandler(IRepository repository, ISmsService smsService) : ID
             repository.Update(account);
             actionResult = ActionResult.Success;
 
-            repository.Update(account);
-
             var user = repository.FetchAll<User>().First(x => x.Id == account.UserRef);
             smsService.Send($"{amount} was deposited to your account", accountNumber, user.PhoneNumber);
         }
