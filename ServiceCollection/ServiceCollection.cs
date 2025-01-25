@@ -20,6 +20,11 @@ using MiniBank.Handlers.Services;
 using MiniBank.Validators.Abstractions;
 using MiniBank.Validators.Services;
 using Repository.Abstractions;
+using Repository.DaoConversion.DaoToEntity.Abstractions;
+using Repository.DaoConversion.DaoToEntity.Services;
+using Repository.DaoConversion.EntityToDao.Abstractions;
+using Repository.DaoConversion.EntityToDao.Services;
+using Repository.Data;
 using Repository.InMemoryRepository;
 using Repository.InMemoryRepository.Services;
 
@@ -94,6 +99,23 @@ public static class ServiceCollection
         serviceCollector.AddSingleton<IEntityRepository<Deposit>, DepositInMemoryRepository>();
         serviceCollector.AddSingleton<IEntityRepository<Withdrawal>, WithdrawalInMemoryRepository>();
         serviceCollector.AddSingleton<IEntityRepository<DynamicPassword>, DynamicPasswordInMemoryRepository>();
+
+        serviceCollector.AddSingleton<IDaoToEntity<AccountDao,Account>, DaoToAccount>();
+        serviceCollector.AddSingleton<IDaoToEntity<UserDao,User>, DaoToUser>();
+        serviceCollector.AddSingleton<IDaoToEntity<CardDao, Card>, DaoToCard>();
+        serviceCollector.AddSingleton<IDaoToEntity<TransactionDao, Transaction>, DaoToTransaction>();
+        serviceCollector.AddSingleton<IDaoToEntity<DepositDao, Deposit>, DaoToDeposit>();
+        serviceCollector.AddSingleton<IDaoToEntity<WithdrawalDao, Withdrawal>, DaoToWithdrawal>();
+        serviceCollector.AddSingleton<IDaoToEntity<DynamicPasswordDao, DynamicPassword>, DaoToDynamicPassword>();
+
+        serviceCollector.AddSingleton<IEntityToDao<Account, AccountDao>, AccountToDao>();
+        serviceCollector.AddSingleton<IEntityToDao<User, UserDao>, UserToDao>();
+        serviceCollector.AddSingleton<IEntityToDao<Card, CardDao>, CardToDao>();
+        serviceCollector.AddSingleton<IEntityToDao<Transaction, TransactionDao>, TransactionToDao>();
+        serviceCollector.AddSingleton<IEntityToDao<Deposit, DepositDao>, DepositToDao>();
+        serviceCollector.AddSingleton<IEntityToDao<Withdrawal, WithdrawalDao>, WithdrawalToDao>();
+        serviceCollector.AddSingleton<IEntityToDao<DynamicPassword, DynamicPasswordDao>, DynamicPasswordToDao>();
+
 
         return serviceCollector.BuildServiceProvider();
     }
