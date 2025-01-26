@@ -105,7 +105,6 @@ public class ShafaghDB(
             return entityList.Cast<T>().Select(e =>
             {
                 var copied = DeepCopy(e);
-                copied.Version = e.Version;
                 return copied;
             });
         }
@@ -125,9 +124,7 @@ public class ShafaghDB(
             var entityIndex = GetEntityIndex(entityList, primaryProperty, id);
             if (entityIndex != -1)
             {
-                var copied = DeepCopy((T)entityList[entityIndex]);
-                copied.Version = entityList[entityIndex].Version;
-                return copied;
+                return DeepCopy((T)entityList[entityIndex]);
             }
         }
         
