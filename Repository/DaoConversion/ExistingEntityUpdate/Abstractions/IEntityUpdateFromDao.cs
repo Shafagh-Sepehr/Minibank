@@ -2,7 +2,7 @@
 
 namespace Repository.DaoConversion.ExistingEntityUpdate.Abstractions;
 
-public interface IEntityUpdateFromDao<in TDao, in TEntity> where TDao : DataBaseEntity where TEntity : DataBaseEntity
+public interface IEntityUpdateFromDao<in TDao, in TEntity> where TDao : DatabaseEntity where TEntity : DatabaseEntity
 {
     void Update(TEntity entity, TDao dao)
     {

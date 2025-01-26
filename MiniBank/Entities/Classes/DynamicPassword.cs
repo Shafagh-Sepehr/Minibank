@@ -6,7 +6,7 @@ using MiniBank.Validators.Abstractions;
 namespace MiniBank.Entities.Classes;
 
 [Validator(typeof(IValidator<DynamicPassword>), typeof(DynamicPassword))]
-public class DynamicPassword : DataBaseEntity
+public class DynamicPassword : DatabaseEntity
 {
     public required decimal Amount { get; init; }
     

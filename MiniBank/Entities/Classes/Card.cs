@@ -6,7 +6,7 @@ using MiniBank.Validators.Abstractions;
 namespace MiniBank.Entities.Classes;
 
 [Validator(typeof(IValidator<Card>), typeof(Card))]
-public class Card : DataBaseEntity
+public class Card : DatabaseEntity
 {
     private string _passwordHash = null!;
     private string _secondPasswordHash = null!;

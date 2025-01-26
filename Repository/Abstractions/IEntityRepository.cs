@@ -2,7 +2,7 @@
 
 namespace Repository.Abstractions;
 
-public interface IEntityRepository<T> where T : DataBaseEntity
+public interface IEntityRepository<T> where T : DatabaseEntity
 {
     List<T> FetchAll();
     T? FetchById(string id);

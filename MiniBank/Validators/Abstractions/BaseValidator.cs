@@ -5,7 +5,7 @@ using MiniBank.Entities.Enums;
 
 namespace MiniBank.Validators.Abstractions;
 
-public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity : DataBaseEntity
+public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity : DatabaseEntity
 {
     public void Validate(TEntity entity, DatabaseAction databaseAction)
     {

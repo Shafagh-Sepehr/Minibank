@@ -6,7 +6,7 @@ using MiniBank.Validators.Abstractions;
 namespace MiniBank.Entities.Classes;
 
 [Validator(typeof(IValidator<User>), typeof(User))]
-public class User : DataBaseEntity
+public class User : DatabaseEntity
 {
     [StringLength(50, MinimumLength = 5)]
     public required string Username { get; set; }

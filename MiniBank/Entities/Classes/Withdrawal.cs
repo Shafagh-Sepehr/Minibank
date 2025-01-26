@@ -7,7 +7,7 @@ using MiniBank.Validators.Abstractions;
 namespace MiniBank.Entities.Classes;
 
 [Validator(typeof(IValidator<Withdrawal>), typeof(Withdrawal))]
-public class Withdrawal : DataBaseEntity
+public class Withdrawal : DatabaseEntity
 {
     public required decimal Amount { get; init; }
     public required TransactionStatus Status { get; init; }

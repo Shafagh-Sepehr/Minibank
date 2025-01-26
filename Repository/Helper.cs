@@ -52,7 +52,7 @@ internal static class Helper
     }
 
 
-    public static void CopyVersion(DataBaseEntity source, DataBaseEntity destination)
+    public static void CopyVersion(DatabaseEntity source, DatabaseEntity destination)
     {
         ((IVersionable)destination).Version = ((IVersionable)source).Version;
     }

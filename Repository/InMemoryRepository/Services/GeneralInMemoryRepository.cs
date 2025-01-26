@@ -13,7 +13,7 @@ public abstract class GeneralInMemoryRepository<TEntity, TDao>
      IEntityToDao<TEntity, TDao> entityToDao,
      IDaoToEntity<TDao, TEntity> daoToEntity,
      IEntityUpdateFromDao<TDao,TEntity> entityUpdater
-     ) : IEntityRepository<TEntity> where TEntity : DataBaseEntity where TDao : DataBaseEntity
+     ) : IEntityRepository<TEntity> where TEntity : DatabaseEntity where TDao : DatabaseEntity
 {
     public List<TEntity> FetchAll()
     {

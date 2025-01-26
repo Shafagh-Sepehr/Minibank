@@ -3,7 +3,7 @@ using InMemoryDataBase.Attributes;
 
 namespace Repository.Data;
 
-public class CardDao : DataBaseEntity
+public class CardDao : DatabaseEntity
 {
     [PrimaryKey]
     public override string Id { get; set; } = string.Empty;

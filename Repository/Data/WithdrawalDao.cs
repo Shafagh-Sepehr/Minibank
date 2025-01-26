@@ -4,7 +4,7 @@ using MiniBank.Entities.Enums;
 
 namespace Repository.Data;
 
-public class WithdrawalDao : DataBaseEntity
+public class WithdrawalDao : DatabaseEntity
 {
     [PrimaryKey]
     public override string Id { get; set; } = string.Empty;

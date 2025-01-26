@@ -9,28 +9,28 @@ namespace MiniBank.Validators.Services;
 
 public class RepositoryWrapperValidator(IRepository repository) : IRepositoryWrapperValidator
 {
-    public List<T> FetchAll<T>() where T : DataBaseEntity => repository.FetchAll<T>();
+    public List<T> FetchAll<T>() where T : DatabaseEntity => repository.FetchAll<T>();
 
-    public T? FetchById<T>(string id) where T : DataBaseEntity => repository.FetchById<T>(id);
+    public T? FetchById<T>(string id) where T : DatabaseEntity => repository.FetchById<T>(id);
 
-    public void Insert<T>(T entity) where T : DataBaseEntity
+    public void Insert<T>(T entity) where T : DatabaseEntity
     {
         Validate(entity, DatabaseAction.Insert);
         repository.Insert(entity);
     }
 
-    public void Update<T>(T entity) where T : DataBaseEntity
+    public void Update<T>(T entity) where T : DatabaseEntity
     {
         Validate(entity, DatabaseAction.Update);
         repository.Update(entity);
     }
 
-    public void Delete<T>(string id) where T : DataBaseEntity
+    public void Delete<T>(string id) where T : DatabaseEntity
     {
         repository.Delete<T>(id);
     }
 
-    private static void Validate<T>(T entity, DatabaseAction databaseAction) where T : DataBaseEntity
+    private static void Validate<T>(T entity, DatabaseAction databaseAction) where T : DatabaseEntity
     {
         if (Attribute.GetCustomAttribute(typeof(T), typeof(ValidatorAttribute)) is ValidatorAttribute validatorBase)
         {

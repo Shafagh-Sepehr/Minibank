@@ -3,7 +3,7 @@ using InMemoryDataBase.Attributes;
 
 namespace Repository.Data;
 
-public class DynamicPasswordDao : DataBaseEntity
+public class DynamicPasswordDao : DatabaseEntity
 {
     [PrimaryKey]
     public override string Id { get; set; } = string.Empty;

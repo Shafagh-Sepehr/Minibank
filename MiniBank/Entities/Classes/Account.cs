@@ -7,7 +7,7 @@ using MiniBank.Validators.Abstractions;
 namespace MiniBank.Entities.Classes;
 
 [Validator(typeof(IValidator<Account>), typeof(Account))]
-public class Account : DataBaseEntity
+public class Account : DatabaseEntity
 {
     private decimal _balance;
     
