@@ -11,30 +11,39 @@ public class TransactionHandler(IRepositoryWrapperValidator repoWrapper, IAppSet
 {
     public void CreateCardToCardTransaction(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword, string cvv2, DateTime expiryDateTime, string? description)
     {
-        var accounts = repoWrapper.FetchAll<Account>();
         var cards = repoWrapper.FetchAll<Card>();
 
         var originCard = cards.FirstOrDefault(c => c.CardNumber == originCardNumber);
         var destinationCard = cards.FirstOrDefault(c => c.CardNumber == destinationCardNumber);
 
-        var originAccount = accounts.FirstOrDefault(a => a.Id == originCard?.AccountRef);
-        var destinationAccount = accounts.FirstOrDefault(a => a.Id == destinationCard?.AccountRef);
+        
 
         ActionResult actionResult;
         var transactionType = TransactionType.FailedCardToCard;
 
-        if (originCard == null || destinationCard == null || originAccount == null || destinationAccount == null || originCard.Cvv2 != cvv2 || originCard.ExpiryDate != expiryDateTime)
+        Account? originAccount = null, destinationAccount = null; 
+        if (originCard == null || destinationCard == null || originCard.Cvv2 != cvv2 || originCard.ExpiryDate != expiryDateTime)
         {
             actionResult = ActionResult.AccountNotFound;
         }
         else
         {
-            actionResult = ExecuteCardToCardTransaction(originCardNumber, destinationCardNumber, amount,
-                secondPassword, originAccount, destinationAccount, originCard, ref transactionType);
+            originAccount = repoWrapper.FetchById<Account>(originCard.AccountRef);
+            destinationAccount = repoWrapper.FetchById<Account>(destinationCard.AccountRef);
 
-            if (actionResult == ActionResult.Success)
+            if (originAccount == null || destinationAccount == null)
             {
-                Sms(originAccount, destinationAccount, amount);
+                actionResult = ActionResult.AccountNotFound;
+            }
+            else
+            {
+                actionResult = ExecuteCardToCardTransaction(originCardNumber, destinationCardNumber, amount,
+                    secondPassword, originAccount, destinationAccount, originCard, ref transactionType);
+
+                if (actionResult == ActionResult.Success)
+                {
+                    Sms(originAccount, destinationAccount, amount);
+                }
             }
         }
 
@@ -203,10 +212,10 @@ public class TransactionHandler(IRepositoryWrapperValidator repoWrapper, IAppSet
 
     private void Sms(Account originAccount, Account destinationAccount, decimal amount)
     {
-        var originUser = repoWrapper.FetchAll<User>().First(x => x.Id == originAccount.UserRef);
-        smsService.Send($"{amount} was taken from your account", originAccount.AccountNumber, originUser.PhoneNumber);
+        var originUser = repoWrapper.FetchById<User>(originAccount.UserRef);
+        smsService.Send($"{amount} was taken from your account", originAccount.AccountNumber, originUser?.PhoneNumber ?? "unknown phone number");
 
-        var destinationUser = repoWrapper.FetchAll<User>().First(x => x.Id == destinationAccount.UserRef);
-        smsService.Send($"{amount} was sent to your account", destinationAccount.AccountNumber, destinationUser.PhoneNumber);
+        var destinationUser = repoWrapper.FetchById<User>(destinationAccount.UserRef);
+        smsService.Send($"{amount} was sent to your account", destinationAccount.AccountNumber, destinationUser?.PhoneNumber ?? "unknown phone number");
     }
 }

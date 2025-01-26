@@ -20,12 +20,12 @@ public class TransactionValidator(IRepositoryWrapperValidator repoWrapper) : Bas
         }
 
         var accounts = repoWrapper.FetchAll<Account>().ToArray();
-        if (OriginAccountNotFound(accounts, entity.OriginAccountRef))
+        if (entity.OriginAccountRef ==null || OriginAccountNotFound(accounts, entity.OriginAccountRef))
         {
             errors.Add("no account found for this transaction's OriginAccountRef");
         }
 
-        if (DestinationAccountNotFound(accounts, entity.DestinationAccountRef))
+        if (entity.DestinationAccountRef == null || DestinationAccountNotFound(accounts, entity.DestinationAccountRef))
         {
             errors.Add("no account found for this transaction's DestinationAccountRef");
         }
@@ -40,27 +40,27 @@ public class TransactionValidator(IRepositoryWrapperValidator repoWrapper) : Bas
             errors.Add("Origin and destination account numbers can't be the same");
         }
 
-        if (OriginAccountNumberNotFound(accounts, entity.OriginAccountNumber))
+        if (entity.OriginAccountNumber == null || OriginAccountNumberNotFound(accounts, entity.OriginAccountNumber))
         {
             errors.Add("no account found for this transaction's OriginAccountNumber");
         }
 
-        if (DestinationAccountNumberNotFound(accounts, entity.DestinationAccountNumber))
+        if (entity.DestinationAccountNumber == null || DestinationAccountNumberNotFound(accounts, entity.DestinationAccountNumber))
         {
             errors.Add("no account found for this transaction's DestinationAccountNumber");
         }
 
-        if (OriginAccountNumberAndRefMismatch(accounts, entity.OriginAccountRef, entity.OriginAccountNumber))
+        if (entity.OriginAccountRef == null || entity.OriginAccountNumber == null ||  OriginAccountNumberAndRefMismatch(accounts, entity.OriginAccountRef, entity.OriginAccountNumber))
         {
             errors.Add("Origin account number and reference mismatch");
         }
 
-        if (DestianaitonAccountNumberAndRefMismatch(accounts, entity.DestinationAccountRef, entity.DestinationAccountNumber))
+        if (entity.DestinationAccountRef == null || entity.DestinationAccountNumber == null || DestinationAccountNumberAndRefMismatch(accounts, entity.DestinationAccountRef, entity.DestinationAccountNumber))
         {
             errors.Add("Destination account number and reference mismatch");
         }
 
-        if(entity.DestinationAccountNumber.Length != 20)
+        if(entity.DestinationAccountNumber != null && entity.DestinationAccountNumber.Length != 20)
         {
             errors.Add("The field DestinationAccountNumber must be a string with a minimum length of 20 and a maximum length of 20.");
         }
@@ -81,7 +81,7 @@ public class TransactionValidator(IRepositoryWrapperValidator repoWrapper) : Bas
     private static bool OriginAccountNumberAndRefMismatch(IEnumerable<Account> accounts, string originAccountRef, string originAccountNumber)
         => accounts.All(x => x.Id != originAccountRef && x.AccountNumber != originAccountNumber);
 
-    private static bool DestianaitonAccountNumberAndRefMismatch(IEnumerable<Account> accounts, string destinationAccountRef, string destinationAccountNumber)
+    private static bool DestinationAccountNumberAndRefMismatch(IEnumerable<Account> accounts, string destinationAccountRef, string destinationAccountNumber)
         => accounts.All(x => x.Id != destinationAccountRef && x.AccountNumber != destinationAccountNumber);
 
 

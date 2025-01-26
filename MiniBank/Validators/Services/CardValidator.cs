@@ -12,8 +12,8 @@ public class CardValidator(IRepositoryWrapperValidator repoWrapper) : BaseValida
             errors.Add("Card expiry date cannot be in the past.");
         }
         
-        var accounts = repoWrapper.FetchAll<Account>();
-        if (accounts.All(x => x.Id != entity.AccountRef))
+        var account = repoWrapper.FetchById<Account>(entity.AccountRef);
+        if (account == null)
         {
             errors.Add("this card's AccountRef doesn't exist");
         }

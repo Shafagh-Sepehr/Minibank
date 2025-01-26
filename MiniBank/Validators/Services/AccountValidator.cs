@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using MiniBank.Entities.Classes;
+using MiniBank.Exceptions;
 using MiniBank.Validators.Abstractions;
 
 namespace MiniBank.Validators.Services;
@@ -13,8 +14,8 @@ public class AccountValidator(IRepositoryWrapperValidator repoWrapper) : BaseVal
             errors.Add("Account balance cannot be less than zero");
         }
         
-        var users = repoWrapper.FetchAll<User>();
-        if (users.All(x => x.Id != entity.UserRef))
+        var user = repoWrapper.FetchById<User>(entity.UserRef);
+        if (user == null)
         {
             errors.Add("no user found for this account's UserRef");
         }
@@ -30,8 +31,13 @@ public class AccountValidator(IRepositoryWrapperValidator repoWrapper) : BaseVal
     
     protected override void ValidateUpdateState(Account entity, List<string> errors)
     {
-        var accounts = repoWrapper.FetchAll<Account>();
-        var oldAccount = accounts.First(x => x.Id == entity.Id);
+        var oldAccount = repoWrapper.FetchById<Account>(entity.Id);
+
+        if(oldAccount ==  null)
+        {
+            throw new OperationFailedException($"the account's user doesn't exists (UserRef:{entity.UserRef})");
+        }
+
         if (oldAccount.UserRef != entity.UserRef || oldAccount.AccountNumber != entity.AccountNumber)
         {
             errors.Add("Can't change account's owner or AccountNumber");

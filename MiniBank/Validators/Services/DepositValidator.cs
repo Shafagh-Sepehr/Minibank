@@ -14,8 +14,7 @@ public class DepositValidator(IRepositoryWrapperValidator repoWrapper) : BaseVal
             errors.Add("Deposit amount must be greater than 0");
         }
         
-        var accounts = repoWrapper.FetchAll<Account>();
-        if (accounts.All(x => x.Id != entity.AccountRef))
+        if (entity.AccountRef == null || repoWrapper.FetchById<Account>(entity.AccountRef) == null)
         {
             errors.Add("no account found for this deposit's AccountRef");
         }

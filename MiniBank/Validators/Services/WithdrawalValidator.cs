@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Abstractions.Repository;
 using MiniBank.Entities.Classes;
 using MiniBank.Validators.Abstractions;
 
@@ -14,8 +13,8 @@ public class WithdrawalValidator(IRepositoryWrapperValidator repoWrapper) : Base
             errors.Add("Withdrawal amount must be greater than 0");
         }
         
-        var accounts = repoWrapper.FetchAll<Account>();
-        if (accounts.All(x => x.Id != entity.AccountRef))
+        var account = repoWrapper.FetchById<Account>(entity.Id);
+        if (account == null)
         {
             errors.Add("no account found for this withdrawal's AccountRef");
         }

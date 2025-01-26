@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Abstractions.Repository;
 using MiniBank.Entities.Classes;
 using MiniBank.Validators.Abstractions;
 
@@ -18,7 +17,7 @@ public class UserValidator(IRepositoryWrapperValidator repoWrapper) : BaseValida
     
     protected override void ValidateUpdateState(User entity, List<string> errors)
     {
-        var user = repoWrapper.FetchAll<User>().FirstOrDefault(x => x.Id == entity.Id);
+        var user = repoWrapper.FetchById<User>(entity.Id);
         if (entity.FirstName != user!.FirstName || entity.LastName != user.LastName || entity.NationalId != user.NationalId)
         {
             errors.Add("First name, last name and national id cannot be change");
@@ -27,8 +26,8 @@ public class UserValidator(IRepositoryWrapperValidator repoWrapper) : BaseValida
     
     protected override void ValidateDeleteState(User entity)
     {
-        var accounts = repoWrapper.FetchAll<Account>();
-        if (accounts.Any(x => x.UserRef == entity.Id))
+        var account = repoWrapper.FetchById<Account>(entity.Id);
+        if (account != null)
         {
             throw new ValidationException("Can't delete user, first deleted owned accounts");
         }

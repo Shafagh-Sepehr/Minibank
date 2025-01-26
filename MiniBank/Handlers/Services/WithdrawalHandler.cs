@@ -29,8 +29,8 @@ public class WithdrawalHandler(IRepositoryWrapperValidator repoWrapper, ISmsServ
             {
                 repoWrapper.Update(account);
                 actionResult = ActionResult.Success;
-                var user = repoWrapper.FetchAll<User>().First(x => x.Id == account.UserRef);
-                smsService.Send($"{amount} was withdrawn from your account", accountNumber, user.PhoneNumber);
+                var user = repoWrapper.FetchById<User>(account.UserRef);
+                smsService.Send($"{amount} was withdrawn from your account", accountNumber, user?.PhoneNumber ?? "unknown phone number");
             }
             
         }
