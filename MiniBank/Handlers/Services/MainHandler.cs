@@ -8,7 +8,7 @@ namespace MiniBank.Handlers.Services;
 public class MainHandler(IUserHandler userHandler, IAccountHandler accountHandler, ICardHandler cardHandler,
     IDepositHandler depositHandler, IWithdrawalHandler withdrawalHandler, ITransactionHandler transactionHandler) : IMainHandler
 {
-    private User? user;
+    private User? _user;
 
     public void Run()
     {
@@ -18,7 +18,7 @@ public class MainHandler(IUserHandler userHandler, IAccountHandler accountHandle
         {
             try
             {
-                user ??= LoginOrSingup();
+                _user ??= LoginOrSingup();
 
                 Console.WriteLine();
                 Console.WriteLine("1-See All of My Accounts");
@@ -35,6 +35,7 @@ public class MainHandler(IUserHandler userHandler, IAccountHandler accountHandle
 
                     case "2":
                         CreateAccount();
+
                         break;
 
                     case "3":
@@ -44,7 +45,7 @@ public class MainHandler(IUserHandler userHandler, IAccountHandler accountHandle
                         break;
 
                     case "4":
-                        user = null;
+                        _user = null;
                         continue;
 
                     default:
@@ -65,8 +66,8 @@ public class MainHandler(IUserHandler userHandler, IAccountHandler accountHandle
 
     private void AccountManager(string accountNumber)
     {
-        ArgumentNullException.ThrowIfNull(user);
-        var correctAccount = accountHandler.AccountExistsAndBelongsToUser(accountNumber, user.Id);
+        ArgumentNullException.ThrowIfNull(_user);
+        var correctAccount = accountHandler.AccountExistsAndBelongsToUser(accountNumber, _user.Id);
 
         if (correctAccount == false)
         {
@@ -200,23 +201,33 @@ public class MainHandler(IUserHandler userHandler, IAccountHandler accountHandle
 
     private void CreateAccount()
     {
+        Console.Write("How much do you want to deposit to your account? (equal or greater than 50000) =: ");
+        var amount = decimal.Parse(ReadLine());
+
+        if(amount < 50000)
+        {
+            throw new OperationFailedException("initial deposit must be equal or greater than 50000");
+        }
+
         Console.Write("card's first password: ");
         var firstPassword = ReadLine();
         Console.Write("card's second(static) password: ");
         var secondPassword = ReadLine();
 
-        var account = accountHandler.CreateAccount(user.Id);
+        var account = accountHandler.CreateAccount(_user.Id);
         Console.WriteLine($"your new account's number: {account.AccountNumber}");
 
         var card = cardHandler.CreateCard(account.Id, firstPassword, secondPassword);
         Console.WriteLine($"your card number: {card.CardNumber}");
         Console.WriteLine($"your card Cvv2: {card.Cvv2}");
         Console.WriteLine($"your card ExpiryDate: {card.ExpiryDate.Year}/{card.ExpiryDate.Month}");
+
+        depositHandler.Deposit(account.AccountNumber, amount);
     }
 
     private void PrintAllAccounts()
     {
-        var accounts = accountHandler.GetAllUserAccounts(user).ToList();
+        var accounts = accountHandler.GetAllUserAccounts(_user).ToList();
 
         if (accounts.Count == 0)
         {
