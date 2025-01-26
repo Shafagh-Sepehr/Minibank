@@ -1,10 +1,9 @@
-﻿using Abstractions.Repository;
-using MiniBank.Entities.Classes;
+﻿using MiniBank.Entities.Classes;
 using MiniBank.Validators.Abstractions;
 
 namespace MiniBank.Validators.Services;
 
-public class CardValidator(IRepository repository) : BaseValidator<Card>
+public class CardValidator(IRepositoryWrapperValidator repoWrapper) : BaseValidator<Card>
 {
     protected override void ValidateGeneralState(Card entity, List<string> errors)
     {
@@ -13,7 +12,7 @@ public class CardValidator(IRepository repository) : BaseValidator<Card>
             errors.Add("Card expiry date cannot be in the past.");
         }
         
-        var accounts = repository.FetchAll<Account>();
+        var accounts = repoWrapper.FetchAll<Account>();
         if (accounts.All(x => x.Id != entity.AccountRef))
         {
             errors.Add("this card's AccountRef doesn't exist");

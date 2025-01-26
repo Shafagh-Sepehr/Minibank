@@ -5,7 +5,7 @@ using MiniBank.Validators.Abstractions;
 
 namespace MiniBank.Validators.Services;
 
-public class TransactionValidator(IRepository repository) : BaseValidator<Transaction>
+public class TransactionValidator(IRepositoryWrapperValidator repoWrapper) : BaseValidator<Transaction>
 {
     protected override void ValidateSaveState(Transaction entity, List<string> errors)
     {
@@ -19,7 +19,7 @@ public class TransactionValidator(IRepository repository) : BaseValidator<Transa
             errors.Add("Withdrawal amount must be greater than 0");
         }
 
-        var accounts = repository.FetchAll<Account>().ToArray();
+        var accounts = repoWrapper.FetchAll<Account>().ToArray();
         if (OriginAccountNotFound(accounts, entity.OriginAccountRef))
         {
             errors.Add("no account found for this transaction's OriginAccountRef");

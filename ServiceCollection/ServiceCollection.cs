@@ -89,6 +89,8 @@ public static class ServiceCollection
 
         serviceCollector.AddSingleton<ISmsService, SmsService>();
 
+        serviceCollector.AddSingleton<IRepositoryWrapperValidator, RepositoryWrapperValidator>();
+
         // Abstractions project
         serviceCollector.AddSingleton<IMainHandler, MainHandler>();
         serviceCollector.AddSingleton<IRepository, InMemoryRepository>();

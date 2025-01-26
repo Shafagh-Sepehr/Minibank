@@ -5,7 +5,7 @@ using MiniBank.Validators.Abstractions;
 
 namespace MiniBank.Validators.Services;
 
-public class DepositValidator(IRepository repository) : BaseValidator<Deposit>
+public class DepositValidator(IRepositoryWrapperValidator repoWrapper) : BaseValidator<Deposit>
 {
     protected override void ValidateSaveState(Deposit entity, List<string> errors)
     {
@@ -14,7 +14,7 @@ public class DepositValidator(IRepository repository) : BaseValidator<Deposit>
             errors.Add("Deposit amount must be greater than 0");
         }
         
-        var accounts = repository.FetchAll<Account>();
+        var accounts = repoWrapper.FetchAll<Account>();
         if (accounts.All(x => x.Id != entity.AccountRef))
         {
             errors.Add("no account found for this deposit's AccountRef");

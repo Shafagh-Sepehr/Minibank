@@ -1,19 +1,19 @@
-﻿using Abstractions.Repository;
-using MiniBank.AppSettings.Abstractions;
+﻿using MiniBank.AppSettings.Abstractions;
 using MiniBank.Communication.Abstractions;
 using MiniBank.Entities.Classes;
 using MiniBank.Entities.Enums;
 using MiniBank.Handlers.Abstractions;
+using MiniBank.Validators.Abstractions;
 
 namespace MiniBank.Handlers.Services;
 
-public class TransactionHandler(IRepository repository, IAppSettings appSettings, ISmsService smsService) : ITransactionHandler
+public class TransactionHandler(IRepositoryWrapperValidator repoWrapper, IAppSettings appSettings, ISmsService smsService) : ITransactionHandler
 {
     public void CreateCardToCardTransaction(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword,
                                                      string? description)
     {
-        var accounts = repository.FetchAll<Account>();
-        var cards = repository.FetchAll<Card>();
+        var accounts = repoWrapper.FetchAll<Account>();
+        var cards = repoWrapper.FetchAll<Card>();
 
         var originCard = cards.FirstOrDefault(c => c.CardNumber == originCardNumber);
         var destinationCard = cards.FirstOrDefault(c => c.CardNumber == destinationCardNumber);
@@ -40,7 +40,7 @@ public class TransactionHandler(IRepository repository, IAppSettings appSettings
         }
 
 
-        repository.Insert(new Transaction
+        repoWrapper.Insert(new Transaction
         {
             Amount = amount,
             OriginAccountRef = originAccount?.Id,
@@ -58,7 +58,7 @@ public class TransactionHandler(IRepository repository, IAppSettings appSettings
     public void CreateAccountToAccountTransaction(string originAccountNumber, string destinationAccountNumber, decimal amount,
                                                                       string? description = null)
     {
-        var accounts = repository.FetchAll<Account>();
+        var accounts = repoWrapper.FetchAll<Account>();
         var originAccount = accounts.FirstOrDefault(x => x.AccountNumber == originAccountNumber);
         var destinationAccount = accounts.FirstOrDefault(x => x.AccountNumber == destinationAccountNumber);
 
@@ -78,7 +78,7 @@ public class TransactionHandler(IRepository repository, IAppSettings appSettings
             }
         }
 
-        repository.Insert(new Transaction
+        repoWrapper.Insert(new Transaction
         {
             Amount = amount,
             OriginAccountRef = originAccount?.Id,
@@ -95,8 +95,8 @@ public class TransactionHandler(IRepository repository, IAppSettings appSettings
 
     public IEnumerable<Transaction> GetAllTransactions(string accountNumber)
     {
-        var account = repository.FetchAll<Account>().First(acc => acc.AccountNumber == accountNumber);
-        return repository
+        var account = repoWrapper.FetchAll<Account>().First(acc => acc.AccountNumber == accountNumber);
+        return repoWrapper
             .FetchAll<Transaction>()
             .Where(dep => dep.OriginAccountRef == account.Id || dep.DestinationAccountRef == account.Id);
     }
@@ -143,7 +143,7 @@ public class TransactionHandler(IRepository repository, IAppSettings appSettings
 
     private bool CanUseStaticPassword(Account account, decimal amount)
     {
-        var transactions = repository.FetchAll<Transaction>();
+        var transactions = repoWrapper.FetchAll<Transaction>();
         var staticPasswordPurchaseAmount = transactions.Where(x => account.Id == x.OriginAccountRef && AreSameDay(x.Date, DateTime.Now) &&
                                                               x.Type == TransactionType.StaticCardToCard && x.Status == TransactionStatus.Success)
             .Sum(x => x.Amount);
@@ -157,7 +157,7 @@ public class TransactionHandler(IRepository repository, IAppSettings appSettings
     }
 
     private bool IsDynamicPassword(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword) =>
-        repository.FetchAll<DynamicPassword>().Any(d =>
+        repoWrapper.FetchAll<DynamicPassword>().Any(d =>
             d.OriginCardNumber == originCardNumber && d.DestinationCardNumber == destinationCardNumber && d.Amount == amount &&
             d.DynamicPasswordHash == Helper.ComputeSha256Hash(secondPassword) && d.ExpiryDate >= DateTime.Now);
 
@@ -170,8 +170,8 @@ public class TransactionHandler(IRepository repository, IAppSettings appSettings
         }
         else
         {
-            repository.Update(originAccount);
-            repository.Update(destinationAccount);
+            repoWrapper.Update(originAccount);
+            repoWrapper.Update(destinationAccount);
             actionResult = ActionResult.Success;
         }
 
@@ -186,10 +186,10 @@ public class TransactionHandler(IRepository repository, IAppSettings appSettings
 
     private void Sms(Account originAccount, Account destinationAccount, decimal amount)
     {
-        var originUser = repository.FetchAll<User>().First(x => x.Id == originAccount.UserRef);
+        var originUser = repoWrapper.FetchAll<User>().First(x => x.Id == originAccount.UserRef);
         smsService.Send($"{amount} was taken from your account", originAccount.AccountNumber, originUser.PhoneNumber);
 
-        var destinationUser = repository.FetchAll<User>().First(x => x.Id == destinationAccount.UserRef);
+        var destinationUser = repoWrapper.FetchAll<User>().First(x => x.Id == destinationAccount.UserRef);
         smsService.Send($"{amount} was sent to your account", destinationAccount.AccountNumber, destinationUser.PhoneNumber);
     }
 }

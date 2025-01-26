@@ -65,8 +65,8 @@ public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity
 
     private static void ValidateThatEntityExists_BeforeUpdateOrDelete(TEntity entity)
     {
-        var repository = ServiceCollection.ServiceProvider.GetRequiredService<IRepository>();
-        var ent = repository.FetchAll<TEntity>().FirstOrDefault(x => x.Id == entity.Id);
+        var repoWrapper = ServiceCollection.ServiceProvider.GetRequiredService<IRepositoryWrapperValidator>();
+        var ent = repoWrapper.FetchAll<TEntity>().FirstOrDefault(x => x.Id == entity.Id);
         if (ent == null)
         {
             throw new ValidationException($"cannot update/delete non-existing {entity.GetType().Name}");

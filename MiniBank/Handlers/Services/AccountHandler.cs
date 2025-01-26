@@ -1,11 +1,11 @@
-﻿using Abstractions.Repository;
-using MiniBank.Entities.Classes;
+﻿using MiniBank.Entities.Classes;
 using MiniBank.Entities.Enums;
 using MiniBank.Handlers.Abstractions;
+using MiniBank.Validators.Abstractions;
 
 namespace MiniBank.Handlers.Services;
 
-public class AccountHandler(IRepository repository) : IAccountHandler
+public class AccountHandler(IRepositoryWrapperValidator repoWrapper) : IAccountHandler
 {
     public Account CreateAccount(string userRef)
     {
@@ -16,26 +16,26 @@ public class AccountHandler(IRepository repository) : IAccountHandler
             Status = AccountStatus.Active,
         };
 
-        repository.Insert(newAccount);
+        repoWrapper.Insert(newAccount);
         return newAccount;
     }
 
     public decimal? GetAccountBalance(string AccountNumber)
-        => repository.FetchAll<Account>()
+        => repoWrapper.FetchAll<Account>()
         .FirstOrDefault(account => account.AccountNumber == AccountNumber)
         ?.Balance;
 
     public IEnumerable<Account> GetAllUserAccounts(User user)
-        => repository.FetchAll<Account>().Where(acc => acc.UserRef == user.Id);
+        => repoWrapper.FetchAll<Account>().Where(acc => acc.UserRef == user.Id);
 
     public bool AccountExistsAndBelongsToUser(string accountNumber, string userRef)
     {
-        return repository.FetchAll<Account>().FirstOrDefault(acc => acc.AccountNumber == accountNumber && acc.UserRef == userRef) != null;
+        return repoWrapper.FetchAll<Account>().FirstOrDefault(acc => acc.AccountNumber == accountNumber && acc.UserRef == userRef) != null;
     }
 
     private string GenerateAccountNumber()
     {
-        var accounts = repository.FetchAll<Account>();
+        var accounts = repoWrapper.FetchAll<Account>();
         string accountNumber;
 
         do

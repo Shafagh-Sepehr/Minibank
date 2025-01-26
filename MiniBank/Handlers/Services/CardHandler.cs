@@ -1,12 +1,12 @@
-﻿using Abstractions.Repository;
-using MiniBank.Communication.Abstractions;
+﻿using MiniBank.Communication.Abstractions;
 using MiniBank.Entities.Classes;
 using MiniBank.Exceptions;
 using MiniBank.Handlers.Abstractions;
+using MiniBank.Validators.Abstractions;
 
 namespace MiniBank.Handlers.Services;
 
-public class CardHandler(IRepository repository, ISmsService smsService) : ICardHandler
+public class CardHandler(IRepositoryWrapperValidator repoWrapper, ISmsService smsService) : ICardHandler
 {
     public Card CreateCard(string accountRef, string password, string secondPassword)
     {
@@ -19,15 +19,15 @@ public class CardHandler(IRepository repository, ISmsService smsService) : ICard
             Password = password,
             SecondPassword = secondPassword,
         };
-        repository.Insert(card);
+        repoWrapper.Insert(card);
         return card;
     }
 
     public void RequestDynamicPassword(decimal amount, string originCardNumber, string destinationCardNumber, string cvv2, DateTime expiryDate)
     {
-        var cards = repository.FetchAll<Card>();
-        var accounts = repository.FetchAll<Account>();
-        var users = repository.FetchAll<User>();
+        var cards = repoWrapper.FetchAll<Card>();
+        var accounts = repoWrapper.FetchAll<Account>();
+        var users = repoWrapper.FetchAll<User>();
         var originCard = cards.FirstOrDefault(c => c.CardNumber == originCardNumber);
 
         var user = (from u in users
@@ -51,26 +51,26 @@ public class CardHandler(IRepository repository, ISmsService smsService) : ICard
             DynamicPasswordHash = Helper.ComputeSha256Hash(dynamicPasswordString),
         };
 
-        repository.Insert(dynamicPassword);
+        repoWrapper.Insert(dynamicPassword);
         smsService.Send($"dynamic password: {dynamicPasswordString}", accounts.First(acc => acc.Id == originCard.AccountRef).AccountNumber, user.PhoneNumber);
     }
 
     public Card GetCard(Account account)
     {
-        var card = repository.FetchAll<Card>().FirstOrDefault(card => card.AccountRef == account.Id);
+        var card = repoWrapper.FetchAll<Card>().FirstOrDefault(card => card.AccountRef == account.Id);
         return card ?? throw new OperationFailedException("couldn't find the requested card");
     }
 
     public Card GetCard(string accountNumber)
     {
-        var account = repository.FetchAll<Account>().Where(acc => acc.AccountNumber == accountNumber).First();
-        var card = repository.FetchAll<Card>().FirstOrDefault(card => card.AccountRef == account.Id);
+        var account = repoWrapper.FetchAll<Account>().Where(acc => acc.AccountNumber == accountNumber).First();
+        var card = repoWrapper.FetchAll<Card>().FirstOrDefault(card => card.AccountRef == account.Id);
         return card ?? throw new OperationFailedException("couldn't find the requested card");
     }
 
     private string GenerateCardNumber()
     {
-        var cards = repository.FetchAll<Card>();
+        var cards = repoWrapper.FetchAll<Card>();
         string cardNumber;
         do
         {
