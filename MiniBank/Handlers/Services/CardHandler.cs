@@ -105,7 +105,7 @@ public class CardHandler(IRepositoryWrapperValidator repoWrapper, ISmsService sm
 
     public Card GetCard(string accountNumber)
     {
-        var account = repoWrapper.FetchAll<Account>().Where(acc => acc.AccountNumber == accountNumber).First();
+        var account = repoWrapper.FetchAll<Account>().First(acc => acc.AccountNumber == accountNumber);
         var card = repoWrapper.FetchAll<Card>().FirstOrDefault(card => card.AccountRef == account.Id);
         return card ?? throw new OperationFailedException("couldn't find the requested card");
     }
