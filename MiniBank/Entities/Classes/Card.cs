@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Abstractions.Repository;
 using MiniBank.Attributes;
+using MiniBank.Exceptions;
 using MiniBank.Validators.Abstractions;
 
 namespace MiniBank.Entities.Classes;
@@ -22,13 +23,36 @@ public class Card : DatabaseEntity
     
     public required string Password
     {
-        init => _passwordHash = Helper.ComputeSha256Hash(value);
+        init
+        {
+            if (value.Except("0123456789".ToCharArray()).Any())
+            {
+                throw new OperationFailedException("first password cant have non-numeric characters");
+            }
+            if(value.Length != 4)
+            {
+                throw new OperationFailedException("first password must have a length 4 digits");
+            }
+            _passwordHash = Helper.ComputeSha256Hash(value);
+        }
     }
+
     public required string SecondPassword
     {
-        init => _secondPasswordHash = Helper.ComputeSha256Hash(value);
+        init
+        {
+            if (value.Except("0123456789".ToCharArray()).Any())
+            {
+                throw new OperationFailedException("second password cant have non-numeric characters");
+            }
+            if (value.Length < 5)
+            {
+                throw new OperationFailedException("second password length greater or equal to 5");
+            }
+            _secondPasswordHash = Helper.ComputeSha256Hash(value);
+        }
     }
-    
+
     public required DateTime ExpiryDate { get; init; }
     
     public string GetPasswordHash() => _passwordHash;
