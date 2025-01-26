@@ -18,7 +18,7 @@ public class MainHandler(IUserHandler userHandler, IAccountHandler accountHandle
         {
             try
             {
-                _user ??= LoginOrSingup();
+                _user ??= LoginOrSignup();
 
                 Console.WriteLine();
                 Console.WriteLine("1-See All of My Accounts");
@@ -39,8 +39,10 @@ public class MainHandler(IUserHandler userHandler, IAccountHandler accountHandle
                         break;
 
                     case "3":
-                        Console.Write("enter account number: ");
-                        var accountNumber = ReadLine();
+                        var accounts = PrintAllAccounts();
+                        Console.Write("which one?: ");
+                        var accIndex = ReadLine();
+                        var accountNumber = accounts[int.Parse(accIndex) - 1].AccountNumber;
                         AccountManager(accountNumber);
                         break;
 
@@ -230,23 +232,25 @@ public class MainHandler(IUserHandler userHandler, IAccountHandler accountHandle
         depositHandler.Deposit(account.AccountNumber, amount);
     }
 
-    private void PrintAllAccounts()
+    private List<Account> PrintAllAccounts()
     {
         var accounts = accountHandler.GetAllUserAccounts(_user).ToList();
 
         if (accounts.Count == 0)
         {
             Console.WriteLine("you don't have any account yet");
-            return;
+            return [];
         }
 
-        for (int i = 0; i < accounts.Count; i++)
+        for (var i = 0; i < accounts.Count; i++)
         {
-            Console.WriteLine($"  {i}- {accounts[i].AccountNumber}");
+            Console.WriteLine($"  {i+1}- {accounts[i].AccountNumber}");
         }
+
+        return accounts;
     }
 
-    private User LoginOrSingup()
+    private User LoginOrSignup()
     {
         Console.WriteLine();
         Console.WriteLine("1-Login");
