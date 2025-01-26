@@ -54,14 +54,19 @@ public class TransactionHandler(IRepositoryWrapperValidator repoWrapper, IAppSet
         Helper.ThrowExceptionIfActionFailed(actionResult);
     }
 
-    public void CreateAccountToAccountTransaction(string originAccountNumber, string destinationAccountNumber, decimal amount,
-                                                                      string? description = null)
+    public void CreateAccountToAccountTransaction(string originAccountNumber, string destinationAccountNumber
+        , decimal amount, string secondPassword, string? description = null)
     {
         var accounts = repoWrapper.FetchAll<Account>();
-        var originAccount = accounts.FirstOrDefault(x => x.AccountNumber == originAccountNumber);
-        var destinationAccount = accounts.FirstOrDefault(x => x.AccountNumber == destinationAccountNumber);
+        var cards = repoWrapper.FetchAll<Card>();
+
+        var originAccount = accounts.FirstOrDefault(a => a.AccountNumber == originAccountNumber);
+        var destinationAccount = accounts.FirstOrDefault(a => a.AccountNumber == destinationAccountNumber);
+
+        
 
         ActionResult actionResult;
+        var transactionType = TransactionType.AccountToAccount;
 
         if (originAccount == null || destinationAccount == null)
         {
@@ -69,13 +74,26 @@ public class TransactionHandler(IRepositoryWrapperValidator repoWrapper, IAppSet
         }
         else
         {
-            actionResult = TransactAndValidateAndUpdate(amount, originAccount, destinationAccount);
+            var originCard = cards.FirstOrDefault(c => c.AccountRef == originAccount.Id);
+            var destinationCard = cards.FirstOrDefault(c => c.AccountRef == destinationAccount.Id);
 
-            if (actionResult == ActionResult.Success)
+            if (originCard == null || destinationCard == null)
             {
-                Sms(originAccount, destinationAccount, amount);
+                actionResult = ActionResult.AccountNotFound;
+            }
+            else
+            {
+                actionResult = ExecuteCardToCardTransaction(originCard.CardNumber, destinationCard.CardNumber, amount,
+                    secondPassword, originAccount, destinationAccount, originCard, ref transactionType);
+
+                if (actionResult == ActionResult.Success)
+                {
+                    Sms(originAccount, destinationAccount, amount);
+                }
             }
         }
+
+        transactionType = TransactionType.AccountToAccount;
 
         repoWrapper.Insert(new Transaction
         {
@@ -86,7 +104,7 @@ public class TransactionHandler(IRepositoryWrapperValidator repoWrapper, IAppSet
             DestinationAccountNumber = destinationAccount?.AccountNumber,
             Description = description,
             Status = actionResult == ActionResult.Success ? TransactionStatus.Success : TransactionStatus.Failed,
-            Type = TransactionType.AccountToAccount,
+            Type = transactionType,
         });
 
         Helper.ThrowExceptionIfActionFailed(actionResult);

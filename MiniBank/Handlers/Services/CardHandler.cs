@@ -55,6 +55,48 @@ public class CardHandler(IRepositoryWrapperValidator repoWrapper, ISmsService sm
         smsService.Send($"dynamic password: {dynamicPasswordString}", accounts.First(acc => acc.Id == originCard.AccountRef).AccountNumber, user.PhoneNumber);
     }
 
+    public void RequestAccountToAccountDynamicPassword(decimal amount, string originAccountNumber, string destinationAccountNumber)
+    {
+        var cards = repoWrapper.FetchAll<Card>();
+        var accounts = repoWrapper.FetchAll<Account>();
+        var users = repoWrapper.FetchAll<User>();
+
+        var originAccount = accounts.FirstOrDefault(a => a.AccountNumber == originAccountNumber);
+        var destinationAccount = accounts.FirstOrDefault(a => a.AccountNumber == destinationAccountNumber);
+
+        
+        if (originAccount == null || destinationAccount == null)
+        {
+            throw new OperationFailedException("a card with this information couldn't be found");
+        }
+
+        var originCard = cards.FirstOrDefault(c => c.AccountRef == originAccount.Id);
+        var destinationCard = cards.FirstOrDefault(c => c.AccountRef == destinationAccount.Id);
+
+        var user = (from u in users
+            join account in accounts on u.Id equals account.UserRef
+            join card in cards on account.Id equals card.AccountRef
+            select u).Distinct().SingleOrDefault();
+
+        if(originCard == null || destinationCard == null || user == null)
+        {
+            throw new OperationFailedException("a card with this information couldn't be found");
+        }
+
+        var dynamicPasswordString = Helper.GenerateRandomNumberAsString(8);
+
+        var dynamicPassword = new DynamicPassword
+        {
+            Amount = amount,
+            OriginCardNumber = originCard.CardNumber,
+            DestinationCardNumber = destinationCard.CardNumber,
+            DynamicPasswordHash = Helper.ComputeSha256Hash(dynamicPasswordString),
+        };
+
+        repoWrapper.Insert(dynamicPassword);
+        smsService.Send($"dynamic password: {dynamicPasswordString}", accounts.First(acc => acc.Id == originCard.AccountRef).AccountNumber, user.PhoneNumber);
+    }
+
     public Card GetCard(Account account)
     {
         var card = repoWrapper.FetchAll<Card>().FirstOrDefault(card => card.AccountRef == account.Id);

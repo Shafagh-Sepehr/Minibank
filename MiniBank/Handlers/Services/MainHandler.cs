@@ -196,7 +196,12 @@ public class MainHandler(IUserHandler userHandler, IAccountHandler accountHandle
         Console.Write("enter transaction description (or leave empty): ");
         var description = Console.ReadLine();
 
-        transactionHandler.CreateAccountToAccountTransaction(accountNumber, destinationAccountNumber, amount, description);
+        cardHandler.RequestAccountToAccountDynamicPassword(amount, accountNumber, destinationAccountNumber);
+
+        Console.Write("enter dynamic password: ");
+        var password = ReadLine();
+
+        transactionHandler.CreateAccountToAccountTransaction(accountNumber, destinationAccountNumber, amount, password, description);
     }
 
     private void CreateAccount()
