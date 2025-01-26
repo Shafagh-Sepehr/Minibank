@@ -90,7 +90,7 @@ public class TransactionValidator(IRepositoryWrapperValidator repoWrapper) : Bas
         throw new ValidationException("Transaction entities can't get updated");
     }
     
-    protected override void ValidateDeleteState(Transaction entity)
+    protected override void ValidateDeleteState(string id)
     {
         throw new ValidationException("Transaction entities can't be deleted");
     }

@@ -27,6 +27,7 @@ public class RepositoryWrapperValidator(IRepository repository) : IRepositoryWra
 
     public void Delete<T>(string id) where T : DatabaseEntity
     {
+        ValidateDelete<T>(id);
         repository.Delete<T>(id);
     }
 
@@ -48,6 +49,27 @@ public class RepositoryWrapperValidator(IRepository repository) : IRepositoryWra
         else
         {
             throw new DataException($"wrong attribute was used on {entity.GetType().Name} entity.");
+        }
+    }
+
+    private static void ValidateDelete<T>(string id) where T : DatabaseEntity
+    {
+        if (Attribute.GetCustomAttribute(typeof(T), typeof(ValidatorAttribute)) is ValidatorAttribute validatorBase)
+        {
+            if (validatorBase.Validator is IValidator<T> validator)
+            {
+                validator.ValidateDelete(id);
+            }
+            else
+            {
+                throw new OperationFailedException(
+                    $"validator type and entity type don't match. " +
+                    $"{validatorBase.Validator.GetType().Name} was used on {typeof(T).Name} entity.");
+            }
+        }
+        else
+        {
+            throw new DataException($"wrong attribute was used on {typeof(T).Name} entity.");
         }
     }
 }

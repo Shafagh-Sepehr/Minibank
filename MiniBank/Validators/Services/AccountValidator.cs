@@ -44,8 +44,15 @@ public class AccountValidator(IRepositoryWrapperValidator repoWrapper) : BaseVal
         }
     }
     
-    protected override void ValidateDeleteState(Account entity)
+    protected override void ValidateDeleteState(string id)
     {
+        var entity = repoWrapper.FetchById<Account>(id);
+
+        if (entity == null)
+        {
+            throw new ValidationException($"can't delete non-existent Account with id {id}");
+        }
+
         if (entity.Balance > 1)
         {
             throw new ValidationException("Account balance cannot be more than 1 when deleting, withdraw money");

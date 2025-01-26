@@ -25,7 +25,7 @@ public class WithdrawalValidator(IRepositoryWrapperValidator repoWrapper) : Base
         throw new ValidationException("Withdrawal entities can't get updated");
     }
     
-    protected override void ValidateDeleteState(Withdrawal entity)
+    protected override void ValidateDeleteState(string id)
     {
         throw new ValidationException("Withdrawal entities can't be deleted");
     }

@@ -37,7 +37,7 @@ public class DynamicPasswordValidator(IRepositoryWrapperValidator repoWrapper) :
         throw new ValidationException("Transaction entities can't get updated");
     }
     
-    protected override void ValidateDeleteState(DynamicPassword entity)
+    protected override void ValidateDeleteState(string id)
     {
         throw new ValidationException("Transaction entities can't be deleted");
     }

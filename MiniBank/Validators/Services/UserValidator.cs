@@ -24,9 +24,9 @@ public class UserValidator(IRepositoryWrapperValidator repoWrapper) : BaseValida
         }
     }
     
-    protected override void ValidateDeleteState(User entity)
+    protected override void ValidateDeleteState(string id)
     {
-        var account = repoWrapper.FetchById<Account>(entity.Id);
+        var account = repoWrapper.FetchById<Account>(id);
         if (account != null)
         {
             throw new ValidationException("Can't delete user, first deleted owned accounts");

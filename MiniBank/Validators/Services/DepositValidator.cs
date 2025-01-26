@@ -25,7 +25,7 @@ public class DepositValidator(IRepositoryWrapperValidator repoWrapper) : BaseVal
         throw new ValidationException("Deposit entities can't get updated");
     }
     
-    protected override void ValidateDeleteState(Deposit entity)
+    protected override void ValidateDeleteState(string id)
     {
         throw new ValidationException("Deposit entities can't be deleted");
     }

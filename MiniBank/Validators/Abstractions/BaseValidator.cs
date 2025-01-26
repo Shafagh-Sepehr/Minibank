@@ -9,13 +9,6 @@ public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity
 {
     public void Validate(TEntity entity, DatabaseAction databaseAction)
     {
-        if (databaseAction == DatabaseAction.Delete)
-        {
-            ValidateThatEntityExists_BeforeUpdateOrDelete(entity);
-            ValidateDeleteState(entity);
-            return;
-        }
-
         var validationResults = new List<ValidationResult>();
         var validationContext = new ValidationContext(entity, null, null);
 
@@ -44,7 +37,7 @@ public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity
         }
         else
         {
-            ValidateThatEntityExists_BeforeUpdateOrDelete(entity);
+            ValidateThatEntityExists_BeforeUpdate(entity);
             ValidateGeneralState(entity, errors);
             ValidateUpdateState(entity, errors);
         }
@@ -55,6 +48,12 @@ public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity
         }
     }
 
+    public void ValidateDelete(string id)
+    {
+        ValidateThatEntityExists_BeforeDelete(id);
+        ValidateDeleteState(id);
+    }
+
     private static void ValidateIdIsNotSet_BeforeSave(TEntity entity, List<string> errors)
     {
         if (entity.Id != string.Empty)
@@ -63,13 +62,21 @@ public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity
         }
     }
 
-    private static void ValidateThatEntityExists_BeforeUpdateOrDelete(TEntity entity)
+    private static void ValidateThatEntityExists_BeforeUpdate(TEntity entity)
     {
         var repoWrapper = ServiceCollection.ServiceProvider.GetRequiredService<IRepositoryWrapperValidator>();
-        var ent = repoWrapper.FetchAll<TEntity>().FirstOrDefault(x => x.Id == entity.Id);
-        if (ent == null)
+        if (repoWrapper.FetchById<TEntity>(entity.Id) == null)
         {
-            throw new ValidationException($"cannot update/delete non-existing {entity.GetType().Name}");
+            throw new ValidationException($"cannot update non-existing {entity.GetType().Name}");
+        }
+    }
+
+    private static void ValidateThatEntityExists_BeforeDelete(string id)
+    {
+        var repoWrapper = ServiceCollection.ServiceProvider.GetRequiredService<IRepositoryWrapperValidator>();
+        if (repoWrapper.FetchById<TEntity>(id) == null)
+        {
+            throw new ValidationException($"{typeof(TEntity).Name} with id {id} doesn't exists, can't delete");
         }
     }
 
@@ -77,6 +84,5 @@ public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity
     protected virtual void ValidateGeneralState(TEntity entity, List<string> errors) { }
     protected virtual void ValidateSaveState(TEntity entity, List<string> errors) { }
     protected virtual void ValidateUpdateState(TEntity entity, List<string> errors) { }
-    protected virtual void ValidateDeleteState(TEntity entity) { }
-
+    protected virtual void ValidateDeleteState(string id) { }
 }
