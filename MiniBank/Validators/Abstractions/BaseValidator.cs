@@ -7,9 +7,9 @@ namespace MiniBank.Validators.Abstractions;
 
 public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity : DataBaseEntity
 {
-    public void Validate(TEntity entity, DataBaseAction dataBaseAction)
+    public void Validate(TEntity entity, DatabaseAction databaseAction)
     {
-        if (dataBaseAction == DataBaseAction.Delete)
+        if (databaseAction == DatabaseAction.Delete)
         {
             ValidateThatEntityExists_BeforeUpdateOrDelete(entity);
             ValidateDeleteState(entity);
@@ -36,7 +36,7 @@ public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity
         }
 
 
-        if (dataBaseAction == DataBaseAction.Save)
+        if (databaseAction == DatabaseAction.Insert)
         {
             ValidateIdIsNotSet_BeforeSave(entity, errors);
             ValidateGeneralState(entity, errors);

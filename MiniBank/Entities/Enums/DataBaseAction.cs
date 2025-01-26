@@ -1,9 +1,9 @@
 ﻿namespace MiniBank.Entities.Enums;
 
-public enum DataBaseAction
+public enum DatabaseAction
 {
     Unknown,
-    Save,
+    Insert,
     Update,
     Delete,
 }

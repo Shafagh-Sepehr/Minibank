@@ -5,5 +5,5 @@ namespace MiniBank.Validators.Abstractions;
 
 public interface IValidator<in TEntity> where TEntity : DataBaseEntity
 {
-    public void Validate(TEntity entity, DataBaseAction dataBaseAction);
+    public void Validate(TEntity entity, DatabaseAction databaseAction);
 }
