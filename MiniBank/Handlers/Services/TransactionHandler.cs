@@ -9,8 +9,7 @@ namespace MiniBank.Handlers.Services;
 
 public class TransactionHandler(IRepositoryWrapperValidator repoWrapper, IAppSettings appSettings, ISmsService smsService) : ITransactionHandler
 {
-    public void CreateCardToCardTransaction(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword,
-                                                     string? description)
+    public void CreateCardToCardTransaction(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword, string cvv2, DateTime expiryDateTime, string? description)
     {
         var accounts = repoWrapper.FetchAll<Account>();
         var cards = repoWrapper.FetchAll<Card>();
@@ -24,7 +23,7 @@ public class TransactionHandler(IRepositoryWrapperValidator repoWrapper, IAppSet
         ActionResult actionResult;
         var transactionType = TransactionType.FailedCardToCard;
 
-        if (originCard == null || destinationCard == null || originAccount == null || destinationAccount == null)
+        if (originCard == null || destinationCard == null || originAccount == null || destinationAccount == null || originCard.Cvv2 != cvv2 || originCard.ExpiryDate != expiryDateTime)
         {
             actionResult = ActionResult.AccountNotFound;
         }

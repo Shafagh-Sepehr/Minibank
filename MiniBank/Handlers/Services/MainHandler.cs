@@ -182,7 +182,7 @@ public class MainHandler(IUserHandler userHandler, IAccountHandler accountHandle
             password = input;
         }
 
-        transactionHandler.CreateCardToCardTransaction(originCardNumber, destinationCardNumber, amount, password, description);
+        transactionHandler.CreateCardToCardTransaction(originCardNumber, destinationCardNumber, amount, password, cvv2, expiryDateTime, description);
     }
 
     private void AccountToAccountTransaction(string accountNumber)

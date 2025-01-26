@@ -24,7 +24,7 @@ public class DepositHandler(IRepositoryWrapperValidator repoWrapper, ISmsService
             repoWrapper.Update(account);
             actionResult = ActionResult.Success;
 
-            var user = repoWrapper.FetchAll<User>().First(x => x.Id == account.UserRef);
+            var user = repoWrapper.FetchById<User>(account.UserRef);
             smsService.Send($"{amount} was deposited to your account", accountNumber, user.PhoneNumber);
         }
 
