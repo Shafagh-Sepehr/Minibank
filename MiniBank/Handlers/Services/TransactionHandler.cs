@@ -2,6 +2,7 @@
 using MiniBank.Communication.Abstractions;
 using MiniBank.Entities.Classes;
 using MiniBank.Entities.Enums;
+using MiniBank.Exceptions;
 using MiniBank.Handlers.Abstractions;
 using MiniBank.Validators.Abstractions;
 
@@ -22,7 +23,7 @@ public class TransactionHandler(IRepositoryWrapperValidator repoWrapper, IAppSet
         var transactionType = TransactionType.FailedCardToCard;
 
         Account? originAccount = null, destinationAccount = null; 
-        if (originCard == null || destinationCard == null || originCard.Cvv2 != cvv2 || originCard.ExpiryDate != expiryDateTime)
+        if (originCard == null || destinationCard == null || originCard.Cvv2 != cvv2 || originCard.ExpiryDate.Year != expiryDateTime.Year || originCard.ExpiryDate.Month != expiryDateTime.Month)
         {
             actionResult = ActionResult.AccountNotFound;
         }
