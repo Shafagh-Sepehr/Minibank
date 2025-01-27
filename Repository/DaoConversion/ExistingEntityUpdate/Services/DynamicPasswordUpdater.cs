@@ -1,6 +1,6 @@
 ﻿using Abstractions.InMemoryDatabase;
+using Abstractions.MiniBank;
 using MiniBank.Entities.Classes;
-using Repository.DaoConversion.DaoToEntity.Abstractions;
 using Repository.DaoConversion.ExistingEntityUpdate.Abstractions;
 using Repository.Data;
 
@@ -16,6 +16,6 @@ public class DynamicPasswordUpdater : IEntityUpdateFromDao<DynamicPasswordDao, D
         Helper.SetValue(entity, nameof(entity.DestinationCardNumber), dao.DestinationCardNumber);
         Helper.SetValue(entity, nameof(entity.DynamicPasswordHash), dao.DynamicPasswordHash);
         Helper.SetValue(entity, nameof(entity.OriginCardNumber), dao.OriginCardNumber);
-        ((IVersionable)entity).Version = ((IVersionable)dao).Version;
+        ((IMiniBankVersionable)entity).Version = ((IInMemoryDBVersionable)dao).Version;
     }
 }

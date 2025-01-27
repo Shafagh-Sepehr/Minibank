@@ -16,10 +16,10 @@ public class ShafaghDB(
     IReferenceHandler referenceHandler,
     IAttributeValidator attributeValidator) : IShafaghDB
 {
-    private readonly Dictionary<Type, List<IVersionable>> _entities   = new();
+    private readonly Dictionary<Type, List<IInMemoryDBVersionable>> _entities   = new();
     private readonly List<Reference>                      _references = new();
     
-    public void Insert<T>(T entity) where T : IVersionable
+    public void Insert<T>(T entity) where T : IInMemoryDBVersionable
     {
         var type = typeof(T);
         
@@ -41,7 +41,7 @@ public class ShafaghDB(
         }
     }
     
-    public void Update<T>(T entity) where T : IVersionable
+    public void Update<T>(T entity) where T : IInMemoryDBVersionable
     {
         var type = typeof(T);
         
@@ -74,7 +74,7 @@ public class ShafaghDB(
             $"Update failed, no entity found with this primary key: `{primaryProperty.PropertyType.Name}` `{primaryProperty.Name}` = `{primaryProperty.GetValue(entity)}` of type `{type.Name}`");
     }
     
-    public void Delete<T>(string id) where T : IVersionable
+    public void Delete<T>(string id) where T : IInMemoryDBVersionable
     {
         var type = typeof(T);
         
@@ -96,7 +96,7 @@ public class ShafaghDB(
         throw new InvalidOperationException($"`{type.Name}` having `{primaryProperty.Name}` with value `{id}` was not found");
     }
     
-    public IEnumerable<T> FetchAll<T>() where T : IVersionable
+    public IEnumerable<T> FetchAll<T>() where T : IInMemoryDBVersionable
     {
         var type = typeof(T);
         
@@ -114,7 +114,7 @@ public class ShafaghDB(
         }
     }
     
-    public T? FetchById<T>(string id) where T : class, IVersionable
+    public T? FetchById<T>(string id) where T : class, IInMemoryDBVersionable
     {
         var type = typeof(T);
         var primaryProperty = Helper.GetPrimaryPropertyInfo(type);
@@ -131,14 +131,14 @@ public class ShafaghDB(
         return null;
     }
     
-    private static void SetId<T>(T entity) where T : IVersionable
+    private static void SetId<T>(T entity) where T : IInMemoryDBVersionable
     {
         var propertyInfo = Helper.GetPrimaryPropertyInfo(entity.GetType());
         var guid = Guid.NewGuid();
         propertyInfo.SetValue(entity, guid.ToString());
     }
     
-    private static int GetEntityIndex(List<IVersionable> entityList, PropertyInfo primaryProperty, string id)
+    private static int GetEntityIndex(List<IInMemoryDBVersionable> entityList, PropertyInfo primaryProperty, string id)
         => entityList.FindIndex(e => (string)primaryProperty.GetValue(e)! == id);
     
     private static T DeepCopy<T>(T entity) => entity.DeepClone();

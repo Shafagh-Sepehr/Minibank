@@ -1,6 +1,6 @@
 ﻿using Abstractions.InMemoryDatabase;
+using Abstractions.MiniBank;
 using MiniBank.Entities.Classes;
-using Repository.DaoConversion.DaoToEntity.Abstractions;
 using Repository.DaoConversion.ExistingEntityUpdate.Abstractions;
 using Repository.Data;
 
@@ -17,6 +17,6 @@ public class CardUpdater : IEntityUpdateFromDao<CardDao, Card>
         Helper.SetValue(entity, nameof(dao.AccountRef), dao.AccountRef);
         Helper.SetValue(entity, nameof(dao.Cvv2), dao.Cvv2);
         Helper.SetValue(entity, nameof(dao.ExpiryDate), dao.ExpiryDate);
-        ((IVersionable)entity).Version = ((IVersionable)dao).Version;
+        ((IMiniBankVersionable)entity).Version = ((IInMemoryDBVersionable)dao).Version;
     }
 }

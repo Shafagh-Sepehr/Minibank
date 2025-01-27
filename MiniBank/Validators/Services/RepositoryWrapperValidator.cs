@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using Abstractions.MiniBank;
 using Abstractions.Repository;
 using MiniBank.Attributes;
 using MiniBank.Entities.Enums;
@@ -9,29 +10,29 @@ namespace MiniBank.Validators.Services;
 
 public class RepositoryWrapperValidator(IRepository repository) : IRepositoryWrapperValidator
 {
-    public List<T> FetchAll<T>() where T : DatabaseEntity => repository.FetchAll<T>();
+    public List<T> FetchAll<T>() where T : MiniBankDatabaseEntity => repository.FetchAll<T>();
 
-    public T? FetchById<T>(string id) where T : DatabaseEntity => repository.FetchById<T>(id);
+    public T? FetchById<T>(string id) where T : MiniBankDatabaseEntity => repository.FetchById<T>(id);
 
-    public void Insert<T>(T entity) where T : DatabaseEntity
+    public void Insert<T>(T entity) where T : MiniBankDatabaseEntity
     {
         Validate(entity, DatabaseAction.Insert);
         repository.Insert(entity);
     }
 
-    public void Update<T>(T entity) where T : DatabaseEntity
+    public void Update<T>(T entity) where T : MiniBankDatabaseEntity
     {
         Validate(entity, DatabaseAction.Update);
         repository.Update(entity);
     }
 
-    public void Delete<T>(string id) where T : DatabaseEntity
+    public void Delete<T>(string id) where T : MiniBankDatabaseEntity
     {
         ValidateDelete<T>(id);
         repository.Delete<T>(id);
     }
 
-    private static void Validate<T>(T entity, DatabaseAction databaseAction) where T : DatabaseEntity
+    private static void Validate<T>(T entity, DatabaseAction databaseAction) where T : MiniBankDatabaseEntity
     {
         if (Attribute.GetCustomAttribute(typeof(T), typeof(ValidatorAttribute)) is ValidatorAttribute validatorBase)
         {
@@ -52,7 +53,7 @@ public class RepositoryWrapperValidator(IRepository repository) : IRepositoryWra
         }
     }
 
-    private static void ValidateDelete<T>(string id) where T : DatabaseEntity
+    private static void ValidateDelete<T>(string id) where T : MiniBankDatabaseEntity
     {
         if (Attribute.GetCustomAttribute(typeof(T), typeof(ValidatorAttribute)) is ValidatorAttribute validatorBase)
         {

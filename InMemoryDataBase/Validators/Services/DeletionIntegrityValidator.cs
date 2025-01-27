@@ -9,7 +9,7 @@ namespace InMemoryDataBase.Validators.Services;
 
 public class DeletionIntegrityValidator : IDeletionIntegrityValidator
 {
-    public void Validate<T>(T entity, IReadOnlyDictionary<Type, List<IVersionable>> entities, List<Reference> references)
+    public void Validate<T>(T entity, IReadOnlyDictionary<Type, List<IInMemoryDBVersionable>> entities, List<Reference> references)
     {
         var type = typeof(T);
         var primaryProperty = Helper.GetPrimaryPropertyInfo(type);

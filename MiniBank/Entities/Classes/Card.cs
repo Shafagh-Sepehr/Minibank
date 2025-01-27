@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Abstractions.Repository;
+using Abstractions.MiniBank;
 using MiniBank.Attributes;
 using MiniBank.Exceptions;
 using MiniBank.Validators.Abstractions;
@@ -7,7 +7,7 @@ using MiniBank.Validators.Abstractions;
 namespace MiniBank.Entities.Classes;
 
 [Validator(typeof(IValidator<Card>), typeof(Card))]
-public class Card : DatabaseEntity
+public class Card : MiniBankDatabaseEntity
 {
     private string _passwordHash = null!;
     private string _secondPasswordHash = null!;

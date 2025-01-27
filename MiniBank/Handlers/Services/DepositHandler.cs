@@ -1,5 +1,4 @@
-﻿using Abstractions.Repository;
-using MiniBank.Communication.Abstractions;
+﻿using MiniBank.Communication.Abstractions;
 using MiniBank.Entities.Classes;
 using MiniBank.Entities.Enums;
 using MiniBank.Handlers.Abstractions;

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Abstractions.Repository;
 using MiniBank.Entities.Classes;
 using MiniBank.Validators.Abstractions;
 

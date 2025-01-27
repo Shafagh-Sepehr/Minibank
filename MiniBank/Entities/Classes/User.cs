@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Abstractions.Repository;
+using Abstractions.MiniBank;
 using MiniBank.Attributes;
 using MiniBank.Validators.Abstractions;
 
 namespace MiniBank.Entities.Classes;
 
 [Validator(typeof(IValidator<User>), typeof(User))]
-public class User : DatabaseEntity
+public class User : MiniBankDatabaseEntity
 {
     [StringLength(50, MinimumLength = 5)]
     public required string Username { get; set; }

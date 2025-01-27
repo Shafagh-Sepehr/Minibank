@@ -8,7 +8,7 @@ namespace InMemoryDataBase.Validators.Services;
 
 public class ForeignKeyValidator : IForeignKeyValidator
 {
-    public void Validate<T>(T entity, IReadOnlyDictionary<Type, List<IVersionable>> entities)
+    public void Validate<T>(T entity, IReadOnlyDictionary<Type, List<IInMemoryDBVersionable>> entities)
     {
         var type = typeof(T);
         var properties = type.GetProperties();

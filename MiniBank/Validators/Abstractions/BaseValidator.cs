@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Abstractions.Repository;
+using Abstractions.MiniBank;
 using Microsoft.Extensions.DependencyInjection;
 using MiniBank.Entities.Enums;
 
 namespace MiniBank.Validators.Abstractions;
 
-public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity : DatabaseEntity
+public abstract class BaseValidator<TEntity> : IValidator<TEntity> where TEntity : MiniBankDatabaseEntity
 {
     public void Validate(TEntity entity, DatabaseAction databaseAction)
     {

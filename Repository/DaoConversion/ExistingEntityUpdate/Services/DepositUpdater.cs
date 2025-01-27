@@ -1,6 +1,6 @@
 ﻿using Abstractions.InMemoryDatabase;
+using Abstractions.MiniBank;
 using MiniBank.Entities.Classes;
-using Repository.DaoConversion.DaoToEntity.Abstractions;
 using Repository.DaoConversion.ExistingEntityUpdate.Abstractions;
 using Repository.Data;
 
@@ -15,6 +15,6 @@ public class DepositUpdater : IEntityUpdateFromDao<DepositDao, Deposit>
         Helper.SetValue(entity, nameof(entity.Amount), dao.Amount);
         Helper.SetValue(entity, nameof(entity.AccountRef), dao.AccountRef);
         Helper.SetValue(entity, nameof(entity.Status), dao.Status);
-        ((IVersionable)entity).Version = ((IVersionable)dao).Version;
+        ((IMiniBankVersionable)entity).Version = ((IInMemoryDBVersionable)dao).Version;
     }
 }

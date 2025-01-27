@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Abstractions.Repository;
+using Abstractions.MiniBank;
 using MiniBank.Attributes;
 using MiniBank.Entities.Enums;
 using MiniBank.Validators.Abstractions;
@@ -7,7 +7,7 @@ using MiniBank.Validators.Abstractions;
 namespace MiniBank.Entities.Classes;
 
 [Validator(typeof(IValidator<Account>), typeof(Account))]
-public class Account : DatabaseEntity
+public class Account : MiniBankDatabaseEntity
 {
     private decimal _balance;
     

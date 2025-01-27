@@ -1,4 +1,5 @@
 ﻿using Abstractions.InMemoryDatabase;
+using Abstractions.MiniBank;
 using MiniBank.Entities.Classes;
 using Repository.DaoConversion.DaoToEntity.Abstractions;
 using Repository.Data;
@@ -17,7 +18,7 @@ public class DaoToAccount : IDaoToEntity< AccountDao,  Account>
             Id = dao.Id,
         };
         entity.IncreaseBalance(dao.Balance);
-        ((IVersionable)entity).Version = ((IVersionable)dao).Version;
+        ((IMiniBankVersionable)entity).Version = ((IInMemoryDBVersionable)dao).Version;
         return entity;
     }
 }

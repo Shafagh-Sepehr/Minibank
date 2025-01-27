@@ -8,7 +8,7 @@ namespace InMemoryDataBase.Validators.Services;
 
 public class PrimaryKeyValidator : IPrimaryKeyValidator
 {
-    public void Validate<T>(T entity, IReadOnlyDictionary<Type, List<IVersionable>> entities)
+    public void Validate<T>(T entity, IReadOnlyDictionary<Type, List<IInMemoryDBVersionable>> entities)
     {
         var type = typeof(T);
         var properties = typeof(T).GetProperties();

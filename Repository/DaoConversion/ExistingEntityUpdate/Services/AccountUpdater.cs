@@ -1,4 +1,5 @@
 ﻿using Abstractions.InMemoryDatabase;
+using Abstractions.MiniBank;
 using MiniBank.Entities.Classes;
 using Repository.DaoConversion.ExistingEntityUpdate.Abstractions;
 using Repository.Data;
@@ -15,6 +16,6 @@ public class AccountUpdater : IEntityUpdateFromDao< AccountDao,  Account>
         Helper.SetValue(entity, nameof(dao.AccountNumber),dao.AccountNumber);
         Helper.SetValue(entity, nameof(dao.UserRef), dao.UserRef);
         Helper.SetValue(entity, "_balance", dao.Balance);
-        ((IVersionable)entity).Version = ((IVersionable)dao).Version;
+        ((IMiniBankVersionable)entity).Version = ((IInMemoryDBVersionable)dao).Version;
     }
 }

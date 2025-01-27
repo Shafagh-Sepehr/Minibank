@@ -1,9 +1,9 @@
-﻿using Abstractions.Repository;
-using InMemoryDataBase.Attributes;
+﻿using InMemoryDataBase.Attributes;
+using Repository.Abstractions;
 
 namespace Repository.Data;
 
-public class DynamicPasswordDao : DatabaseEntity
+public class DynamicPasswordDao : RepositoryEntity
 {
     [PrimaryKey]
     public override string Id { get; set; } = string.Empty;

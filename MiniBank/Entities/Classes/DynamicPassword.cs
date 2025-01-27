@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Abstractions.Repository;
+using Abstractions.MiniBank;
 using MiniBank.Attributes;
 using MiniBank.Validators.Abstractions;
 
 namespace MiniBank.Entities.Classes;
 
 [Validator(typeof(IValidator<DynamicPassword>), typeof(DynamicPassword))]
-public class DynamicPassword : DatabaseEntity
+public class DynamicPassword : MiniBankDatabaseEntity
 {
     public required decimal Amount { get; init; }
     

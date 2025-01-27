@@ -1,6 +1,6 @@
 ﻿namespace Abstractions.InMemoryDatabase;
 
-public interface IVersionable
+public interface IInMemoryDBVersionable
 {
     int Version { get; set; }
     void IncrementVersion() => Version++;

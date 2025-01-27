@@ -1,10 +1,10 @@
-﻿using Abstractions.Repository;
-using InMemoryDataBase.Attributes;
+﻿using InMemoryDataBase.Attributes;
 using MiniBank.Entities.Enums;
+using Repository.Abstractions;
 
 namespace Repository.Data;
 
-public class DepositDao : DatabaseEntity
+public class DepositDao : RepositoryEntity
 {
     [PrimaryKey]
     public override string Id { get; set; } = string.Empty;

@@ -1,4 +1,5 @@
 ﻿using Abstractions.InMemoryDatabase;
+using Abstractions.MiniBank;
 using MiniBank.Entities.Classes;
 using Repository.DaoConversion.EntityToDao.Abstractions;
 using Repository.Data;
@@ -18,7 +19,7 @@ public class DynamicPasswordToDao : IEntityToDao<DynamicPassword, DynamicPasswor
             ExpiryDate = entity.ExpiryDate,
             OriginCardNumber = entity.OriginCardNumber
         };
-        ((IVersionable)dao).Version = ((IVersionable)entity).Version;
+        ((IInMemoryDBVersionable)dao).Version = ((IMiniBankVersionable)entity).Version;
         return dao;
     }
 }

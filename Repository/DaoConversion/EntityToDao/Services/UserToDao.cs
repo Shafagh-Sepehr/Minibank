@@ -1,4 +1,5 @@
 ﻿using Abstractions.InMemoryDatabase;
+using Abstractions.MiniBank;
 using MiniBank.Entities.Classes;
 using Repository.DaoConversion.EntityToDao.Abstractions;
 using Repository.Data;
@@ -19,7 +20,7 @@ public class UserToDao : IEntityToDao<User, UserDao>
             PhoneNumber = entity.PhoneNumber,
             Username = entity.Username
         };
-        ((IVersionable)dao).Version = ((IVersionable)entity).Version;
+        ((IInMemoryDBVersionable)dao).Version = ((IMiniBankVersionable)entity).Version;
         return dao;
     }
 }

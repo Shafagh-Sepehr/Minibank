@@ -1,6 +1,6 @@
 ﻿using Abstractions.InMemoryDatabase;
+using Abstractions.MiniBank;
 using MiniBank.Entities.Classes;
-using Repository.DaoConversion.DaoToEntity.Abstractions;
 using Repository.DaoConversion.ExistingEntityUpdate.Abstractions;
 using Repository.Data;
 
@@ -16,6 +16,6 @@ public class WithdrawalUpdater : IEntityUpdateFromDao<WithdrawalDao, Withdrawal>
         Helper.SetValue(entity, nameof(entity.Status), dao.Status);
         Helper.SetValue(entity, nameof(entity.AccountRef), dao.AccountRef);
         Helper.SetValue(entity, nameof(entity.Amount), dao.Amount);
-        ((IVersionable)entity).Version = ((IVersionable)dao).Version;
+        ((IMiniBankVersionable)entity).Version = ((IInMemoryDBVersionable)dao).Version;
     }
 }

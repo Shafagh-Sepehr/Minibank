@@ -1,4 +1,5 @@
 ﻿using Abstractions.InMemoryDatabase;
+using Abstractions.MiniBank;
 using MiniBank.Entities.Classes;
 using Repository.DaoConversion.DaoToEntity.Abstractions;
 using Repository.Data;
@@ -22,7 +23,7 @@ public class DaoToCard : IDaoToEntity<CardDao, Card>
 
         Helper.SetValue(entity, "_passwordHash", dao.Password);
         Helper.SetValue(entity, "_secondPasswordHash", dao.SecondPassword);
-        ((IVersionable)entity).Version = ((IVersionable)dao).Version;
+        ((IMiniBankVersionable)entity).Version = ((IInMemoryDBVersionable)dao).Version;
         return entity;
     }
 }

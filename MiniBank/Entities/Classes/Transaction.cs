@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Abstractions.Repository;
+using Abstractions.MiniBank;
 using MiniBank.Attributes;
 using MiniBank.Entities.Enums;
 using MiniBank.Validators.Abstractions;
@@ -7,7 +7,7 @@ using MiniBank.Validators.Abstractions;
 namespace MiniBank.Entities.Classes;
 
 [Validator(typeof(IValidator<Transaction>), typeof(Transaction))]
-public class Transaction : DatabaseEntity
+public class Transaction : MiniBankDatabaseEntity
 {
     public required decimal Amount { get; init; }
     public required TransactionStatus Status { get; init; }

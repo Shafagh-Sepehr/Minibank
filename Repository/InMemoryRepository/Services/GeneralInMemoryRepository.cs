@@ -1,5 +1,5 @@
 ﻿using Abstractions.InMemoryDatabase;
-using Abstractions.Repository;
+using Abstractions.MiniBank;
 using InMemoryDataBase.Core.Abstractions;
 using Repository.Abstractions;
 using Repository.DaoConversion.DaoToEntity.Abstractions;
@@ -13,7 +13,7 @@ public abstract class GeneralInMemoryRepository<TEntity, TDao>
      IEntityToDao<TEntity, TDao> entityToDao,
      IDaoToEntity<TDao, TEntity> daoToEntity,
      IEntityUpdateFromDao<TDao,TEntity> entityUpdater
-     ) : IEntityRepository<TEntity> where TEntity : DatabaseEntity where TDao : DatabaseEntity
+     ) : IEntityRepository<TEntity> where TEntity : MiniBankDatabaseEntity where TDao : RepositoryEntity
 {
     public List<TEntity> FetchAll()
     {
@@ -36,7 +36,7 @@ public abstract class GeneralInMemoryRepository<TEntity, TDao>
     public void Update(TEntity entity)
     {
         var accountDao = entityToDao.Convert(entity);
-        ((IVersionable)accountDao).Version = ((IVersionable)accountDao).Version;
+        ((IInMemoryDBVersionable)accountDao).Version = ((IInMemoryDBVersionable)accountDao).Version;
         shafaghDB.Update(accountDao);
         entityUpdater.Update(entity, accountDao);
     }
