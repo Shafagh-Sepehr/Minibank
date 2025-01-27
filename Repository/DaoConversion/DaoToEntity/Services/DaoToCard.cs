@@ -14,8 +14,8 @@ public class DaoToCard : IDaoToEntity<CardDao, Card>
             CardNumber = dao.CardNumber,
             AccountRef = dao.AccountRef,
             Cvv2 = dao.Cvv2,
-            Password = "holder",
-            SecondPassword = "holder",
+            Password = "1234",
+            SecondPassword = "12345",
             ExpiryDate = dao.ExpiryDate
         };
 

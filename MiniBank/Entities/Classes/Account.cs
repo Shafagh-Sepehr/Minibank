@@ -15,7 +15,6 @@ public class Account : DatabaseEntity
     public void DecreaseBalance(decimal amount) => _balance -= amount;
     public decimal Balance => _balance;
 
-
     public AccountStatus Status { get; set; } = AccountStatus.Active;
     
     [StringLength(36, MinimumLength = 36)]

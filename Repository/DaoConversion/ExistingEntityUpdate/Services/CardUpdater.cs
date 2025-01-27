@@ -15,8 +15,6 @@ public class CardUpdater : IEntityUpdateFromDao<CardDao, Card>
         Helper.SetValue(entity, nameof(dao.CardNumber), dao.CardNumber);
         Helper.SetValue(entity, nameof(dao.AccountRef), dao.AccountRef);
         Helper.SetValue(entity, nameof(dao.Cvv2), dao.Cvv2);
-        Helper.SetValue(entity, nameof(dao.Password), dao.Password);
-        Helper.SetValue(entity, nameof(dao.SecondPassword), dao.SecondPassword);
         Helper.SetValue(entity, nameof(dao.ExpiryDate), dao.ExpiryDate);
     }
 }
