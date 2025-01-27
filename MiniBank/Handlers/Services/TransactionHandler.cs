@@ -12,12 +12,14 @@ public class TransactionHandler(IRepositoryWrapperValidator repoWrapper, IAppSet
 {
     public void CreateCardToCardTransaction(string originCardNumber, string destinationCardNumber, decimal amount, string secondPassword, string cvv2, DateTime expiryDateTime, string? description)
     {
-        var cards = repoWrapper.FetchAll<Card>();
+        if (originCardNumber == destinationCardNumber)
+        {
+            throw new OperationFailedException("origin and destination card number can't be the same");
+        }
 
+        var cards = repoWrapper.FetchAll<Card>();
         var originCard = cards.FirstOrDefault(c => c.CardNumber == originCardNumber);
         var destinationCard = cards.FirstOrDefault(c => c.CardNumber == destinationCardNumber);
-
-        
 
         ActionResult actionResult;
         var transactionType = TransactionType.FailedCardToCard;
