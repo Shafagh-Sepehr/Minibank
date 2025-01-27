@@ -1,4 +1,5 @@
-﻿using MiniBank.Entities.Classes;
+﻿using Abstractions.InMemoryDatabase;
+using MiniBank.Entities.Classes;
 using Repository.DaoConversion.ExistingEntityUpdate.Abstractions;
 using Repository.Data;
 
@@ -6,7 +7,7 @@ namespace Repository.DaoConversion.ExistingEntityUpdate.Services;
 
 public class UserUpdater : IEntityUpdateFromDao<UserDao, User>
 {
-    public void EntityUpdate(User entity, UserDao dao)
+    public void Update(User entity, UserDao dao)
     {
         entity.Id = dao.Id;
         entity.Username = dao.Username;
@@ -15,5 +16,6 @@ public class UserUpdater : IEntityUpdateFromDao<UserDao, User>
         Helper.SetValue(entity,nameof(entity.LastName),dao.LastName);
         Helper.SetValue(entity,nameof(entity.NationalId),dao.NationalId);
         Helper.SetValue(entity,nameof(entity.PhoneNumber),dao.PhoneNumber);
+        ((IVersionable)entity).Version = ((IVersionable)dao).Version;
     }
 }

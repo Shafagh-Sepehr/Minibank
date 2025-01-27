@@ -1,4 +1,5 @@
-﻿using MiniBank.Entities.Classes;
+﻿using Abstractions.InMemoryDatabase;
+using MiniBank.Entities.Classes;
 using Repository.DaoConversion.EntityToDao.Abstractions;
 using Repository.Data;
 
@@ -6,9 +7,9 @@ namespace Repository.DaoConversion.EntityToDao.Services;
 
 public class TransactionToDao : IEntityToDao<Transaction, TransactionDao>
 {
-    public TransactionDao EntityToDao(Transaction entity)
+    public TransactionDao Convert(Transaction entity)
     {
-        return new TransactionDao
+        var dao = new TransactionDao
         {
             Id = entity.Id,
             Amount = entity.Amount,
@@ -21,5 +22,7 @@ public class TransactionToDao : IEntityToDao<Transaction, TransactionDao>
             OriginAccountRef = entity.OriginAccountRef,
             Type = entity.Type
         };
+        ((IVersionable)dao).Version = ((IVersionable)entity).Version;
+        return dao;
     }
 }

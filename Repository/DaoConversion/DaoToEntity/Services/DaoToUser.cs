@@ -1,4 +1,5 @@
-﻿using MiniBank.Entities.Classes;
+﻿using Abstractions.InMemoryDatabase;
+using MiniBank.Entities.Classes;
 using Repository.DaoConversion.DaoToEntity.Abstractions;
 using Repository.Data;
 
@@ -6,9 +7,9 @@ namespace Repository.DaoConversion.DaoToEntity.Services;
 
 public class DaoToUser : IDaoToEntity<UserDao, User>
 {
-    public User DaoToEntity(UserDao dao)
+    public User Convert(UserDao dao)
     {
-        return new User
+        var entity = new User
         {
             Id = dao.Id,
             FirstName = dao.FirstName,
@@ -18,5 +19,7 @@ public class DaoToUser : IDaoToEntity<UserDao, User>
             PhoneNumber = dao.PhoneNumber,
             Username = dao.Username
         };
+        ((IVersionable)entity).Version = ((IVersionable)dao).Version;
+        return entity;
     }
 }

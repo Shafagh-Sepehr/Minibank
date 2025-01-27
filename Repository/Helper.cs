@@ -1,6 +1,4 @@
 ﻿using System.Reflection;
-using Abstractions.InMemoryDatabase;
-using Abstractions.Repository;
 
 namespace Repository;
 
@@ -49,11 +47,5 @@ internal static class Helper
         }
 
         throw new ArgumentException($"Member {memberName} not found on {type.Name}");
-    }
-
-
-    public static void CopyVersion(DatabaseEntity source, DatabaseEntity destination)
-    {
-        ((IVersionable)destination).Version = ((IVersionable)source).Version;
     }
 }

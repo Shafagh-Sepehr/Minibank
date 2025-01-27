@@ -1,4 +1,5 @@
-﻿using MiniBank.Entities.Classes;
+﻿using Abstractions.InMemoryDatabase;
+using MiniBank.Entities.Classes;
 using Repository.DaoConversion.DaoToEntity.Abstractions;
 using Repository.Data;
 
@@ -6,9 +7,9 @@ namespace Repository.DaoConversion.DaoToEntity.Services;
 
 public class DaoToCard : IDaoToEntity<CardDao, Card>
 {
-    public Card DaoToEntity(CardDao dao)
+    public Card Convert(CardDao dao)
     {
-        var card = new Card
+        var entity = new Card
         {
             Id = dao.Id,
             CardNumber = dao.CardNumber,
@@ -19,8 +20,9 @@ public class DaoToCard : IDaoToEntity<CardDao, Card>
             ExpiryDate = dao.ExpiryDate
         };
 
-        Helper.SetValue(card, "_passwordHash", dao.Password);
-        Helper.SetValue(card, "_secondPasswordHash", dao.SecondPassword);
-        return card;
+        Helper.SetValue(entity, "_passwordHash", dao.Password);
+        Helper.SetValue(entity, "_secondPasswordHash", dao.SecondPassword);
+        ((IVersionable)entity).Version = ((IVersionable)dao).Version;
+        return entity;
     }
 }

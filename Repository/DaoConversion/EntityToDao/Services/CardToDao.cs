@@ -1,4 +1,5 @@
-﻿using MiniBank.Entities.Classes;
+﻿using Abstractions.InMemoryDatabase;
+using MiniBank.Entities.Classes;
 using Repository.DaoConversion.EntityToDao.Abstractions;
 using Repository.Data;
 
@@ -6,9 +7,9 @@ namespace Repository.DaoConversion.EntityToDao.Services;
 
 public class CardToDao : IEntityToDao<Card, CardDao>
 {
-    public CardDao EntityToDao(Card entity)
+    public CardDao Convert(Card entity)
     {
-        return new CardDao
+        var dao = new CardDao
         {
             CardNumber = entity.CardNumber,
             Id = entity.Id,
@@ -18,5 +19,7 @@ public class CardToDao : IEntityToDao<Card, CardDao>
             SecondPassword = entity.GetSecondPasswordHash(),
             ExpiryDate = entity.ExpiryDate
         };
+        ((IVersionable)dao).Version = ((IVersionable)entity).Version;
+        return dao;
     }
 }
