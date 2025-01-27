@@ -25,15 +25,19 @@ public class CardHandler(IRepositoryWrapperValidator repoWrapper, ISmsService sm
 
     public void RequestDynamicPassword(decimal amount, string originCardNumber, string destinationCardNumber, string cvv2, DateTime expiryDate)
     {
-        var cards = repoWrapper.FetchAll<Card>();
-        var accounts = repoWrapper.FetchAll<Account>();
-        var users = repoWrapper.FetchAll<User>();
-        var originCard = cards.FirstOrDefault(c => c.CardNumber == originCardNumber);
+        var originCard = repoWrapper.FetchAll<Card>().FirstOrDefault(c => c.CardNumber == originCardNumber);
+        if (originCard == null)
+        {
+            throw new OperationFailedException($"origin card not found, no card exists with card number {originCardNumber}");
+        }
 
-        var user = (from u in users
-                    join account in accounts on u.Id equals account.UserRef
-                    join card in cards on account.Id equals card.AccountRef
-                    select u).Distinct().SingleOrDefault();
+        var originAccount = repoWrapper.FetchById<Account>(originCard.AccountRef);
+        if (originAccount == null)
+        {
+            throw new OperationFailedException($"origin account not found, no account exists for card number {originCardNumber}");
+        }
+
+        var user = repoWrapper.FetchById<User>(originAccount.UserRef);
 
         if (user == null || originCard == null || originCard.Cvv2 != cvv2 ||
             originCard.ExpiryDate.Month != expiryDate.Month || originCard.ExpiryDate.Year != expiryDate.Year)
@@ -52,7 +56,7 @@ public class CardHandler(IRepositoryWrapperValidator repoWrapper, ISmsService sm
         };
 
         repoWrapper.Insert(dynamicPassword);
-        smsService.Send($"dynamic password: {dynamicPasswordString}", accounts.First(acc => acc.Id == originCard.AccountRef).AccountNumber, user.PhoneNumber);
+        smsService.Send($"dynamic password: {dynamicPasswordString}", originAccount.AccountNumber, user.PhoneNumber);
     }
 
     public void RequestAccountToAccountDynamicPassword(decimal amount, string originAccountNumber, string destinationAccountNumber)
@@ -73,10 +77,7 @@ public class CardHandler(IRepositoryWrapperValidator repoWrapper, ISmsService sm
         var originCard = cards.FirstOrDefault(c => c.AccountRef == originAccount.Id);
         var destinationCard = cards.FirstOrDefault(c => c.AccountRef == destinationAccount.Id);
 
-        var user = (from u in users
-            join account in accounts on u.Id equals account.UserRef
-            join card in cards on account.Id equals card.AccountRef
-            select u).Distinct().SingleOrDefault();
+        var user = repoWrapper.FetchById<User>(originAccount.UserRef);
 
         if(originCard == null || destinationCard == null || user == null)
         {
