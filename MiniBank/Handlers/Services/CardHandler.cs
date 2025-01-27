@@ -71,7 +71,7 @@ public class CardHandler(IRepositoryWrapperValidator repoWrapper, ISmsService sm
         
         if (originAccount == null || destinationAccount == null)
         {
-            throw new OperationFailedException("a card with this information couldn't be found");
+            throw new OperationFailedException("an account with this information couldn't be found");
         }
 
         var originCard = cards.FirstOrDefault(c => c.AccountRef == originAccount.Id);
@@ -81,7 +81,7 @@ public class CardHandler(IRepositoryWrapperValidator repoWrapper, ISmsService sm
 
         if(originCard == null || destinationCard == null || user == null)
         {
-            throw new OperationFailedException("a card with this information couldn't be found");
+            throw new OperationFailedException("an account with this information couldn't be found");
         }
 
         var dynamicPasswordString = Helper.GenerateRandomNumberAsString(8);
