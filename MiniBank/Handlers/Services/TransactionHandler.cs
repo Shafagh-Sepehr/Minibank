@@ -66,13 +66,16 @@ public class TransactionHandler(IRepositoryWrapperValidator repoWrapper, IAppSet
     public void CreateAccountToAccountTransaction(string originAccountNumber, string destinationAccountNumber
         , decimal amount, string secondPassword, string? description = null)
     {
+        if (originAccountNumber == destinationAccountNumber)
+        {
+            throw new OperationFailedException("origin and destination account can't be the same");
+        }
+
         var accounts = repoWrapper.FetchAll<Account>();
         var cards = repoWrapper.FetchAll<Card>();
 
         var originAccount = accounts.FirstOrDefault(a => a.AccountNumber == originAccountNumber);
         var destinationAccount = accounts.FirstOrDefault(a => a.AccountNumber == destinationAccountNumber);
-
-        
 
         ActionResult actionResult;
         var transactionType = TransactionType.AccountToAccount;
