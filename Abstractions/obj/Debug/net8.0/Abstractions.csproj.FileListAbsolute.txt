@@ -1,0 +1,12 @@
+/home/runner/work/Minibank/Minibank/Abstractions/bin/Debug/net8.0/Abstractions.deps.json
+/home/runner/work/Minibank/Minibank/Abstractions/bin/Debug/net8.0/Abstractions.dll
+/home/runner/work/Minibank/Minibank/Abstractions/bin/Debug/net8.0/Abstractions.pdb
+/home/runner/work/Minibank/Minibank/Abstractions/obj/Debug/net8.0/Abstractions.GeneratedMSBuildEditorConfig.editorconfig
+/home/runner/work/Minibank/Minibank/Abstractions/obj/Debug/net8.0/Abstractions.AssemblyInfoInputs.cache
+/home/runner/work/Minibank/Minibank/Abstractions/obj/Debug/net8.0/Abstractions.AssemblyInfo.cs
+/home/runner/work/Minibank/Minibank/Abstractions/obj/Debug/net8.0/Abstractions.csproj.CoreCompileInputs.cache
+/home/runner/work/Minibank/Minibank/Abstractions/obj/Debug/net8.0/Abstractions.sourcelink.json
+/home/runner/work/Minibank/Minibank/Abstractions/obj/Debug/net8.0/Abstractions.dll
+/home/runner/work/Minibank/Minibank/Abstractions/obj/Debug/net8.0/refint/Abstractions.dll
+/home/runner/work/Minibank/Minibank/Abstractions/obj/Debug/net8.0/Abstractions.pdb
+/home/runner/work/Minibank/Minibank/Abstractions/obj/Debug/net8.0/ref/Abstractions.dll
